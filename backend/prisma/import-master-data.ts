@@ -70,7 +70,31 @@ async function importAllData() {
             }
         }
 
-        // 4. Sync Settings
+        // 4. Sync Marketing & UI
+        console.log('🎨 Syncing Banners, Discounts, and Gallery...');
+        for (const banner of data.banners || []) {
+            await prisma.banner.upsert({
+                where: { id: banner.id },
+                update: banner,
+                create: banner,
+            });
+        }
+        for (const discount of data.discounts || []) {
+            await prisma.discount.upsert({
+                where: { id: discount.id },
+                update: discount,
+                create: discount,
+            });
+        }
+        for (const item of data.gallery || []) {
+            await prisma.galleryItem.upsert({
+                where: { id: item.id },
+                update: item,
+                create: item,
+            });
+        }
+
+        // 5. Sync Settings
         console.log('⚙️ Syncing Settings...');
         for (const setting of data.settings) {
             await prisma.setting.upsert({
@@ -80,7 +104,9 @@ async function importAllData() {
             });
         }
 
-        console.log('✅ Master Data Restoration Complete!');
+        console.log('\n' + '='.repeat(50));
+        console.log('✅ MASTER DATA RESTORATION COMPLETE!');
+        console.log('='.repeat(50));
 
     } catch (error) {
         console.error('❌ Import failed:', error);
