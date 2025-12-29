@@ -1,7 +1,33 @@
 version: '3.8'
 
 services:
-  # PostgreSQL Database
+  # Traefik Reverse Proxy & SSL
+  traefik:
+    image: traefik:v3.0
+    container_name: mobileshop-proxy
+    restart: unless-stopped
+    command:
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entryPoints.web.address=:80"
+      - "--entryPoints.websecure.address=:443"
+      # Global HTTP to HTTPS redirection
+      - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
+      - "--certificatesresolvers.myresolver.acme.httpchallenge=true"
+      - "--certificatesresolvers.myresolver.acme.httpchallenge.entrypoint=web"
+      - "--certificatesresolvers.myresolver.acme.email=raoufi.saidmasoom@gmail.com"
+      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "./letsencrypt:/letsencrypt"
+    networks:
+      - mobileshop-network
+
+  # PostgreSQL Database (Private)
   postgres:
     image: postgres:16-alpine
     container_name: mobileshop-db
@@ -10,8 +36,7 @@ services:
       POSTGRES_USER: mobileshop
       POSTGRES_PASSWORD: mobileshop_secret
       POSTGRES_DB: mobileshop
-    ports:
-      - "5433:5432"
+    # ports removed for security
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -22,7 +47,7 @@ services:
     networks:
       - mobileshop-network
 
-  # MinIO S3-Compatible Storage
+  # MinIO S3-Compatible Storage (Private API, Public via Traefik /storage)
   minio:
     image: minio/minio:latest
     container_name: mobileshop-minio
@@ -31,9 +56,7 @@ services:
     environment:
       MINIO_ROOT_USER: minioadmin
       MINIO_ROOT_PASSWORD: minioadmin123
-    ports:
-      - "9002:9000" # API (external:internal)
-      - "9003:9001" # Console (external:internal)
+    # ports removed for security
     volumes:
       - minio_data:/data
     healthcheck:
@@ -43,8 +66,16 @@ services:
       retries: 3
     networks:
       - mobileshop-network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.minio.rule=Host(`smartphoneservice.be`) && PathPrefix(`/storage`)"
+      - "traefik.http.routers.minio.entrypoints=websecure"
+      - "traefik.http.routers.minio.tls.certresolver=myresolver"
+      - "traefik.http.routers.minio.middlewares=minio-strip"
+      - "traefik.http.middlewares.minio-strip.stripprefix.prefixes=/storage"
+      - "traefik.http.services.minio.loadbalancer.server.port=9000"
 
-  # MinIO Setup - Creates default buckets
+  # MinIO Setup
   minio-setup:
     image: minio/mc:latest
     container_name: mobileshop-minio-setup
@@ -63,15 +94,14 @@ services:
       dockerfile: Dockerfile
     container_name: mobileshop-backend
     restart: unless-stopped
-    ports:
-      - "3001:3001"
+    # ports removed for security
     environment:
       - NODE_ENV=production
       - PORT=3001
       - DATABASE_URL=postgresql://mobileshop:mobileshop_secret@postgres:5432/mobileshop
       - JWT_SECRET=${JWT_SECRET:-your-super-secret-jwt-key-change-in-production}
       - JWT_EXPIRES_IN=7d
-      - FRONTEND_URL=http://localhost:3000
+      - FRONTEND_URL=https://smartphoneservice.be
       - MINIO_ENDPOINT=minio
       - MINIO_PORT=9000
       - MINIO_ACCESS_KEY=minioadmin
@@ -79,6 +109,7 @@ services:
       - MINIO_USE_SSL=false
       - MINIO_BUCKET_PRODUCTS=products
       - MINIO_BUCKET_REPAIRS=repairs
+      - MINIO_PUBLIC_URL=https://smartphoneservice.be/storage
       - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
       - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}
       - RESEND_API_KEY=${RESEND_API_KEY}
@@ -90,6 +121,12 @@ services:
         condition: service_healthy
     networks:
       - mobileshop-network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.backend.rule=Host(`smartphoneservice.be`) && PathPrefix(`/api`)"
+      - "traefik.http.routers.backend.entrypoints=websecure"
+      - "traefik.http.routers.backend.tls.certresolver=myresolver"
+      - "traefik.http.services.backend.loadbalancer.server.port=3001"
 
   # Next.js Frontend
   frontend:
@@ -97,11 +134,10 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
       args:
-        - NEXT_PUBLIC_API_URL=http://localhost:3001
+        - NEXT_PUBLIC_API_URL=https://smartphoneservice.be
     container_name: mobileshop-frontend
     restart: unless-stopped
-    ports:
-      - "3000:3000"
+    # ports removed for security
     environment:
       - NODE_ENV=production
       - NEXT_PUBLIC_API_URL=http://backend:3001
@@ -109,6 +145,12 @@ services:
       - backend
     networks:
       - mobileshop-network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.frontend.rule=Host(`smartphoneservice.be`)"
+      - "traefik.http.routers.frontend.entrypoints=websecure"
+      - "traefik.http.routers.frontend.tls.certresolver=myresolver"
+      - "traefik.http.services.frontend.loadbalancer.server.port=3000"
 
 networks:
   mobileshop-network:

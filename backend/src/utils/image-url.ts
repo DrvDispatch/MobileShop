@@ -39,6 +39,7 @@ export function getRelativeImagePath(absoluteUrl: string): string {
 
     // Remove any known base URLs to get relative path
     const knownBases = [
+        'https://smartphoneservice.be/storage',
         'https://images.smartphoneservice.be',
         'http://localhost:9002',
         'http://localhost:9000',
