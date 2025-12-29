@@ -24,7 +24,7 @@ async function exportAllData() {
                 reviews: true,
             }
         });
-        console.log(`📦 Exporting ${products.length} products (with ${products.reduce((acc, p) => acc + p.images.length, 0)} images)...`);
+        console.log(`📦 Exporting ${products.length} products (with ${products.reduce((acc: number, p: any) => acc + p.images.length, 0)} images)...`);
 
         // 3. Export Repair Configs (The whole tree)
         const repairBrands = await prisma.repairBrand.findMany({
