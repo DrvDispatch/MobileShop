@@ -40,6 +40,11 @@ export function getProductionImageUrl(localUrl: string): string {
     if (!localUrl) return '';
 
     try {
+        // If already a full production URL with /storage, return as-is
+        if (localUrl.includes('smartphoneservice.be/storage')) {
+            return localUrl;
+        }
+
         // Handle both localhost:9002 (backend reported) and localhost:9000 (standard MinIO)
         if (localUrl.includes('localhost:9002') || localUrl.includes('localhost:9000')) {
             const url = new URL(localUrl);
