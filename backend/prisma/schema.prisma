@@ -1,0 +1,1143 @@
+// Prisma Schema for Mobile Device Shop
+// Includes: Users, Products, Orders, Repairs, Inventory
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ============================================
+// USER & AUTH
+// ============================================
+
+enum UserRole {
+  CUSTOMER
+  STAFF
+  ADMIN
+}
+
+model User {
+  id           String    @id @default(uuid())
+  email        String    @unique
+  passwordHash String?   // Nullable for OAuth-only users
+  name         String
+  phone        String?
+  role         UserRole  @default(CUSTOMER)
+  isActive     Boolean   @default(true)
+  avatar       String?
+  lastActiveAt DateTime? // For tracking online status
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  // Enhanced Customer View
+  isVip        Boolean   @default(false)  // VIP customer status
+  adminNotes   String?   // Internal notes for staff
+  totalSpent   Decimal   @default(0) @db.Decimal(10, 2) // Cached lifetime value
+
+  // Email Verification
+  emailVerified    DateTime?
+  emailVerifyToken String?
+
+  // Password Reset
+  resetToken       String?
+  resetTokenExpiry DateTime?
+
+  // Google OAuth
+  googleId String? @unique
+
+  // Relations
+  orders              Order[]
+  repairTickets       RepairTicket[]       @relation("CustomerTickets")
+  assignedRepairs     RepairTicket[]       @relation("StaffTickets")
+  inventoryMovements  InventoryMovement[]
+  wishlist            Wishlist?
+  reviews             ProductReview[]
+
+  @@index([email])
+  @@index([role])
+  @@index([googleId])
+  @@index([isVip])
+}
+
+// ============================================
+// PRODUCTS & CATEGORIES
+// ============================================
+
+model Category {
+  id          String    @id @default(uuid())
+  name        String
+  slug        String    @unique
+  description String?
+  image       String?
+  parentId    String?
+  sortOrder   Int       @default(0)
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Self-relation for subcategories
+  parent   Category?  @relation("CategoryChildren", fields: [parentId], references: [id])
+  children Category[] @relation("CategoryChildren")
+
+  // Products in this category
+  products Product[]
+
+  @@index([slug])
+  @@index([parentId])
+}
+
+enum ProductCondition {
+  NEW
+  USED
+  REFURBISHED
+}
+
+enum ProductType {
+  PHONE
+  PART
+  ACCESSORY
+}
+
+enum DeviceGrade {
+  A_PLUS  // Like new, no visible wear
+  A       // Excellent, minimal signs of use
+  B       // Good, minor cosmetic wear
+  C       // Fair, noticeable wear but functional
+}
+
+model Product {
+  id              String           @id @default(uuid())
+  name            String
+  slug            String           @unique
+  description     String?
+  shortDescription String?
+  price           Decimal          @db.Decimal(10, 2)
+  compareAtPrice  Decimal?         @db.Decimal(10, 2)
+  costPrice       Decimal?         @db.Decimal(10, 2)
+  sku             String?          @unique
+  barcode         String?
+  stockQty        Int              @default(0)
+  lowStockThreshold Int            @default(5)
+  condition       ProductCondition @default(NEW)
+  brand           String?
+  modelCompatibility Json?         // Array of compatible device models
+  specifications  Json?            // Key-value specs
+  isFeatured      Boolean          @default(false)
+  isActive        Boolean          @default(true)
+  categoryId      String?
+  sortOrder       Int              @default(0)
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  // Device specification fields
+  productType     ProductType      @default(PHONE)
+  storage         String?          // "128GB", "256GB", "512GB"
+  color           String?          // "Space Black", "Gold", "Silver"
+  batteryHealth   Int?             // Battery capacity percentage (e.g., 98 = 98%)
+  deviceGrade     DeviceGrade?     // Quality grade for used/refurbished
+
+  // Relations
+  category          Category?          @relation(fields: [categoryId], references: [id])
+  images            ProductImage[]
+  orderItems        OrderItem[]
+  inventoryMovements InventoryMovement[]
+  reviews           ProductReview[]
+  wishlistItems     WishlistItem[]
+  stockNotifications StockNotification[]
+
+  @@index([slug])
+  @@index([categoryId])
+  @@index([brand])
+  @@index([condition])
+  @@index([isFeatured])
+  @@index([isActive])
+  @@index([productType])
+  @@index([batteryHealth])
+}
+
+model ProductImage {
+  id        String   @id @default(uuid())
+  productId String
+  url       String
+  alt       String?
+  order     Int      @default(0)
+  isPrimary Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId])
+}
+
+// ============================================
+// ORDERS
+// ============================================
+
+enum OrderStatus {
+  PENDING
+  PAID
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+  REFUNDED
+}
+
+enum FulfillmentType {
+  SHIPPING
+  PICKUP
+}
+
+// ============================================
+// REFUNDS
+// ============================================
+
+enum RefundStatus {
+  PENDING
+  PROCESSING
+  SUCCEEDED
+  FAILED
+  CANCELLED
+}
+
+enum RefundReason {
+  DUPLICATE
+  FRAUDULENT
+  REQUESTED_BY_CUSTOMER
+  DEFECTIVE_PRODUCT
+  WRONG_PRODUCT
+  SHIPPING_DAMAGE
+  OTHER
+}
+
+model Order {
+  id                    String          @id @default(uuid())
+  orderNumber           String          @unique
+  userId                String?
+  status                OrderStatus     @default(PENDING)
+  fulfillmentType       FulfillmentType @default(SHIPPING)
+  
+  // Pricing
+  subtotal              Decimal         @db.Decimal(10, 2)
+  taxAmount             Decimal         @db.Decimal(10, 2) @default(0)
+  shippingAmount        Decimal         @db.Decimal(10, 2) @default(0)
+  discountAmount        Decimal         @db.Decimal(10, 2) @default(0)
+  total                 Decimal         @db.Decimal(10, 2)
+
+  // Stripe
+  stripeSessionId       String?
+  stripePaymentIntentId String?
+
+  // Customer info (for guest checkout)
+  customerEmail         String
+  customerName          String
+  customerPhone         String?
+
+  // Addresses
+  shippingAddress       Json?
+  billingAddress        Json?
+
+  // Notes
+  notes                 String?
+  adminNotes            String?
+
+  createdAt             DateTime        @default(now())
+  updatedAt             DateTime        @updatedAt
+  paidAt                DateTime?
+  shippedAt             DateTime?
+  deliveredAt           DateTime?
+
+  // Relations
+  user           User?         @relation(fields: [userId], references: [id])
+  items          OrderItem[]
+  refunds        Refund[]
+  discountCode   DiscountCode? @relation(fields: [discountCodeId], references: [id])
+  discountCodeId String?
+  statusHistory  OrderStatusHistory[]
+
+  @@index([orderNumber])
+  @@index([userId])
+  @@index([status])
+  @@index([customerEmail])
+  @@index([createdAt])
+}
+
+model OrderItem {
+  id           String  @id @default(uuid())
+  orderId      String
+  productId    String?
+  
+  // Snapshot at time of order
+  productName  String
+  productSku   String?
+  productImage String?
+  
+  quantity     Int
+  unitPrice    Decimal @db.Decimal(10, 2)
+  totalPrice   Decimal @db.Decimal(10, 2)
+
+  // Relations
+  order   Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+
+  @@index([orderId])
+  @@index([productId])
+}
+
+model Refund {
+  id              String       @id @default(uuid())
+  orderId         String
+  order           Order        @relation(fields: [orderId], references: [id])
+  
+  // Stripe info
+  stripeRefundId  String?      @unique
+  stripeChargeId  String?
+  
+  // Amount
+  amount          Decimal      @db.Decimal(10, 2)
+  currency        String       @default("EUR")
+  
+  // Status & reason
+  status          RefundStatus @default(PENDING)
+  reason          RefundReason @default(REQUESTED_BY_CUSTOMER)
+  reasonText      String?
+  
+  // Admin who processed
+  processedBy     String?
+  adminNotes      String?
+  
+  // Return tracking (optional)
+  returnRequired  Boolean      @default(false)
+  returnReceived  Boolean      @default(false)
+  returnTrackingNumber String?
+  
+  // Timestamps
+  createdAt       DateTime     @default(now())
+  processedAt     DateTime?
+  failedAt        DateTime?
+  failureReason   String?
+  
+  @@index([orderId])
+  @@index([status])
+  @@index([stripeRefundId])
+  @@index([createdAt])
+}
+
+// ============================================
+// REPAIR SERVICES
+// ============================================
+
+model RepairService {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  deviceBrand String
+  deviceModel String
+  issueType   String   // e.g., "screen", "battery", "water_damage"
+  basePrice   Decimal  @db.Decimal(10, 2)
+  etaMinutes  Int      @default(60)
+  isActive    Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  repairTickets RepairTicket[]
+
+  @@unique([deviceBrand, deviceModel, issueType])
+  @@index([deviceBrand])
+  @@index([deviceModel])
+  @@index([isActive])
+}
+
+enum RepairStatus {
+  RECEIVED
+  DIAGNOSING
+  AWAITING_PARTS
+  IN_PROGRESS
+  READY
+  COMPLETED
+  CANCELLED
+}
+
+model RepairTicket {
+  id              String       @id @default(uuid())
+  ticketNumber    String       @unique
+  userId          String?
+  serviceId       String?
+  assignedStaffId String?
+  status          RepairStatus @default(RECEIVED)
+
+  // Customer info
+  customerName    String
+  customerEmail   String
+  customerPhone   String
+
+  // Device info
+  deviceBrand     String
+  deviceModel     String
+  deviceSerial    String?
+  devicePassword  String?      // Encrypted
+  deviceNotes     String?
+
+  // Repair details
+  issueDescription String
+  diagnosis        String?
+  workPerformed    String?
+  partsUsed        Json?        // Array of parts used
+
+  // Pricing
+  estimatedPrice   Decimal?     @db.Decimal(10, 2)
+  finalPrice       Decimal?     @db.Decimal(10, 2)
+  isPaid           Boolean      @default(false)
+
+  // Timestamps
+  receivedAt       DateTime     @default(now())
+  diagnosedAt      DateTime?
+  completedAt      DateTime?
+  pickedUpAt       DateTime?
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+
+  // Relations
+  user          User?          @relation("CustomerTickets", fields: [userId], references: [id])
+  assignedStaff User?          @relation("StaffTickets", fields: [assignedStaffId], references: [id])
+  service       RepairService? @relation(fields: [serviceId], references: [id])
+
+  @@index([ticketNumber])
+  @@index([userId])
+  @@index([status])
+  @@index([assignedStaffId])
+  @@index([createdAt])
+}
+
+// ============================================
+// INVENTORY MANAGEMENT
+// ============================================
+
+enum MovementType {
+  STOCK_IN
+  STOCK_OUT
+  ADJUSTMENT
+  SALE
+  RETURN
+  REPAIR_USAGE
+}
+
+model InventoryMovement {
+  id          String       @id @default(uuid())
+  productId   String
+  userId      String?
+  type        MovementType
+  quantity    Int          // Positive for in, negative for out
+  previousQty Int
+  newQty      Int
+  reason      String?
+  reference   String?      // Order ID, Repair Ticket ID, etc.
+  createdAt   DateTime     @default(now())
+
+  // Relations
+  product Product @relation(fields: [productId], references: [id])
+  user    User?   @relation(fields: [userId], references: [id])
+
+  @@index([productId])
+  @@index([type])
+  @@index([createdAt])
+}
+
+// ============================================
+// SETTINGS & CONFIG
+// ============================================
+
+model Setting {
+  id        String   @id @default(uuid())
+  key       String   @unique
+  value     Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([key])
+}
+
+model ShippingZone {
+  id          String   @id @default(uuid())
+  name        String                    // "Belgium", "EU Zone 1"
+  countries   String[]                  // ["BE"], ["NL", "LU", "DE"]
+  rate        Decimal  @db.Decimal(10, 2)
+  freeAbove   Decimal? @db.Decimal(10, 2)  // Free shipping threshold
+  minDays     Int      @default(2)
+  maxDays     Int      @default(5)
+  carrier     String?                   // "bpost", "DHL"
+  isActive    Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([isActive])
+}
+
+// ============================================
+// APPOINTMENTS / BOOKING SYSTEM
+// ============================================
+
+enum AppointmentStatus {
+  CONFIRMED
+  COMPLETED
+  CANCELLED
+  NO_SHOW
+}
+
+enum RepairType {
+  SCREEN
+  BATTERY
+  BACKCOVER
+  CHARGING_PORT
+  WATER_DAMAGE
+  OTHER
+}
+
+enum AppointmentPriority {
+  NORMAL
+  URGENT
+  VIP
+}
+
+model Appointment {
+  id                 String            @id @default(uuid())
+  
+  // Customer info
+  customerName       String
+  customerEmail      String
+  customerPhone      String
+  
+  // Device info
+  deviceBrand        String
+  deviceModel        String
+  repairType         RepairType
+  problemDescription String?
+  damageImageUrl     String?           // Optional image upload
+  
+  // Scheduling
+  appointmentDate    DateTime          @db.Date
+  timeSlot           String            // "09:00", "10:00", etc.
+  
+  // Status
+  status             AppointmentStatus @default(CONFIRMED)
+  priority           AppointmentPriority @default(NORMAL)
+  adminNotes         String?
+  repairDuration     Int?              // Duration in minutes
+  
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+
+  @@unique([appointmentDate, timeSlot])  // Prevent double booking
+  @@index([appointmentDate])
+  @@index([status])
+  @@index([customerEmail])
+}
+
+// ============================================
+// TICKET / CHAT SUPPORT SYSTEM
+// ============================================
+
+enum TicketStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
+
+enum TicketCategory {
+  REPAIR_QUESTION
+  ORDER_QUESTION
+  PRICE_QUOTE
+  GENERAL
+  DISPUTE
+  REFUND
+}
+
+model Ticket {
+  id            String         @id @default(uuid())
+  caseId        String         @unique  // NEO-2024-001234
+  sessionId     String         // Cookie-based session for returning users
+  
+  // Customer info
+  customerName  String
+  customerEmail String?
+  customerPhone String?
+  
+  category      TicketCategory @default(GENERAL)
+  subject       String
+  status        TicketStatus   @default(OPEN)
+  
+  // Messages
+  messages      TicketMessage[]
+  
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  @@index([sessionId])
+  @@index([caseId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model TicketMessage {
+  id          String   @id @default(uuid())
+  ticketId    String
+  ticket      Ticket   @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  
+  sender      String   // "customer" or "staff" or staff name
+  message     String
+  attachments Json?    @default("[]")  // Array of {url, type, name, size}
+  
+  createdAt   DateTime @default(now())
+
+  @@index([ticketId])
+  @@index([createdAt])
+}
+
+// ============================================
+// SUPPORTED DEVICES FOR REPAIRS
+// ============================================
+
+model SupportedDevice {
+  id        String   @id @default(uuid())
+  brand     String   // "Apple", "Samsung", "Huawei", etc.
+  model     String   // "iPhone 16 Pro Max", "Galaxy S25 Ultra"
+  isActive  Boolean  @default(true)
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([brand, model])
+  @@index([brand])
+  @@index([isActive])
+}
+
+// ============================================
+// REPAIR CATALOG (for appointment wizard)
+// ============================================
+
+// Device Types: Smartphone, Tablet
+model RepairDeviceType {
+  id        String   @id @default(uuid())
+  name      String   @unique  // "Smartphone", "Tablet"
+  slug      String   @unique  // "smartphone", "tablet"
+  icon      String?           // URL to icon image
+  sortOrder Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  brands    RepairBrand[]
+
+  @@index([slug])
+  @@index([isActive])
+  @@index([sortOrder])
+}
+
+// Brands: Apple, Samsung
+model RepairBrand {
+  id           String   @id @default(uuid())
+  name         String           // "Apple", "Samsung"
+  slug         String   @unique // "apple", "samsung"
+  logo         String?          // URL to brand logo
+  deviceTypeId String
+  sortOrder    Int      @default(0)
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relations
+  deviceType   RepairDeviceType @relation(fields: [deviceTypeId], references: [id], onDelete: Cascade)
+  devices      RepairDevice[]
+
+  @@index([slug])
+  @@index([deviceTypeId])
+  @@index([isActive])
+  @@index([sortOrder])
+}
+
+// Devices: iPhone 16 Pro Max, Galaxy S25 Ultra
+model RepairDevice {
+  id        String   @id @default(uuid())
+  name      String           // "iPhone 16 Pro Max"
+  slug      String   @unique // "iphone-16-pro-max"
+  image     String?          // URL to device image
+  brandId   String
+  sortOrder Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  brand     RepairBrand @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  services  RepairDeviceService[]
+
+  @@index([slug])
+  @@index([brandId])
+  @@index([isActive])
+  @@index([sortOrder])
+}
+
+// Service Types: Scherm, Batterij, Oplaadpoort (master list)
+model RepairServiceType {
+  id          String   @id @default(uuid())
+  name        String   @unique  // "Scherm", "Batterij"
+  slug        String   @unique  // "scherm", "batterij"
+  icon        String?           // URL to SVG icon
+  description String?
+  sortOrder   Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  deviceServices RepairDeviceService[]
+
+  @@index([slug])
+  @@index([isActive])
+  @@index([sortOrder])
+}
+
+// Device-specific service pricing
+model RepairDeviceService {
+  id          String   @id @default(uuid())
+  deviceId    String
+  serviceId   String
+  price       Decimal? @db.Decimal(10, 2) // null = "Op aanvraag"
+  priceText   String?  // "€ 129,99" or "Op aanvraag"
+  duration    String?  // "60 MINUTEN", "1-3 DAGEN"
+  isActive    Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  device      RepairDevice @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+  service     RepairServiceType @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+
+  @@unique([deviceId, serviceId])
+  @@index([deviceId])
+  @@index([serviceId])
+  @@index([isActive])
+}
+
+// ============================================
+// FEEDBACK & RATINGS
+// ============================================
+
+model FeedbackRating {
+  id                  String    @id @default(uuid())
+  token               String    @unique  // Secure token for rating URL
+  
+  // Link to source (one of these will be set)
+  ticketId            String?   @unique
+  repairTicketId      String?   @unique
+  
+  // Type of feedback source
+  sourceType          String    // "ticket" or "repair"
+  
+  // Rating data
+  rating              Int?      // 1-5 stars
+  comment             String?
+  googleReviewClicked Boolean   @default(false)
+  
+  // Customer info (copied from source for easy access)
+  customerEmail       String
+  customerName        String
+  
+  // Status
+  emailSent           Boolean   @default(false)
+  
+  createdAt           DateTime  @default(now())
+  ratedAt             DateTime?
+  
+  @@index([token])
+  @@index([customerEmail])
+  @@index([sourceType])
+}
+
+// Email unsubscribe list for marketing
+model EmailUnsubscribe {
+  id          String   @id @default(uuid())
+  email       String   @unique
+  reason      String?
+  createdAt   DateTime @default(now())
+  
+  @@index([email])
+}
+
+// ============================================
+// DISCOUNT CODES & PROMOTIONS
+// ============================================
+
+enum DiscountType {
+  PERCENTAGE
+  FIXED
+}
+
+model DiscountCode {
+  id              String       @id @default(uuid())
+  code            String       @unique
+  description     String?
+  type            DiscountType
+  value           Decimal      @db.Decimal(10, 2) // e.g., 10 for 10% or €10
+  minOrderAmount  Decimal?     @db.Decimal(10, 2) // Minimum order to apply
+  maxDiscount     Decimal?     @db.Decimal(10, 2) // Cap for percentage discounts
+  usageLimit      Int?         // Total uses allowed (null = unlimited)
+  usageCount      Int          @default(0)
+  perUserLimit    Int?         // Uses per customer (null = unlimited)
+  startsAt        DateTime?
+  expiresAt       DateTime?
+  isActive        Boolean      @default(true)
+  appliesToAll    Boolean      @default(true)
+  productIds      String[]     // Specific products (if not appliesToAll)
+  categoryIds     String[]     // Specific categories (if not appliesToAll)
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  
+  // Track which orders used this code
+  orders          Order[]
+  
+  @@index([code])
+  @@index([isActive])
+  @@index([startsAt])
+  @@index([expiresAt])
+}
+
+enum BannerPosition {
+  TICKER      // Top scrolling ticker
+  HEADER      // Below header banner
+  POPUP       // Modal popup
+  FOOTER      // Above footer
+}
+
+model PromotionalBanner {
+  id          String         @id @default(uuid())
+  title       String
+  message     String
+  linkUrl     String?
+  linkText    String?
+  bgColor     String         @default("#7c3aed") // Purple default
+  textColor   String         @default("#ffffff")
+  position    BannerPosition @default(TICKER)
+  priority    Int            @default(0) // Higher = shown first
+  startsAt    DateTime?
+  expiresAt   DateTime?
+  isActive    Boolean        @default(true)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  
+  @@index([isActive])
+  @@index([position])
+  @@index([startsAt])
+  @@index([expiresAt])
+}
+
+// ============================================
+// ORDER STATUS HISTORY (Audit Trail)
+// ============================================
+
+model OrderStatusHistory {
+  id            String    @id @default(uuid())
+  orderId       String
+  order         Order     @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  
+  previousStatus String?   // null for first entry (order creation)
+  newStatus     String
+  
+  // Who made the change
+  changedBy     String?   // Admin user ID or "system" or "stripe"
+  changedByName String?   // Human-readable name
+  changedByType String    @default("admin") // "admin", "system", "stripe", "customer"
+  
+  // Optional notes
+  notes         String?
+  
+  createdAt     DateTime  @default(now())
+  
+  @@index([orderId])
+  @@index([createdAt])
+}
+
+// ============================================
+// ADMIN AUDIT LOG (Activity Tracking)
+// ============================================
+
+enum AuditAction {
+  CREATE
+  UPDATE
+  DELETE
+  STATUS_CHANGE
+  LOGIN
+  LOGOUT
+  EXPORT
+  REFUND
+  OTHER
+}
+
+model AuditLog {
+  id            String      @id @default(uuid())
+  
+  // Who performed the action
+  userId        String
+  userName      String
+  userRole      String
+  
+  // What action was performed
+  action        AuditAction
+  entityType    String      // "product", "order", "user", "refund", etc.
+  entityId      String?     // ID of the affected entity
+  entityName    String?     // Human-readable identifier (product name, order number, etc.)
+  
+  // Details of the change
+  description   String      // Brief description
+  oldValue      Json?       // Previous state (for updates)
+  newValue      Json?       // New state (for updates/creates)
+  metadata      Json?       // Additional context
+  
+  // Request info
+  ipAddress     String?
+  userAgent     String?
+  
+  createdAt     DateTime    @default(now())
+  
+  @@index([userId])
+  @@index([action])
+  @@index([entityType])
+  @@index([entityId])
+  @@index([createdAt])
+}
+
+// ============================================
+// PRODUCT REVIEWS & RATINGS
+// ============================================
+
+model ProductReview {
+  id            String    @id @default(uuid())
+  productId     String
+  product       Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  // Reviewer info (can be linked to user or anonymous with order proof)
+  userId        String?
+  user          User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+  reviewerName  String    // Display name
+  reviewerEmail String    // For verification
+  
+  // Order verification
+  orderId       String?   // Link to order for "verified purchase" badge
+  isVerified    Boolean   @default(false) // True if orderId is valid
+  
+  // Review content
+  rating        Int       // 1-5 stars
+  title         String?
+  comment       String?
+  
+  // Moderation
+  isApproved    Boolean   @default(false) // Requires admin approval
+  isVisible     Boolean   @default(true)  // Admin can hide reviews
+  adminNotes    String?   // Internal notes
+  
+  // Helpful votes (optional future feature)
+  helpfulCount  Int       @default(0)
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  @@unique([productId, reviewerEmail]) // One review per email per product
+  @@index([productId])
+  @@index([userId])
+  @@index([rating])
+  @@index([isApproved])
+  @@index([createdAt])
+}
+
+// Google Business Reviews (synced from Google Places API)
+model GoogleReview {
+  id                      String    @id @default(uuid())
+  placeId                 String    // Google Place ID
+  authorName              String
+  authorPhotoUrl          String?
+  rating                  Int       // 1-5 stars
+  text                    String?
+  googleTime              Int       // Unix timestamp from Google
+  relativeTimeDescription String    // "2 months ago"
+  isVisible               Boolean   @default(true)
+  createdAt               DateTime  @default(now())
+  updatedAt               DateTime  @updatedAt
+
+  @@unique([authorName, googleTime])
+  @@index([placeId])
+  @@index([rating])
+  @@index([isVisible])
+  @@index([createdAt])
+}
+
+// ============================================
+// WISHLIST
+// ============================================
+
+model Wishlist {
+  id        String        @id @default(uuid())
+  userId    String        @unique
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items     WishlistItem[]
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  
+  @@index([userId])
+}
+
+model WishlistItem {
+  id          String    @id @default(uuid())
+  wishlistId  String
+  wishlist    Wishlist  @relation(fields: [wishlistId], references: [id], onDelete: Cascade)
+  productId   String
+  product     Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  // Price at time of adding (to show price drops)
+  priceWhenAdded Decimal  @db.Decimal(10, 2)
+  
+  createdAt   DateTime  @default(now())
+  
+  @@unique([wishlistId, productId]) // Can't add same product twice
+  @@index([wishlistId])
+  @@index([productId])
+}
+
+// ============================================
+// BACK-IN-STOCK NOTIFICATIONS
+// ============================================
+
+model StockNotification {
+  id            String    @id @default(uuid())
+  productId     String
+  product       Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  // Subscriber info
+  email         String
+  userId        String?   // Optional: linked user
+  
+  // Status
+  isNotified    Boolean   @default(false)
+  notifiedAt    DateTime?
+  
+  createdAt     DateTime  @default(now())
+  
+  @@unique([productId, email]) // One subscription per email per product
+  @@index([productId])
+  @@index([email])
+  @@index([isNotified])
+}
+
+// ============================================
+// INVOICES (Walk-in Customer Sales)
+// ============================================
+
+enum InvoiceStatus {
+  DRAFT
+  SENT
+  PAID
+  CANCELLED
+}
+
+enum InvoiceType {
+  SALE
+  REPAIR
+  MIXED
+}
+
+enum PaymentMethod {
+  CASH
+  CARD
+  TRANSFER
+  PENDING
+}
+
+enum InvoiceItemType {
+  PRODUCT
+  REPAIR
+  CUSTOM
+}
+
+model Invoice {
+  id              String         @id @default(uuid())
+  invoiceNumber   String         @unique  // INV-2024-0001
+  type            InvoiceType    @default(SALE)
+  status          InvoiceStatus  @default(DRAFT)
+  
+  // Customer info
+  customerName    String
+  customerEmail   String
+  customerPhone   String?
+  customerAddress String?
+  customerVatNumber String?
+  
+  // Optional link to registered user
+  userId          String?
+  
+  // Pricing
+  subtotal        Decimal        @db.Decimal(10, 2)
+  taxRate         Decimal        @default(21) @db.Decimal(5, 2)  // BTW %
+  taxAmount       Decimal        @db.Decimal(10, 2)
+  discountAmount  Decimal        @default(0) @db.Decimal(10, 2)
+  total           Decimal        @db.Decimal(10, 2)
+  
+  // Payment
+  paymentMethod   PaymentMethod  @default(PENDING)
+  paidAt          DateTime?
+  
+  // Notes
+  notes           String?        // Customer-visible notes
+  adminNotes      String?        // Internal notes
+  
+  // Tracking
+  createdBy       String         // Admin user ID who created
+  emailedAt       DateTime?      // When invoice was emailed
+  
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  
+  // Relations
+  items           InvoiceItem[]
+  
+  @@index([invoiceNumber])
+  @@index([status])
+  @@index([customerEmail])
+  @@index([userId])
+  @@index([createdAt])
+  @@index([createdBy])
+}
+
+model InvoiceItem {
+  id          String          @id @default(uuid())
+  invoiceId   String
+  invoice     Invoice         @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  
+  // Item type
+  type        InvoiceItemType @default(CUSTOM)
+  
+  // Optional links
+  productId   String?         // Link to product (for PRODUCT type)
+  repairId    String?         // Link to repair ticket (for REPAIR type)
+  
+  // Item details (snapshot at time of invoice)
+  description String
+  quantity    Int             @default(1)
+  unitPrice   Decimal         @db.Decimal(10, 2)
+  totalPrice  Decimal         @db.Decimal(10, 2)
+  
+  createdAt   DateTime        @default(now())
+  
+  @@index([invoiceId])
+  @@index([productId])
+  @@index([repairId])
+}
+
