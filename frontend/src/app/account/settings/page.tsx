@@ -151,7 +151,7 @@ export default function AccountSettingsPage() {
                                     type="tel"
                                     value={formData.phone}
                                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                                    placeholder="+32 3 123 45 67"
+                                    placeholder="+32 465 63 81 06"
                                 />
                             </div>
                         </div>

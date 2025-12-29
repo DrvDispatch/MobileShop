@@ -54,8 +54,8 @@ export default function SupportPage() {
                         </div>
                         <h3 className="font-semibold text-zinc-900 mb-2">Call Us</h3>
                         <p className="text-zinc-600 text-sm mb-3">Mon-Sat, 9:00-18:00</p>
-                        <a href="tel:+3231234567" className="text-zinc-900 font-medium hover:underline">
-                            +32 3 123 45 67
+                        <a href="tel:+32465638106" className="text-zinc-900 font-medium hover:underline">
+                            +32 465 63 81 06
                         </a>
                     </div>
 

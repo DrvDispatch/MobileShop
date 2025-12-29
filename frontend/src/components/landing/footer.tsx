@@ -136,6 +136,7 @@ export function Footer() {
                         <ul className="space-y-2 text-sm text-zinc-500">
                             <li><Link href="/repair/book" className="hover:text-zinc-900 transition-colors">Reparaties</Link></li>
                             <li><Link href="/contact" className="hover:text-zinc-900 transition-colors">Contact</Link></li>
+                            <li><Link href="/over-ons" className="hover:text-zinc-900 transition-colors">Over Ons</Link></li>
                         </ul>
                     </div>
 

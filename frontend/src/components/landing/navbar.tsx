@@ -31,7 +31,7 @@ const MarqueeContent = () => (
         </span>
         <span className="mx-8 text-sm font-medium flex items-center gap-2">
             <Star className="w-3.5 h-3.5" />
-            4.9 klantbeoordeling
+            4.7 klantbeoordeling
         </span>
         <span className="mx-8 text-sm font-medium flex items-center gap-2">
             <Wrench className="w-3.5 h-3.5" />

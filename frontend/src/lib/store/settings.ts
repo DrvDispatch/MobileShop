@@ -46,7 +46,7 @@ export interface PublicSettings {
 const DEFAULT_SETTINGS: PublicSettings = {
     store: {
         name: 'Smartphone Service',
-        phone: '+32 3 123 45 67',
+        phone: '+32 465 63 81 06',
         email: 'info@smartphoneservice.be',
         address: {
             line1: 'Korte Koepoortstraat 7',
