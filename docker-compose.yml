@@ -36,7 +36,6 @@ services:
       POSTGRES_USER: mobileshop
       POSTGRES_PASSWORD: mobileshop_secret
       POSTGRES_DB: mobileshop
-    # ports removed for security
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -56,7 +55,6 @@ services:
     environment:
       MINIO_ROOT_USER: minioadmin
       MINIO_ROOT_PASSWORD: minioadmin123
-    # ports removed for security
     volumes:
       - minio_data:/data
     healthcheck:
@@ -71,6 +69,7 @@ services:
       - "traefik.http.routers.minio.rule=Host(`smartphoneservice.be`) && PathPrefix(`/storage`)"
       - "traefik.http.routers.minio.entrypoints=websecure"
       - "traefik.http.routers.minio.tls.certresolver=myresolver"
+      - "traefik.http.routers.minio.priority=30"
       - "traefik.http.routers.minio.middlewares=minio-strip"
       - "traefik.http.middlewares.minio-strip.stripprefix.prefixes=/storage"
       - "traefik.http.services.minio.loadbalancer.server.port=9000"
@@ -94,13 +93,13 @@ services:
       dockerfile: Dockerfile
     container_name: mobileshop-backend
     restart: unless-stopped
-    # ports removed for security
     environment:
       - NODE_ENV=production
       - PORT=3001
       - DATABASE_URL=postgresql://mobileshop:mobileshop_secret@postgres:5432/mobileshop
       - JWT_SECRET=${JWT_SECRET:-your-super-secret-jwt-key-change-in-production}
       - JWT_EXPIRES_IN=7d
+      - CORS_ORIGIN=https://smartphoneservice.be
       - FRONTEND_URL=https://smartphoneservice.be
       - MINIO_ENDPOINT=minio
       - MINIO_PORT=9000
@@ -112,8 +111,17 @@ services:
       - MINIO_PUBLIC_URL=https://smartphoneservice.be/storage
       - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
       - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}
+      - STRIPE_SUCCESS_URL=https://smartphoneservice.be/checkout/success
+      - STRIPE_CANCEL_URL=https://smartphoneservice.be/checkout/cancel
       - RESEND_API_KEY=${RESEND_API_KEY}
-      - GOOGLE_PLACES_API_KEY=${GOOGLE_PLACES_API_KEY:-}
+      - RESEND_FROM_EMAIL=${RESEND_FROM_EMAIL:-SmartphoneService <noreply@send.smartphoneservice.be>}
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      - GOOGLE_CALLBACK_URL=https://smartphoneservice.be/api/auth/google/callback
+      - GOOGLE_GEMINI_API_KEY=${GOOGLE_GEMINI_API_KEY}
+      - CLICKSEND_USERNAME=${CLICKSEND_USERNAME}
+      - CLICKSEND_API_KEY=${CLICKSEND_API_KEY}
+      - CLICKSEND_SENDER_ID=${CLICKSEND_SENDER_ID:-SmartSvc}
     depends_on:
       postgres:
         condition: service_healthy
@@ -126,6 +134,7 @@ services:
       - "traefik.http.routers.backend.rule=Host(`smartphoneservice.be`) && PathPrefix(`/api`)"
       - "traefik.http.routers.backend.entrypoints=websecure"
       - "traefik.http.routers.backend.tls.certresolver=myresolver"
+      - "traefik.http.routers.backend.priority=20"
       - "traefik.http.services.backend.loadbalancer.server.port=3001"
 
   # Next.js Frontend
@@ -135,12 +144,15 @@ services:
       dockerfile: Dockerfile
       args:
         - NEXT_PUBLIC_API_URL=https://smartphoneservice.be
+        - NEXT_PUBLIC_MINIO_URL=https://smartphoneservice.be/storage
+        - NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=${NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY}
+        - NEXT_PUBLIC_GOOGLE_CLIENT_ID=${NEXT_PUBLIC_GOOGLE_CLIENT_ID}
     container_name: mobileshop-frontend
     restart: unless-stopped
-    # ports removed for security
     environment:
       - NODE_ENV=production
-      - NEXT_PUBLIC_API_URL=http://backend:3001
+      - NEXT_PUBLIC_API_URL=https://smartphoneservice.be
+      - NEXT_PUBLIC_MINIO_URL=https://smartphoneservice.be/storage
     depends_on:
       - backend
     networks:
@@ -150,6 +162,7 @@ services:
       - "traefik.http.routers.frontend.rule=Host(`smartphoneservice.be`)"
       - "traefik.http.routers.frontend.entrypoints=websecure"
       - "traefik.http.routers.frontend.tls.certresolver=myresolver"
+      - "traefik.http.routers.frontend.priority=10"
       - "traefik.http.services.frontend.loadbalancer.server.port=3000"
 
 networks:

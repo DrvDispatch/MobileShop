@@ -6,8 +6,8 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "images.smartphoneservice.be",
-        pathname: "/**",
+        hostname: "smartphoneservice.be",
+        pathname: "/storage/**",
       },
       {
         protocol: "http",
@@ -26,4 +26,3 @@ const nextConfig: NextConfig = {
 };
 
 export default nextConfig;
-
