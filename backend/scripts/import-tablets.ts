@@ -7,7 +7,7 @@
  */
 import 'dotenv/config';
 import * as fs from 'fs';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '../src/generated/prisma/client.js';
 import { PrismaPg } from '@prisma/adapter-pg';
 
 const DEVICES_JSON_PATH = 'C:\\Users\\saidm\\MuhsinWeb\\devices.json';

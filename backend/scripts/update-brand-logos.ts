@@ -3,7 +3,7 @@
  * Run with: npx ts-node scripts/update-brand-logos.ts
  */
 
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '../src/generated/prisma/client.js';
 
 const prisma = new PrismaClient();
 const MINIO_PUBLIC_URL = process.env.MINIO_PUBLIC_URL || 'https://images.smartphoneservice.be';

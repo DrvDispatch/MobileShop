@@ -3,7 +3,7 @@
  * Run with: npx ts-node scripts/clear-products.ts
  */
 
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '../src/generated/prisma/client.js';
 
 const prisma = new PrismaClient();
 
