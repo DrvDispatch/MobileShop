@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsEnum, IsNumber, IsOptional, IsString, IsBoolean, Min, IsUUID } from 'class-validator';
-import { RefundReason, RefundStatus } from '@prisma/client';
+import { RefundReason, RefundStatus } from '../../../generated/prisma/client.js';
 
 export class CreateRefundDto {
     @ApiProperty({ description: 'Order ID to refund' })

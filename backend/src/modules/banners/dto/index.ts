@@ -1,6 +1,6 @@
 import { IsString, IsOptional, IsBoolean, IsEnum, IsNumber, IsDateString } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { BannerPosition } from '@prisma/client';
+import { BannerPosition } from '../../../generated/prisma/client.js';
 
 export class CreateBannerDto {
     @ApiProperty({ description: 'Banner title (for admin reference)' })

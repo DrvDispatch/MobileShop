@@ -3,7 +3,7 @@ import { AuditLogService } from './audit-log.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
-import type { AuditAction } from '@prisma/client';
+import type { AuditAction } from '../../generated/prisma/client.js';
 import type { Response } from 'express';
 
 @Controller('audit-logs')

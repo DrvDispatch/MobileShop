@@ -12,7 +12,7 @@ import { ApiTags, ApiOperation, ApiBearerAuth, ApiConsumes, ApiBody } from '@nes
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from '../auth/guards';
 import { Roles } from '../auth/decorators';
-import { UserRole } from '@prisma/client';
+import { UserRole } from '../../generated/prisma/client.js';
 import { GeminiService, GenerateProductInput } from './gemini.service';
 import { IsString, IsOptional, IsIn } from 'class-validator';
 

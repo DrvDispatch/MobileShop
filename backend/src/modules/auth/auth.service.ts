@@ -5,7 +5,7 @@ import * as bcrypt from 'bcrypt';
 import { randomBytes } from 'crypto';
 import { PrismaService } from '../../prisma';
 import { RegisterDto, LoginDto, AuthResponseDto, ForgotPasswordDto, ResetPasswordDto, VerifyEmailDto, ResendVerificationDto, MessageResponseDto } from './dto';
-import { UserRole } from '@prisma/client';
+import { UserRole } from '../../generated/prisma/client.js';
 import { EmailService } from '../email';
 import { GoogleUser } from './strategies/google.strategy';
 

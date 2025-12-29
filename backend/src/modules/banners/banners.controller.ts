@@ -5,7 +5,7 @@ import { CreateBannerDto, UpdateBannerDto } from './dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
-import { BannerPosition } from '@prisma/client';
+import { BannerPosition } from '../../generated/prisma/client.js';
 
 @ApiTags('Banners')
 @Controller('banners')

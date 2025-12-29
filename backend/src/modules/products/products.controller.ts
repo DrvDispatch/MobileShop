@@ -5,7 +5,7 @@ import { ProductsService } from './products.service';
 import { CreateProductDto, UpdateProductDto, ProductQueryDto } from './dto';
 import { Roles } from '../auth/decorators';
 import { RolesGuard } from '../auth/guards';
-import { UserRole } from '@prisma/client';
+import { UserRole } from '../../generated/prisma/client.js';
 
 @ApiTags('Products')
 @Controller('products')

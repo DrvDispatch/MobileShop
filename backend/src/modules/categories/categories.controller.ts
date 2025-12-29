@@ -4,7 +4,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { CategoriesService } from './categories.service';
 import { Roles } from '../auth/decorators';
 import { RolesGuard } from '../auth/guards';
-import { UserRole } from '@prisma/client';
+import { UserRole } from '../../generated/prisma/client.js';
 
 @ApiTags('Categories')
 @Controller('categories')

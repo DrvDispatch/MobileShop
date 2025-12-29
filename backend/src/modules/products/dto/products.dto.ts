@@ -1,6 +1,6 @@
 import { IsString, IsOptional, IsNumber, IsBoolean, IsEnum, Min, Max, IsArray } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { ProductCondition } from '@prisma/client';
+import { ProductCondition } from '../../../generated/prisma/client.js';
 import { Type, Transform } from 'class-transformer';
 
 // Define locally until Prisma client regenerates

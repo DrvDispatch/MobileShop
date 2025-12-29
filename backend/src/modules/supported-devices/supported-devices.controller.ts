@@ -4,7 +4,7 @@ import { SupportedDevicesService } from './supported-devices.service';
 import { CreateDeviceDto, UpdateDeviceDto } from './dto';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
-import { UserRole } from '@prisma/client';
+import { UserRole } from '../../generated/prisma/client.js';
 
 @Controller('devices')
 export class SupportedDevicesController {

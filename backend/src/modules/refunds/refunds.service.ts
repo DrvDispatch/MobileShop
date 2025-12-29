@@ -1,6 +1,6 @@
 import { Injectable, Logger, NotFoundException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
-import { RefundStatus, RefundReason, Prisma } from '@prisma/client';
+import { RefundStatus, RefundReason, Prisma } from '../../generated/prisma/client.js';
 import Stripe from 'stripe';
 import { CreateRefundDto, UpdateRefundDto, RefundListQueryDto } from './dto';
 
