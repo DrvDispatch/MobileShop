@@ -15,17 +15,19 @@ services:
     networks:
       - mobileshop-network
 
-  # PostgreSQL Database
+  # PostgreSQL Database (optimized for 4GB RAM)
   postgres:
     image: postgres:16-alpine
     container_name: mobileshop-db
     restart: unless-stopped
+    command: postgres -c config_file=/etc/postgresql/postgresql.conf
     environment:
       POSTGRES_USER: mobileshop
       POSTGRES_PASSWORD: mobileshop_secret
       POSTGRES_DB: mobileshop
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./postgres/postgresql.conf:/etc/postgresql/postgresql.conf:ro
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U mobileshop -d mobileshop" ]
       interval: 10s
