@@ -1,8 +1,13 @@
+import 'dotenv/config';
 import { PrismaClient } from '@prisma/client';
+import { PrismaPg } from '@prisma/adapter-pg';
 import * as fs from 'fs';
 import * as path from 'path';
 
-const prisma = new PrismaClient();
+const adapter = new PrismaPg({
+    connectionString: process.env.DATABASE_URL!,
+});
+const prisma = new PrismaClient({ adapter }) as any;
 
 async function importAllData() {
     const inputPath = path.join(process.cwd(), 'master_data_export.json');
