@@ -34,23 +34,23 @@ async function exportAllData() {
         console.log(`🔧 Exporting ${repairBrands.length} repair brands...`);
 
         // 4. Export Marketing & UI Data
-        const banners = await prisma.banner.findMany();
-        const discounts = await prisma.discount.findMany();
-        const gallery = await prisma.galleryItem.findMany();
-        console.log(`🎨 Exporting ${banners.length} banners, ${discounts.length} discounts, and ${gallery.length} gallery items...`);
+        const banners = await prisma.promotionalBanner.findMany();
+        const discounts = await prisma.discountCode.findMany();
+        const googleReviews = await prisma.googleReview.findMany();
+        console.log(`🎨 Exporting ${banners.length} banners, ${discounts.length} discounts, and ${googleReviews.length} google reviews...`);
 
         // 5. Export Settings
         const settings = await prisma.setting.findMany();
 
         const masterData = {
             exportedAt: new Date().toISOString(),
-            version: '1.1',
+            version: '1.2',
             categories,
             products,
             repairConfig: repairBrands,
             banners,
             discounts,
-            gallery,
+            googleReviews,
             settings
         };
 
@@ -64,7 +64,8 @@ async function exportAllData() {
         console.log(' - ✅ Products, Prices & Full Descriptions');
         console.log(' - ✅ All Images & Icons References');
         console.log(' - ✅ Complete Repair Tree (Brands -> Devices -> Services)');
-        console.log(' - ✅ Marketing (Banners, Discounts, Gallery)');
+        console.log(' - ✅ Marketing (Banners, Discounts)');
+        console.log(' - ✅ Google Reviews');
         console.log(' - ✅ System Settings');
         console.log('\nNote: User personal data and Orders were excluded.');
 

@@ -71,30 +71,33 @@ async function importAllData() {
         }
 
         // 4. Sync Marketing & UI
-        console.log('🎨 Syncing Banners, Discounts, and Gallery...');
+        console.log('🎨 Syncing Banners and Discounts...');
         for (const banner of data.banners || []) {
-            await prisma.banner.upsert({
+            await prisma.promotionalBanner.upsert({
                 where: { id: banner.id },
                 update: banner,
                 create: banner,
             });
         }
         for (const discount of data.discounts || []) {
-            await prisma.discount.upsert({
+            await prisma.discountCode.upsert({
                 where: { id: discount.id },
                 update: discount,
                 create: discount,
             });
         }
-        for (const item of data.gallery || []) {
-            await prisma.galleryItem.upsert({
-                where: { id: item.id },
-                update: item,
-                create: item,
+
+        // 5. Sync Google Reviews
+        console.log('⭐ Syncing Google Reviews...');
+        for (const review of data.googleReviews || []) {
+            await prisma.googleReview.upsert({
+                where: { id: review.id },
+                update: review,
+                create: review,
             });
         }
 
-        // 5. Sync Settings
+        // 6. Sync Settings
         console.log('⚙️ Syncing Settings...');
         for (const setting of data.settings) {
             await prisma.setting.upsert({
