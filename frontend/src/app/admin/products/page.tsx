@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { api, Product } from "@/lib/api";
@@ -9,7 +9,6 @@ import { Input } from "@/components/ui/input";
 import {
     Plus,
     Search,
-    Edit,
     Trash2,
     ChevronLeft,
     ChevronRight,
@@ -17,8 +16,6 @@ import {
     ExternalLink,
     RefreshCw,
     AlertTriangle,
-    Eye,
-    TrendingUp,
 } from "lucide-react";
 
 function ConditionBadge({ condition }: { condition: string }) {
@@ -151,7 +148,7 @@ function ProductCard({ product, onEdit, onDelete, onView }: {
     );
 }
 
-export default function AdminProductsPage() {
+function ProductsContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
 
@@ -161,7 +158,6 @@ export default function AdminProductsPage() {
     const [isRefreshing, setIsRefreshing] = useState(false);
     const [searchQuery, setSearchQuery] = useState(searchParams.get("search") || "");
     const [page, setPage] = useState(parseInt(searchParams.get("page") || "1"));
-    const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
     const limit = 12;
 
     // Stats state (calculated from ALL products)
@@ -364,5 +360,13 @@ export default function AdminProductsPage() {
                 </div>
             )}
         </div>
+    );
+}
+
+export default function AdminProductsPage() {
+    return (
+        <Suspense fallback={<div className="p-8 text-center text-zinc-500">Laden...</div>}>
+            <ProductsContent />
+        </Suspense>
     );
 }

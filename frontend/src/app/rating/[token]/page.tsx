@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import { Star, CheckCircle, ExternalLink } from "lucide-react";
 
@@ -18,7 +18,7 @@ interface FeedbackData {
     googleReviewUrl: string;
 }
 
-export default function RatingPage() {
+function RatingContent() {
     const params = useParams();
     const searchParams = useSearchParams();
     const token = params.token as string;
@@ -230,7 +230,7 @@ export default function RatingPage() {
                         <textarea
                             value={comment}
                             onChange={(e) => setComment(e.target.value)}
-                            placeholder="Vertel ons meer over uw ervaring..."
+                            placeholder="Vertel ons meer over uw experience..."
                             className="w-full border border-gray-200 rounded-lg p-4 text-gray-900 placeholder-gray-400 resize-none focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
                             rows={3}
                         />
@@ -266,5 +266,17 @@ export default function RatingPage() {
                 </div>
             </div>
         </div>
+    );
+}
+
+export default function RatingPage() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+                <div className="animate-spin rounded-full h-8 w-8 border-2 border-black border-t-transparent"></div>
+            </div>
+        }>
+            <RatingContent />
+        </Suspense>
     );
 }

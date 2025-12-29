@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback, useRef } from "react";
+import { useEffect, useState, useCallback, useRef, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -270,7 +270,7 @@ function playNotificationSound() {
     }
 }
 
-export default function AdminOrdersPage() {
+function OrdersContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const statusFilter = searchParams.get("status") || "";
@@ -770,5 +770,13 @@ export default function AdminOrdersPage() {
                 </div>
             )}
         </div>
+    );
+}
+
+export default function AdminOrdersPage() {
+    return (
+        <Suspense fallback={<div className="p-8 text-zinc-500">Bestellingen laden...</div>}>
+            <OrdersContent />
+        </Suspense>
     );
 }

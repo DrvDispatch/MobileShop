@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Navbar, Footer } from "@/components/landing";
 import { ProductGrid } from "@/components/storefront";
@@ -31,7 +31,7 @@ const SORT_OPTIONS = [
 
 const ITEMS_PER_PAGE = 12;
 
-export default function PhonesPage() {
+function PhonesContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
 
@@ -426,6 +426,14 @@ export default function PhonesPage() {
 
             <Footer />
         </main>
+    );
+}
+
+export default function PhonesPage() {
+    return (
+        <Suspense fallback={<div className="min-h-screen bg-white flex items-center justify-center">Loading...</div>}>
+            <PhonesContent />
+        </Suspense>
     );
 }
 
