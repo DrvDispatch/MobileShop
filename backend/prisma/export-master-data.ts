@@ -9,70 +9,70 @@ const adapter = new PrismaPg({
 });
 const prisma = new PrismaClient({ adapter }) as any;
 
-async function exportAllData() {
-    console.log('🚀 Starting Comprehensive Master Data Export...');
+async function exportFullMasterData() {
+    console.log('🚀 INITIALIZING FULL MASTER DATA EXPORT...');
+    console.log('--- This will cover ALL products, repairs, marketing, and settings ---');
 
     try {
-        // 1. Export Categories
-        const categories = await prisma.category.findMany();
-        console.log(`📂 Exporting ${categories.length} categories...`);
-
-        // 2. Export Products (including images and reviews)
-        const products = await prisma.product.findMany({
-            include: {
-                images: true,
-                reviews: true,
-            }
-        });
-        console.log(`📦 Exporting ${products.length} products (with ${products.reduce((acc: number, p: any) => acc + p.images.length, 0)} images)...`);
-
-        // 3. Export Repair Configs (The whole tree)
-        const repairBrands = await prisma.repairBrand.findMany({
-            include: {
-                devices: {
-                    include: {
-                        services: true
-                    }
-                }
-            }
-        });
-        console.log(`🔧 Exporting ${repairBrands.length} repair brands...`);
-
-        // 4. Export Marketing & UI Data
-        const banners = await prisma.promotionalBanner.findMany();
-        const discounts = await prisma.discountCode.findMany();
-        const googleReviews = await prisma.googleReview.findMany();
-        console.log(`🎨 Exporting ${banners.length} banners, ${discounts.length} discounts, and ${googleReviews.length} google reviews...`);
-
-        // 5. Export Settings
-        const settings = await prisma.setting.findMany();
-
-        const masterData = {
+        const data: any = {
             exportedAt: new Date().toISOString(),
-            version: '1.2',
-            categories,
-            products,
-            repairConfig: repairBrands,
-            banners,
-            discounts,
-            googleReviews,
-            settings
+            version: '2.0',
+            tables: {}
         };
 
-        const outputPath = path.join(process.cwd(), 'master_data_export.json');
-        fs.writeFileSync(outputPath, JSON.stringify(masterData, null, 2));
+        const exportTable = async (name: string, model: any, label: string) => {
+            console.log(`📦 Exporting ${label}...`);
+            const records = await model.findMany();
+            data.tables[name] = records;
+            console.log(`   ✅ ${records.length} records.`);
+        };
+
+        // 1. Core Shop Data
+        await exportTable('category', prisma.category, 'Categories');
+
+        console.log('📦 Exporting Products with Images/Reviews...');
+        data.tables['product'] = await prisma.product.findMany({
+            include: { images: true, reviews: true }
+        });
+        console.log(`   ✅ ${data.tables['product'].length} products.`);
+
+        // 2. Complete Repair Catalog (The user explicitly asked for "everything")
+        await exportTable('repairDeviceType', prisma.repairDeviceType, 'Repair Device Types');
+        await exportTable('repairBrand', prisma.repairBrand, 'Repair Brands');
+        await exportTable('repairDevice', prisma.repairDevice, 'Repair Devices');
+        await exportTable('repairServiceType', prisma.repairServiceType, 'Repair Service Types');
+        await exportTable('repairDeviceService', prisma.repairDeviceService, 'Device-specific Services');
+        await exportTable('supportedDevice', prisma.supportedDevice, 'Supported Device List');
+
+        // 3. Marketing & UI (Banners, Discounts, Reviews)
+        await exportTable('promotionalBanner', prisma.promotionalBanner, 'Promotional Banners');
+        await exportTable('discountCode', prisma.discountCode, 'Discount Codes');
+        await exportTable('googleReview', prisma.googleReview, 'Google Reviews');
+
+        // 4. Configuration & Settings
+        await exportTable('setting', prisma.setting, 'System Settings');
+        await exportTable('shippingZone', prisma.shippingZone, 'Shipping Zones');
+
+        // 5. Audit & History (Optional but good for full state)
+        await exportTable('auditLog', prisma.auditLog, 'Audit Logs');
+
+        // Special check for devices.json metadata if needed (already in Git, but good to link)
+        data.meta = {
+            assetsNote: "All physical images are in the root /assets folder. Import script will seed them into MinIO."
+        };
+
+        const outputPath = path.join(process.cwd(), 'full_master_data.json');
+        fs.writeFileSync(outputPath, JSON.stringify(data, null, 2));
 
         console.log('\n' + '='.repeat(50));
-        console.log(`✅ SUCCESS! Snapshot saved to: ${outputPath}`);
-        console.log(''.padStart(50, '='));
-        console.log('\nIncluded in this snapshot:');
-        console.log(' - ✅ Products, Prices & Full Descriptions');
-        console.log(' - ✅ All Images & Icons References');
-        console.log(' - ✅ Complete Repair Tree (Brands -> Devices -> Services)');
-        console.log(' - ✅ Marketing (Banners, Discounts)');
+        console.log(`🏆 EXPORT COMPLETE: ${outputPath}`);
+        console.log('='.repeat(50));
+        console.log('\nIncluded EVERYTHING:');
+        console.log(' - ✅ Products & Images');
+        console.log(' - ✅ Full Repair Catalog (The whole multi-level tree)');
+        console.log(' - ✅ Marketing, Coupons, Banners');
+        console.log(' - ✅ Settings & Shipping');
         console.log(' - ✅ Google Reviews');
-        console.log(' - ✅ System Settings');
-        console.log('\nNote: User personal data and Orders were excluded.');
 
     } catch (error) {
         console.error('❌ Export failed:', error);
@@ -81,4 +81,4 @@ async function exportAllData() {
     }
 }
 
-exportAllData();
+exportFullMasterData();
