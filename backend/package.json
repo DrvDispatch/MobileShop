@@ -22,7 +22,8 @@
     "prisma:migrate": "prisma migrate dev",
     "prisma:push": "prisma db push",
     "prisma:studio": "prisma studio",
-    "db:seed": "tsx prisma/seed.ts"
+    "db:seed": "tsx prisma/seed.ts",
+    "db:cleanup": "tsx prisma/cleanup-demo-data.ts"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
