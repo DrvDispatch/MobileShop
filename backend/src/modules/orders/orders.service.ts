@@ -31,15 +31,15 @@ export class OrdersService {
         return `${prefix}-${timestamp}-${random}`;
     }
 
-    async createCheckoutSession(dto: CreateCheckoutDto) {
+    async createCheckoutSession(tenantId: string, dto: CreateCheckoutDto) {
         if (!dto.items || dto.items.length === 0) {
             throw new BadRequestException('Cart is empty');
         }
 
-        // Validate products exist and get current prices
+        // Validate products exist and get current prices (tenant-scoped)
         const productIds = dto.items.map(item => item.productId);
         const products = await this.prisma.product.findMany({
-            where: { id: { in: productIds }, isActive: true },
+            where: { tenantId, id: { in: productIds }, isActive: true },
         });
 
         if (products.length !== dto.items.length) {
@@ -125,9 +125,10 @@ export class OrdersService {
         const taxAmount = 0;
         const total = subtotal - discountAmount + shippingAmount;
 
-        // Create order in database
+        // Create order in database (with tenantId)
         const order = await this.prisma.order.create({
             data: {
+                tenantId,
                 orderNumber: this.generateOrderNumber(),
                 status: 'PENDING',
                 fulfillmentType: dto.fulfillmentType || FulfillmentType.SHIPPING,
@@ -416,9 +417,9 @@ export class OrdersService {
         }
     }
 
-    async getOrderBySessionId(sessionId: string) {
+    async getOrderBySessionId(tenantId: string, sessionId: string) {
         const order = await this.prisma.order.findFirst({
-            where: { stripeSessionId: sessionId },
+            where: { tenantId, stripeSessionId: sessionId },
             include: { items: true },
         });
 
@@ -429,17 +430,18 @@ export class OrdersService {
         return order;
     }
 
-    async getOrdersByEmail(email: string) {
+    async getOrdersByEmail(tenantId: string, email: string) {
         return this.prisma.order.findMany({
-            where: { customerEmail: email },
+            where: { tenantId, customerEmail: email },
             include: { items: true },
             orderBy: { createdAt: 'desc' },
         });
     }
 
-    async getOrderById(id: string) {
-        const order = await this.prisma.order.findUnique({
-            where: { id },
+    async getOrderById(tenantId: string, id: string) {
+        // Use findFirst for tenant-scoped lookup (prevents cross-tenant access)
+        const order = await this.prisma.order.findFirst({
+            where: { tenantId, id },
             include: { items: true },
         });
 
@@ -450,9 +452,10 @@ export class OrdersService {
         return order;
     }
 
-    async getOrderByNumber(orderNumber: string) {
-        const order = await this.prisma.order.findUnique({
-            where: { orderNumber },
+    async getOrderByNumber(tenantId: string, orderNumber: string) {
+        // Use findFirst for tenant-scoped lookup (prevents cross-tenant access)
+        const order = await this.prisma.order.findFirst({
+            where: { tenantId, orderNumber },
             include: { items: true },
         });
 
@@ -481,15 +484,17 @@ export class OrdersService {
         };
     }
 
-    async getAllOrders() {
+    async getAllOrders(tenantId: string) {
         return this.prisma.order.findMany({
+            where: { tenantId },
             include: { items: true },
             orderBy: { createdAt: 'desc' },
         });
     }
 
-    async updateOrder(id: string, data: { status?: string; adminNotes?: string; trackingNumber?: string; cancellationReason?: string }, adminUser?: { id: string; name: string }) {
-        const order = await this.prisma.order.findUnique({ where: { id } });
+    async updateOrder(tenantId: string, id: string, data: { status?: string; adminNotes?: string; trackingNumber?: string; cancellationReason?: string }, adminUser?: { id: string; name: string }) {
+        // Verify order belongs to this tenant
+        const order = await this.prisma.order.findFirst({ where: { tenantId, id } });
         if (!order) {
             throw new NotFoundException('Order not found');
         }
@@ -572,9 +577,14 @@ export class OrdersService {
     }
 
     /**
-     * Get order status history
+     * Get order status history (tenant-scoped)
      */
-    async getOrderStatusHistory(orderId: string) {
+    async getOrderStatusHistory(tenantId: string, orderId: string) {
+        // First verify order belongs to tenant
+        const order = await this.prisma.order.findFirst({ where: { tenantId, id: orderId } });
+        if (!order) {
+            throw new NotFoundException('Order not found');
+        }
         return this.prisma.orderStatusHistory.findMany({
             where: { orderId },
             orderBy: { createdAt: 'asc' },
@@ -582,9 +592,9 @@ export class OrdersService {
     }
 
     /**
-     * Bulk update order status
+     * Bulk update order status (tenant-scoped)
      */
-    async bulkUpdateStatus(orderIds: string[], status: string, adminUser?: { id: string; name: string }) {
+    async bulkUpdateStatus(tenantId: string, orderIds: string[], status: string, adminUser?: { id: string; name: string }) {
         if (!orderIds || orderIds.length === 0) {
             throw new BadRequestException('No orders specified');
         }
@@ -601,7 +611,7 @@ export class OrdersService {
 
         for (const orderId of orderIds) {
             try {
-                await this.updateOrder(orderId, { status }, adminUser);
+                await this.updateOrder(tenantId, orderId, { status }, adminUser);
                 results.success.push(orderId);
             } catch (error) {
                 results.failed.push({
@@ -616,15 +626,15 @@ export class OrdersService {
     }
 
     /**
-     * Generate shipping labels for multiple orders (returns label data)
+     * Generate shipping labels for multiple orders (tenant-scoped)
      */
-    async generateBulkLabels(orderIds: string[]) {
+    async generateBulkLabels(tenantId: string, orderIds: string[]) {
         if (!orderIds || orderIds.length === 0) {
             throw new BadRequestException('No orders specified');
         }
 
         const orders = await this.prisma.order.findMany({
-            where: { id: { in: orderIds } },
+            where: { tenantId, id: { in: orderIds } },
             include: { items: true },
         });
 

@@ -8,7 +8,7 @@ import { transformProductImages } from '../../utils/image-url';
 export class ProductsService {
     constructor(private readonly prisma: PrismaService) { }
 
-    async findAll(query: ProductQueryDto) {
+    async findAll(tenantId: string, query: ProductQueryDto) {
         const {
             category,
             brand,
@@ -24,6 +24,7 @@ export class ProductsService {
         } = query;
 
         const where: Prisma.ProductWhereInput = {
+            tenantId,
             isActive: true,
         };
 
@@ -106,9 +107,10 @@ export class ProductsService {
         };
     }
 
-    async findFeatured(limit = 4) {
+    async findFeatured(tenantId: string, limit = 4) {
         const products = await this.prisma.product.findMany({
             where: {
+                tenantId,
                 isActive: true,
                 isFeatured: true,
             },
@@ -127,9 +129,10 @@ export class ProductsService {
         return products.map(transformProductImages);
     }
 
-    async findBySlug(slug: string) {
-        const product = await this.prisma.product.findUnique({
-            where: { slug },
+    async findBySlug(tenantId: string, slug: string) {
+        // Use findFirst for tenant-scoped lookup (findUnique doesn't support composite conditions)
+        const product = await this.prisma.product.findFirst({
+            where: { tenantId, slug },
             include: {
                 category: true,
                 images: {
@@ -145,9 +148,10 @@ export class ProductsService {
         return transformProductImages(product);
     }
 
-    async findById(id: string) {
-        const product = await this.prisma.product.findUnique({
-            where: { id },
+    async findById(tenantId: string, id: string) {
+        // Use findFirst to ensure product belongs to this tenant (prevents cross-tenant access)
+        const product = await this.prisma.product.findFirst({
+            where: { tenantId, id },
             include: {
                 category: true,
                 images: {
@@ -163,7 +167,7 @@ export class ProductsService {
         return transformProductImages(product);
     }
 
-    async create(dto: CreateProductDto) {
+    async create(tenantId: string, dto: CreateProductDto) {
         // Generate slug if not provided
         const slug = dto.slug || this.generateSlug(dto.name);
 
@@ -172,6 +176,7 @@ export class ProductsService {
 
         const product = await this.prisma.product.create({
             data: {
+                tenantId,
                 ...productData,
                 slug,
                 price: dto.price,
@@ -196,15 +201,15 @@ export class ProductsService {
             });
 
             // Re-fetch to include images
-            return this.findById(product.id);
+            return this.findById(tenantId, product.id);
         }
 
         return product;
     }
 
-    async update(id: string, dto: UpdateProductDto) {
-        // Check if product exists
-        await this.findById(id);
+    async update(tenantId: string, id: string, dto: UpdateProductDto) {
+        // Check if product exists AND belongs to this tenant
+        await this.findById(tenantId, id);
 
         // Extract imageUrls before updating product
         const { imageUrls, ...productData } = dto;
@@ -242,21 +247,21 @@ export class ProductsService {
             });
         }
 
-        return this.findById(id);
+        return this.findById(tenantId, id);
     }
 
-    async delete(id: string) {
-        // Check if product exists
-        await this.findById(id);
+    async delete(tenantId: string, id: string) {
+        // Check if product exists AND belongs to this tenant
+        await this.findById(tenantId, id);
 
         return this.prisma.product.delete({
             where: { id },
         });
     }
 
-    async getBrands() {
+    async getBrands(tenantId: string) {
         const products = await this.prisma.product.findMany({
-            where: { isActive: true, brand: { not: null } },
+            where: { tenantId, isActive: true, brand: { not: null } },
             select: { brand: true },
             distinct: ['brand'],
         });
@@ -269,10 +274,10 @@ export class ProductsService {
      * 1. Same brand (different model) - Primary recommendations
      * 2. Similar price range (±25%) from other brands - Secondary
      */
-    async getRelatedProducts(productId: string, limit = 8) {
-        // Get the current product
-        const product = await this.prisma.product.findUnique({
-            where: { id: productId },
+    async getRelatedProducts(tenantId: string, productId: string, limit = 8) {
+        // Get the current product (with tenant check)
+        const product = await this.prisma.product.findFirst({
+            where: { tenantId, id: productId },
             select: { id: true, brand: true, price: true, name: true },
         });
 
@@ -287,6 +292,7 @@ export class ProductsService {
         // Get products from same brand (different model)
         const sameBrandProducts = await this.prisma.product.findMany({
             where: {
+                tenantId,
                 isActive: true,
                 brand: product.brand,
                 id: { not: productId },
@@ -302,6 +308,7 @@ export class ProductsService {
         // Get products from other brands in similar price range
         const otherBrandProducts = await this.prisma.product.findMany({
             where: {
+                tenantId,
                 isActive: true,
                 brand: { not: product.brand },
                 id: { not: productId },
@@ -328,10 +335,11 @@ export class ProductsService {
     }
 
     /**
-     * Export all products to CSV format
+     * Export all products to CSV format (tenant-scoped)
      */
-    async exportToCsv(): Promise<string> {
+    async exportToCsv(tenantId: string): Promise<string> {
         const products = await this.prisma.product.findMany({
+            where: { tenantId },
             include: {
                 category: { select: { name: true, slug: true } },
                 images: { where: { isPrimary: true }, take: 1 },
@@ -379,9 +387,9 @@ export class ProductsService {
     }
 
     /**
-     * Import products from CSV data
+     * Import products from CSV data (tenant-scoped)
      */
-    async importFromCsv(csvData: string): Promise<{ created: number; updated: number; errors: string[] }> {
+    async importFromCsv(tenantId: string, csvData: string): Promise<{ created: number; updated: number; errors: string[] }> {
         const lines = csvData.trim().split('\n');
         if (lines.length < 2) {
             throw new Error('CSV must have headers and at least one row');
@@ -417,10 +425,10 @@ export class ProductsService {
                     description: row.description || null,
                 };
 
-                // Check if product exists by ID or slug
-                const existingById = row.id ? await this.prisma.product.findUnique({ where: { id: row.id } }) : null;
+                // Check if product exists by ID or slug (tenant-scoped)
+                const existingById = row.id ? await this.prisma.product.findFirst({ where: { tenantId, id: row.id } }) : null;
                 const existingBySlug = !existingById && productData.slug ?
-                    await this.prisma.product.findUnique({ where: { slug: productData.slug } }) : null;
+                    await this.prisma.product.findFirst({ where: { tenantId, slug: productData.slug } }) : null;
 
                 if (existingById) {
                     await this.prisma.product.update({
@@ -430,12 +438,12 @@ export class ProductsService {
                     results.updated++;
                 } else if (existingBySlug) {
                     await this.prisma.product.update({
-                        where: { slug: productData.slug },
+                        where: { id: existingBySlug.id },
                         data: productData,
                     });
                     results.updated++;
                 } else {
-                    await this.prisma.product.create({ data: productData });
+                    await this.prisma.product.create({ data: { tenantId, ...productData } });
                     results.created++;
                 }
             } catch (error) {

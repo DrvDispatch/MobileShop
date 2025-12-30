@@ -17,6 +17,7 @@ import { Roles } from '../auth/decorators/roles.decorator';
 import { UserRole } from '../../generated/prisma/client.js';
 import { AppointmentsService } from './appointments.service';
 import { CreateAppointmentDto, UpdateAppointmentDto, AppointmentStatus } from './dto';
+import { TenantId } from '../tenant/tenant.decorator';
 
 @ApiTags('Appointments')
 @Controller('appointments')
@@ -26,16 +27,16 @@ export class AppointmentsController {
     // Public endpoint - customers can book appointments
     @Post()
     @ApiOperation({ summary: 'Book a new appointment (public)' })
-    create(@Body() dto: CreateAppointmentDto) {
-        return this.appointmentsService.create(dto);
+    create(@TenantId() tenantId: string, @Body() dto: CreateAppointmentDto) {
+        return this.appointmentsService.create(tenantId, dto);
     }
 
     // Public endpoint - get available slots for a date
     @Get('available-slots')
     @ApiOperation({ summary: 'Get available time slots for a date' })
     @ApiQuery({ name: 'date', example: '2024-12-25' })
-    getAvailableSlots(@Query('date') date: string) {
-        return this.appointmentsService.getAvailableSlots(date);
+    getAvailableSlots(@TenantId() tenantId: string, @Query('date') date: string) {
+        return this.appointmentsService.getAvailableSlots(tenantId, date);
     }
 
     // Authenticated user endpoint - get own appointments
@@ -43,8 +44,8 @@ export class AppointmentsController {
     @UseGuards(AuthGuard('jwt'))
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Get my appointments (authenticated user)' })
-    getMyAppointments(@Request() req: any) {
-        return this.appointmentsService.findByUserEmail(req.user.email);
+    getMyAppointments(@TenantId() tenantId: string, @Request() req: any) {
+        return this.appointmentsService.findByUserEmail(tenantId, req.user.email);
     }
 
     // Admin endpoints below
@@ -57,11 +58,12 @@ export class AppointmentsController {
     @ApiQuery({ name: 'startDate', required: false })
     @ApiQuery({ name: 'endDate', required: false })
     findAll(
+        @TenantId() tenantId: string,
         @Query('status') status?: AppointmentStatus,
         @Query('startDate') startDate?: string,
         @Query('endDate') endDate?: string,
     ) {
-        return this.appointmentsService.findAll({
+        return this.appointmentsService.findAll(tenantId, {
             status,
             startDate: startDate ? new Date(startDate) : undefined,
             endDate: endDate ? new Date(endDate) : undefined,
@@ -73,8 +75,8 @@ export class AppointmentsController {
     @Roles(UserRole.ADMIN, UserRole.STAFF)
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Get appointment by ID (admin)' })
-    findOne(@Param('id') id: string) {
-        return this.appointmentsService.findOne(id);
+    findOne(@TenantId() tenantId: string, @Param('id') id: string) {
+        return this.appointmentsService.findOne(tenantId, id);
     }
 
     @Patch(':id')
@@ -82,8 +84,8 @@ export class AppointmentsController {
     @Roles(UserRole.ADMIN, UserRole.STAFF)
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Update appointment status (admin)' })
-    update(@Param('id') id: string, @Body() dto: UpdateAppointmentDto) {
-        return this.appointmentsService.update(id, dto);
+    update(@TenantId() tenantId: string, @Param('id') id: string, @Body() dto: UpdateAppointmentDto) {
+        return this.appointmentsService.update(tenantId, id, dto);
     }
 
     @Delete(':id')
@@ -91,7 +93,8 @@ export class AppointmentsController {
     @Roles(UserRole.ADMIN, UserRole.STAFF)
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Delete appointment (admin)' })
-    remove(@Param('id') id: string) {
-        return this.appointmentsService.remove(id);
+    remove(@TenantId() tenantId: string, @Param('id') id: string) {
+        return this.appointmentsService.remove(tenantId, id);
     }
 }
+

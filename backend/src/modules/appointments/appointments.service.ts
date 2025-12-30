@@ -20,7 +20,7 @@ export class AppointmentsService {
         private smsService: SmsService,
     ) { }
 
-    async create(dto: CreateAppointmentDto) {
+    async create(tenantId: string, dto: CreateAppointmentDto) {
         // Parse the date
         const appointmentDate = new Date(dto.appointmentDate);
 
@@ -34,13 +34,13 @@ export class AppointmentsService {
             throw new ConflictException('Invalid time slot');
         }
 
-        // Check if slot is available
-        const existing = await this.prisma.appointment.findUnique({
+        // Check if slot is available (tenant-scoped)
+        const existing = await this.prisma.appointment.findFirst({
             where: {
-                appointmentDate_timeSlot: {
-                    appointmentDate,
-                    timeSlot: dto.timeSlot,
-                },
+                tenantId,
+                appointmentDate,
+                timeSlot: dto.timeSlot,
+                status: { not: 'CANCELLED' }, // Only consider non-cancelled appointments
             },
         });
 
@@ -48,9 +48,10 @@ export class AppointmentsService {
             throw new ConflictException('This time slot is already booked');
         }
 
-        // Create the appointment
+        // Create the appointment (with tenantId)
         const appointment = await this.prisma.appointment.create({
             data: {
+                tenantId,
                 customerName: dto.customerName,
                 customerEmail: dto.customerEmail,
                 customerPhone: dto.customerPhone,
@@ -80,8 +81,8 @@ export class AppointmentsService {
         return appointment;
     }
 
-    async findAll(params?: { status?: AppointmentStatus; startDate?: Date; endDate?: Date }) {
-        const where: any = {};
+    async findAll(tenantId: string, params?: { status?: AppointmentStatus; startDate?: Date; endDate?: Date }) {
+        const where: any = { tenantId };
 
         if (params?.status) {
             where.status = params.status;
@@ -106,9 +107,10 @@ export class AppointmentsService {
         });
     }
 
-    async findByUserEmail(email: string) {
+    async findByUserEmail(tenantId: string, email: string) {
         return this.prisma.appointment.findMany({
             where: {
+                tenantId,
                 customerEmail: email,
             },
             orderBy: [
@@ -118,9 +120,10 @@ export class AppointmentsService {
         });
     }
 
-    async findOne(id: string) {
-        const appointment = await this.prisma.appointment.findUnique({
-            where: { id },
+    async findOne(tenantId: string, id: string) {
+        // Use findFirst for tenant-scoped lookup (prevents cross-tenant access)
+        const appointment = await this.prisma.appointment.findFirst({
+            where: { tenantId, id },
         });
 
         if (!appointment) {
@@ -130,20 +133,21 @@ export class AppointmentsService {
         return appointment;
     }
 
-    async update(id: string, dto: UpdateAppointmentDto) {
-        const appointment = await this.findOne(id);
+    async update(tenantId: string, id: string, dto: UpdateAppointmentDto) {
+        const appointment = await this.findOne(tenantId, id);
 
         // Check if rescheduling (date or time changed)
         const isRescheduling = (dto.appointmentDate && dto.appointmentDate !== appointment.appointmentDate.toISOString().split('T')[0]) ||
             (dto.timeSlot && dto.timeSlot !== appointment.timeSlot);
 
-        // If rescheduling, check availability
+        // If rescheduling, check availability (tenant-scoped)
         if (isRescheduling) {
             const newDate = dto.appointmentDate ? new Date(dto.appointmentDate) : appointment.appointmentDate;
             const newSlot = dto.timeSlot || appointment.timeSlot;
 
             const existing = await this.prisma.appointment.findFirst({
                 where: {
+                    tenantId,
                     appointmentDate: newDate,
                     timeSlot: newSlot,
                     id: { not: id },
@@ -248,15 +252,15 @@ export class AppointmentsService {
         return updated;
     }
 
-    async remove(id: string) {
-        await this.findOne(id); // Check exists
+    async remove(tenantId: string, id: string) {
+        await this.findOne(tenantId, id); // Check exists and belongs to tenant
 
         return this.prisma.appointment.delete({
             where: { id },
         });
     }
 
-    async getAvailableSlots(dateStr: string) {
+    async getAvailableSlots(tenantId: string, dateStr: string) {
         const date = new Date(dateStr);
 
         // Check if closed day
@@ -264,9 +268,10 @@ export class AppointmentsService {
             return { date: dateStr, slots: [], closed: true };
         }
 
-        // Get booked slots for this date
+        // Get booked slots for this date (tenant-scoped)
         const bookedAppointments = await this.prisma.appointment.findMany({
             where: {
+                tenantId,
                 appointmentDate: date,
                 status: { not: AppointmentStatus.CANCELLED },
             },
