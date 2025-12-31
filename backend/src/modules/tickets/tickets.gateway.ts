@@ -9,6 +9,7 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { Logger } from '@nestjs/common';
+import { PrismaService } from '../../prisma/prisma.service';
 
 @WebSocketGateway({
     cors: {
@@ -24,85 +25,151 @@ export class TicketsGateway implements OnGatewayConnection, OnGatewayDisconnect 
     private logger = new Logger('TicketsGateway');
 
     // Track connected clients by their session/admin status
-    private sessionClients: Map<string, Set<string>> = new Map(); // sessionId -> socketIds
-    private adminClients: Set<string> = new Set(); // socketIds of admins
+    // sessionClients: Map<sessionId, Set<socketId>> -> No change needed structure-wise, but rooms will be scoped
+    private sessionClients: Map<string, Set<string>> = new Map();
+    private adminClients: Set<string> = new Set();
 
-    handleConnection(client: Socket) {
-        this.logger.log(`Client connected: ${client.id}`);
+    constructor(private prisma: PrismaService) { }
+
+    async handleConnection(client: Socket) {
+        try {
+            // Secure Tenant Resolution via Handshake
+            const hostHeader = client.handshake.headers.host;
+            if (!hostHeader) {
+                this.logger.warn(`Client ${client.id} rejected: No Host header`);
+                client.disconnect();
+                return;
+            }
+
+            // Normalize host (remove port if present)
+            const domain = hostHeader.split(':')[0].toLowerCase();
+
+            // Resolve Tenant
+            const tenantDomain = await this.prisma.tenantDomain.findUnique({
+                where: { domain },
+                include: { tenant: true },
+            });
+
+            if (!tenantDomain || !tenantDomain.tenant || tenantDomain.tenant.status !== 'ACTIVE') {
+                this.logger.warn(`Client ${client.id} rejected: Invalid or inactive tenant for domain ${domain}`);
+                client.disconnect();
+                return;
+            }
+
+            // Store tenantId in socket data (Safe Source of Truth)
+            client.data.tenantId = tenantDomain.tenantId;
+            this.logger.log(`Client ${client.id} connected [Tenant: ${tenantDomain.tenantId}]`);
+
+        } catch (error) {
+            this.logger.error(`Connection error for client ${client.id}: ${error.message}`);
+            client.disconnect();
+        }
     }
 
     handleDisconnect(client: Socket) {
         this.logger.log(`Client disconnected: ${client.id}`);
-
-        // Remove from admin clients
         this.adminClients.delete(client.id);
 
-        // Remove from session clients
+        // Cleanup session tracking
         this.sessionClients.forEach((sockets, sessionId) => {
-            sockets.delete(client.id);
-            if (sockets.size === 0) {
-                this.sessionClients.delete(sessionId);
+            if (sockets.has(client.id)) {
+                sockets.delete(client.id);
+                if (sockets.size === 0) {
+                    this.sessionClients.delete(sessionId);
+                }
             }
         });
     }
 
     // Customer joins with their sessionId
     @SubscribeMessage('join:session')
-    handleJoinSession(
+    async handleJoinSession(
         @ConnectedSocket() client: Socket,
         @MessageBody() data: { sessionId: string },
     ) {
         const { sessionId } = data;
+        const tenantId = client.data.tenantId;
 
+        if (!tenantId) {
+            this.logger.error(`Client ${client.id} has no tenantId in socket data`);
+            client.disconnect();
+            return;
+        }
+
+        if (!sessionId) {
+            this.logger.warn(`Client ${client.id} tried to join session without sessionId`);
+            return;
+        }
+
+        // Optional: Verify session belongs to tenant (Strict Mode)
+        // For now, scoping the room is sufficient isolation
+
+        // Add to scoped session room
+        const roomName = `session:${tenantId}:${sessionId}`;
+        client.join(roomName);
+
+        // Track client
         if (!this.sessionClients.has(sessionId)) {
             this.sessionClients.set(sessionId, new Set());
         }
         this.sessionClients.get(sessionId)?.add(client.id);
 
-        client.join(`session:${sessionId}`);
-        this.logger.log(`Client ${client.id} joined session: ${sessionId}`);
+        this.logger.log(`Client ${client.id} joined room: ${roomName}`);
     }
 
-    // Admin joins to receive all ticket updates
+    // Admin joins to receive ticket updates for their tenant
     @SubscribeMessage('join:admin')
-    handleJoinAdmin(@ConnectedSocket() client: Socket) {
+    handleJoinAdmin(
+        @ConnectedSocket() client: Socket,
+    ) {
+        const tenantId = client.data.tenantId;
+
+        if (!tenantId) {
+            this.logger.error(`Admin client ${client.id} has no tenantId in socket data`);
+            client.disconnect();
+            return;
+        }
+
         this.adminClients.add(client.id);
-        client.join('admin:tickets');
-        this.logger.log(`Admin client ${client.id} joined`);
+
+        // Join scoped admin room
+        const roomName = `admin:tickets:${tenantId}`;
+        client.join(roomName);
+
+        this.logger.log(`Admin client ${client.id} joined room: ${roomName}`);
     }
 
     // Emit new message to relevant clients
-    emitNewMessage(ticketId: string, sessionId: string, message: any) {
-        // Send to customer with this session
-        this.server.to(`session:${sessionId}`).emit('ticket:message', {
+    emitNewMessage(tenantId: string, ticketId: string, sessionId: string, message: any) {
+        // Send to customer in scoped session room
+        this.server.to(`session:${tenantId}:${sessionId}`).emit('ticket:message', {
             ticketId,
             message,
         });
 
-        // Send to all admins
-        this.server.to('admin:tickets').emit('ticket:message', {
+        // Send to admins of this tenant only
+        this.server.to(`admin:tickets:${tenantId}`).emit('ticket:message', {
             ticketId,
             message,
         });
 
-        this.logger.log(`Emitted message for ticket ${ticketId}`);
+        this.logger.log(`Emitted message for ticket ${ticketId} [Tenant: ${tenantId}]`);
     }
 
     // Emit new ticket notification to admins
-    emitNewTicket(ticket: any) {
-        this.server.to('admin:tickets').emit('ticket:new', ticket);
-        this.logger.log(`Emitted new ticket: ${ticket.caseId}`);
+    emitNewTicket(tenantId: string, ticket: any) {
+        this.server.to(`admin:tickets:${tenantId}`).emit('ticket:new', ticket);
+        this.logger.log(`Emitted new ticket: ${ticket.caseId} [Tenant: ${tenantId}]`);
     }
 
     // Emit ticket status update
-    emitTicketUpdate(ticketId: string, sessionId: string, update: any) {
-        this.server.to(`session:${sessionId}`).emit('ticket:update', {
-            ticketId,
-            ...update,
-        });
-        this.server.to('admin:tickets').emit('ticket:update', {
-            ticketId,
-            ...update,
-        });
+    emitTicketUpdate(tenantId: string, ticketId: string, sessionId: string, update: any) {
+        const payload = { ticketId, ...update };
+
+        // Notify customer
+        this.server.to(`session:${tenantId}:${sessionId}`).emit('ticket:update', payload);
+
+        // Notify admin
+        this.server.to(`admin:tickets:${tenantId}`).emit('ticket:update', payload);
     }
 }

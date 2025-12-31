@@ -35,7 +35,7 @@ export default function AdminGalleryPage() {
     const loadAssets = async () => {
         setIsLoading(true);
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"}/api/upload/assets?folder=devices&limit=250`, {
+            const response = await fetch(`/api/upload/assets?folder=devices&limit=250`, {
                 headers: { "Authorization": `Bearer ${localStorage.getItem("adminAccessToken")}` },
             });
 
@@ -73,7 +73,7 @@ export default function AdminGalleryPage() {
             for (const url of selectedAssets) {
                 const asset = assets.find(a => a.url === url);
                 if (asset) {
-                    await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"}/api/upload/${encodeURIComponent(asset.key)}`, {
+                    await fetch(`/api/upload/${encodeURIComponent(asset.key)}`, {
                         method: "DELETE",
                         headers: { "Authorization": `Bearer ${localStorage.getItem("adminAccessToken")}` },
                     });

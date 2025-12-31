@@ -1,11 +1,12 @@
-import { Module, MiddlewareConsumer, NestModule, RequestMethod } from '@nestjs/common';
+import { Module, MiddlewareConsumer, NestModule, RequestMethod, forwardRef } from '@nestjs/common';
 import { TenantController } from './tenant.controller';
 import { TenantService } from './tenant.service';
 import { TenantMiddleware } from './tenant.middleware';
 import { PrismaModule } from '../../prisma';
+import { OwnerModule } from '../owner/owner.module';
 
 @Module({
-    imports: [PrismaModule],
+    imports: [PrismaModule, forwardRef(() => OwnerModule)],
     controllers: [TenantController],
     providers: [TenantService, TenantMiddleware],
     exports: [TenantService, TenantMiddleware],
@@ -27,6 +28,10 @@ export class TenantModule implements NestModule {
                 { path: 'api/docs/(.*)', method: RequestMethod.ALL },
                 // Stripe webhooks (external origin, no domain context)
                 { path: 'api/orders/webhook', method: RequestMethod.POST },
+                // Owner panel routes (platform-level, no tenant context)
+                { path: 'api/owner', method: RequestMethod.ALL },
+                { path: 'api/owner/(.*)', method: RequestMethod.ALL },
+                { path: 'api/auth/owner-login', method: RequestMethod.POST },
             )
             .forRoutes('*');
 

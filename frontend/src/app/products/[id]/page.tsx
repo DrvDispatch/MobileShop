@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { api, Product } from "@/lib/api";
 import { useCartStore } from "@/lib/store";
 import { RelatedProducts } from "@/components/related-products";
+import { getImageUrl } from "@/lib/image-utils";
 import {
     ChevronLeft,
     Minus,
@@ -131,7 +132,7 @@ export default function ProductDetailPage() {
                         <div className="aspect-square bg-zinc-100 rounded-2xl flex items-center justify-center overflow-hidden">
                             {product.images && product.images.length > 0 ? (
                                 <img
-                                    src={product.images[selectedImage]?.url}
+                                    src={getImageUrl(product.images[selectedImage]?.url)}
                                     alt={product.name}
                                     className="max-w-full max-h-full object-contain"
                                 />
@@ -150,7 +151,7 @@ export default function ProductDetailPage() {
                                         className={`w-16 h-16 rounded-lg bg-zinc-100 overflow-hidden border-2 transition-colors ${selectedImage === idx ? "border-zinc-900" : "border-transparent"
                                             }`}
                                     >
-                                        <img src={img.url} alt="" className="w-full h-full object-cover" />
+                                        <img src={getImageUrl(img.url)} alt="" className="w-full h-full object-cover" />
                                     </button>
                                 ))}
                             </div>

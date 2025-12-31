@@ -178,7 +178,7 @@ export class AppointmentsService {
         // Send feedback request email + SMS if status changed to COMPLETED
         if (dto.status === AppointmentStatus.COMPLETED && appointment.status !== AppointmentStatus.COMPLETED) {
             try {
-                await this.feedbackService.createAndSendFeedbackRequest({
+                await this.feedbackService.createAndSendFeedbackRequest(tenantId, {
                     sourceType: 'repair',
                     repairTicketId: appointment.id,
                     customerEmail: appointment.customerEmail,

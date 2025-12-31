@@ -23,7 +23,7 @@ import {
     FileText,
 } from "lucide-react";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+// All API calls use relative paths to go through Next.js proxy for tenant resolution
 
 interface AuditLog {
     id: string;
@@ -90,7 +90,7 @@ export default function AdminAuditLogsPage() {
             if (filterAction) params.append("action", filterAction);
             if (filterEntity) params.append("entityType", filterEntity);
 
-            const response = await fetch(`${API_URL}/api/audit-logs?${params}`, {
+            const response = await fetch(`/api/audit-logs?${params}`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
 
@@ -109,7 +109,7 @@ export default function AdminAuditLogsPage() {
     const handleExport = async () => {
         const token = localStorage.getItem("adminAccessToken");
         try {
-            const response = await fetch(`${API_URL}/api/audit-logs/export`, {
+            const response = await fetch(`/api/audit-logs/export`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             const blob = await response.blob();

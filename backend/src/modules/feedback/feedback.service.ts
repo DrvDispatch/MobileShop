@@ -24,11 +24,12 @@ export class FeedbackService {
     /**
      * Create a feedback rating entry and send email
      */
-    async createAndSendFeedbackRequest(dto: CreateFeedbackDto): Promise<{ token: string; id: string }> {
+    async createAndSendFeedbackRequest(tenantId: string, dto: CreateFeedbackDto): Promise<{ token: string; id: string }> {
         const token = this.generateToken();
 
         const feedback = await this.prisma.feedbackRating.create({
             data: {
+                tenantId,
                 token,
                 sourceType: dto.sourceType,
                 ticketId: dto.ticketId,
@@ -49,18 +50,20 @@ export class FeedbackService {
 
         if (sent) {
             await this.prisma.feedbackRating.update({
-                where: { id: feedback.id },
+                where: { id: feedback.id }, // ID is unique global UUID, secure to access directly here as we just created it
                 data: { emailSent: true },
             });
         }
 
-        this.logger.log(`Feedback request created for ${dto.customerEmail}, token: ${token.substring(0, 8)}...`);
+        this.logger.log(`Feedback request created for ${dto.customerEmail}, token: ${token.substring(0, 8)}... [Tenant: ${tenantId}]`);
 
         return { token, id: feedback.id };
     }
 
     /**
      * Get feedback by token (for rating page)
+     * Note: Tokens are globally unique securely generated strings, so findUnique is safe without tenantId
+     * (Customer clicking link won't have tenantId context initially)
      */
     async getFeedbackByToken(token: string) {
         const feedback = await this.prisma.feedbackRating.findUnique({
@@ -79,11 +82,13 @@ export class FeedbackService {
             ratedAt: feedback.ratedAt,
             showGoogleReview: feedback.sourceType === 'repair',
             googleReviewUrl: this.googleReviewUrl,
+            tenantId: feedback.tenantId // Optionally return tenantId if frontend needs it for theming
         };
     }
 
     /**
      * Submit a rating
+     * Token is proof of authority
      */
     async submitRating(token: string, dto: SubmitRatingDto) {
         const feedback = await this.prisma.feedbackRating.findUnique({
@@ -108,7 +113,7 @@ export class FeedbackService {
             },
         });
 
-        this.logger.log(`Rating submitted: ${dto.rating} stars for feedback ${feedback.id}`);
+        this.logger.log(`Rating submitted: ${dto.rating} stars for feedback ${feedback.id} [Tenant: ${feedback.tenantId}]`);
 
         return {
             success: true,
@@ -120,9 +125,10 @@ export class FeedbackService {
     /**
      * Get all feedback ratings (for admin analytics)
      */
-    async getAllRatings(params?: { sourceType?: string; limit?: number }) {
+    async getAllRatings(tenantId: string, params?: { sourceType?: string; limit?: number }) {
         return this.prisma.feedbackRating.findMany({
             where: {
+                tenantId,
                 ...(params?.sourceType && { sourceType: params.sourceType }),
                 rating: { not: null },
             },
@@ -134,9 +140,10 @@ export class FeedbackService {
     /**
      * Get average rating
      */
-    async getAverageRating(sourceType?: string) {
+    async getAverageRating(tenantId: string, sourceType?: string) {
         const result = await this.prisma.feedbackRating.aggregate({
             where: {
+                tenantId,
                 ...(sourceType && { sourceType }),
                 rating: { not: null },
             },

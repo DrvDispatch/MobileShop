@@ -12,6 +12,288 @@ datasource db {
 }
 
 // ============================================
+// MULTI-TENANCY
+// ============================================
+
+enum TenantStatus {
+  DRAFT       // Created but not yet activated
+  SEEDING     // Being seeded with initial data
+  ACTIVE      // Live and operational
+  SUSPENDED   // Temporarily blocked by owner
+  ARCHIVED    // Soft deleted
+}
+
+model Tenant {
+  id          String       @id @default(uuid())
+  name        String
+  slug        String       @unique  // "gsm-ali", "smartphoneservice"
+  status      TenantStatus @default(DRAFT)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  suspendedAt DateTime?    // When tenant was suspended
+  archivedAt  DateTime?    // When tenant was archived
+  onboardingStatus String? // For tracking onboarding progress
+
+  // Relations
+  domains   TenantDomain[]
+  config    TenantConfig?
+  features  TenantFeature?  // Feature flags for this tenant
+  users     User[]
+  products  Product[]
+  categories Category[]
+  orders    Order[]
+  appointments Appointment[]
+  tickets   Ticket[]
+  repairTickets RepairTicket[]
+  invoices  Invoice[]
+  settings  Setting[]
+  banners   PromotionalBanner[]
+  discountCodes DiscountCode[]
+  shippingZones ShippingZone[]
+  auditLogs AuditLog[]
+  feedbackRatings FeedbackRating[]
+  emailUnsubscribes EmailUnsubscribe[]
+  repairDeviceServices RepairDeviceService[]
+  repairBrands RepairBrand[] @relation("TenantRepairBrands")
+  repairDevices RepairDevice[] @relation("TenantRepairDevices")
+  repairServiceTypes RepairServiceType[] @relation("TenantRepairServiceTypes")
+  homepage  TenantHomepage?
+  pages     TenantPage[]
+
+  @@index([slug])
+  @@index([status])
+}
+
+model TenantDomain {
+  id                  String                   @id @default(uuid())
+  tenantId            String
+  domain              String                   @unique  // "gsm-ali.be", "smartphoneservice.be"
+  isPrimary           Boolean                  @default(false)
+  createdAt           DateTime                 @default(now())
+  updatedAt           DateTime                 @default(now()) @updatedAt
+
+  // Cloudflare Integration
+  cloudflareZoneId    String?                  // Zone ID after creation
+  cloudflareStatus    CloudflareDomainStatus   @default(PENDING)
+  nameservers         String[]                 // Nameservers to set at registrar
+  sslStatus           String?                  // SSL certificate status
+  lastCheckedAt       DateTime?
+  errorMessage        String?
+
+  // Legacy verification (keeping for backwards compatibility)
+  verificationStatus  DomainVerificationStatus @default(PENDING)
+  verificationToken   String?                  @default(uuid())
+  verifiedAt          DateTime?
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([domain])
+  @@index([tenantId])
+  @@index([verificationStatus])
+  @@index([cloudflareStatus])
+}
+
+enum CloudflareDomainStatus {
+  PENDING           // Zone created, waiting for nameserver update
+  ACTIVE            // Zone active, DNS configured
+  DNS_CONFIGURED    // DNS records set, tunnel attached
+  ERROR             // Setup failed
+}
+
+enum DomainVerificationStatus {
+  PENDING
+  VERIFIED
+  FAILED
+}
+
+model TenantConfig {
+  id             String  @id @default(uuid())
+  tenantId       String  @unique
+  
+  // Branding
+  shopName       String
+  logoUrl        String?
+  faviconUrl     String?
+  primaryColor   String  @default("#7c3aed")  // Main brand color
+  secondaryColor String?                       // Secondary brand color
+  accentColor    String?                       // Accent/highlight color
+  borderRadius   String  @default("0.625rem") // UI border radius
+  darkMode       Boolean @default(false)       // Enable dark mode by default
+  
+  // Contact
+  email          String?
+  phone          String?
+  whatsappNumber String?
+  address        Json?   // { line1, line2, city, postalCode, country }
+  
+  // Regional
+  locale         String  @default("nl")
+  currency       String  @default("EUR")
+  currencySymbol String  @default("€")
+  timezone       String  @default("Europe/Brussels")
+  
+  // Business Hours
+  openingHours   Json?   // { "monday": { "open": "09:00", "close": "18:00" }, ... }
+  timeSlots      Json?   // ["09:00", "10:00", "11:00", ...]
+  closedDays     Int[]   @default([0])  // 0 = Sunday
+  
+  // Invoice Settings
+  companyName    String?
+  vatNumber      String?
+  bankAccount    String?
+  bankName       String?
+  invoicePrefix  String  @default("INV")
+  invoiceFooter  String?
+  
+  // Third-party IDs (sensitive, should be encrypted in production)
+  googleAnalyticsId  String?
+  cookiebotId        String?
+  
+  // SEO
+  seoTitle       String?
+  seoDescription String?
+
+  // Feature flags per tenant
+  features       Json?  @default("{\"ecommerce\":true,\"tickets\":true,\"marketing\":true}")
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+}
+
+// ============================================
+// TENANT FEATURE FLAGS
+// ============================================
+
+model TenantFeature {
+  id        String   @id @default(uuid())
+  tenantId  String   @unique
+  
+  // === 🛒 E-COMMERCE MODULE ===
+  ecommerceEnabled       Boolean @default(true)   // Global e-commerce toggle
+  refurbishedGrading     Boolean @default(true)   // A/B/C condition badges
+  wishlistEnabled        Boolean @default(true)   // Wishlist feature
+  stockNotifications     Boolean @default(true)   // Stock alert notifications
+  couponsEnabled         Boolean @default(true)   // Discount codes
+  
+  // === 📅 REPAIR APPOINTMENT MODULE ===
+  repairsEnabled         Boolean @default(true)   // Global repairs toggle
+  quoteOnRequest         Boolean @default(false)  // Hide prices, show "Op aanvraag"
+  mailInRepairs          Boolean @default(false)  // Shipping label generation
+  walkInQueue            Boolean @default(false)  // Digital ticket system
+  
+  // === 🎫 TICKETING/SUPPORT MODULE ===
+  ticketsEnabled         Boolean @default(true)   // Support tickets
+  liveChatWidget         Boolean @default(true)   // Chat widget on frontend
+  
+  // === 🧾 INVOICING MODULE ===
+  invoicingEnabled       Boolean @default(true)   // Invoice generation
+  vatCalculation         Boolean @default(true)   // VAT/BTW calculation
+  pdfGeneration          Boolean @default(true)   // PDF invoice generation
+  
+  // === 📦 INVENTORY MODULE ===
+  inventoryEnabled       Boolean @default(true)   // Basic inventory
+  advancedInventory      Boolean @default(false)  // Multi-location, transfers
+  
+  // === 👥 TEAM MANAGEMENT ===
+  employeeManagement     Boolean @default(false)  // Multiple staff accounts
+  maxAdminUsers          Int     @default(1)      // Max admin users allowed
+  
+  // === 📊 ANALYTICS ===
+  analyticsEnabled       Boolean @default(true)   // Dashboard analytics
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  
+  @@index([tenantId])
+}
+
+// ============================================
+// CMS (Content Management)
+// ============================================
+
+enum CmsStatus {
+  DRAFT
+  PUBLISHED
+}
+
+model TenantHomepage {
+  id                   String   @id @default(uuid())
+  tenantId             String   @unique
+
+  // Hero Section
+  heroTitle            String   @default("Problemen met uw toestel?")
+  heroSubtitle         String   @default("Wij helpen u graag.")
+  heroDescription      String?
+  heroImageUrl         String?
+
+  // CTAs
+  heroCta1Text         String   @default("Bekijk Toestellen")
+  heroCta1Link         String   @default("/phones")
+  heroCta2Text         String?  @default("Maak Afspraak")
+  heroCta2Link         String?  @default("/repair/book")
+
+  // Trust Badges
+  trustBadge1          String   @default("Gratis verzending")
+  trustBadge2          String   @default("1 jaar garantie")
+  trustBadge3          String   @default("Veilig betalen")
+
+  // Conversion Strip
+  conversionTitle      String?  @default("Vandaag kapot. Vandaag opgelost.")
+  conversionFeature1   String?  @default("Binnen 60 minuten klaar")
+  conversionFeature2   String?  @default("Originele onderdelen")
+  conversionFeature3   String?  @default("Lokale service")
+
+  // Section Visibility
+  showConversionStrip  Boolean  @default(true)
+  showServices         Boolean  @default(true)
+
+  // Publishing
+  status               CmsStatus @default(PUBLISHED)
+  draftContent         Json?
+
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  tenant               Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+}
+
+model TenantPage {
+  id              String    @id @default(uuid())
+  tenantId        String
+  slug            String    // "about", "terms", "privacy", "returns"
+  title           String
+  content         Json      // TipTap JSON content
+
+  // SEO
+  seoTitle        String?
+  seoDescription  String?
+
+  // Navigation
+  showInNav       Boolean   @default(false)
+  navOrder        Int       @default(0)
+
+  // System page protection
+  isSystemPage    Boolean   @default(false)  // Cannot be deleted if true
+
+  // Publishing
+  status          CmsStatus @default(DRAFT)
+  publishedAt     DateTime?
+
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  tenant          Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, slug])
+  @@index([tenantId])
+  @@index([tenantId, status])
+}
+
+// ============================================
 // USER & AUTH
 // ============================================
 
@@ -19,11 +301,13 @@ enum UserRole {
   CUSTOMER
   STAFF
   ADMIN
+  OWNER  // Platform owner - access to all tenants
 }
 
 model User {
   id           String    @id @default(uuid())
-  email        String    @unique
+  tenantId     String?   // null for OWNER users, required for others after migration
+  email        String    // unique per-tenant (see @@unique below)
   passwordHash String?   // Nullable for OAuth-only users
   name         String
   phone        String?
@@ -47,10 +331,11 @@ model User {
   resetToken       String?
   resetTokenExpiry DateTime?
 
-  // Google OAuth
-  googleId String? @unique
+  // Google OAuth (unique per-tenant to allow same Google account across shops)
+  googleId String?
 
   // Relations
+  tenant              Tenant?              @relation(fields: [tenantId], references: [id])
   orders              Order[]
   repairTickets       RepairTicket[]       @relation("CustomerTickets")
   assignedRepairs     RepairTicket[]       @relation("StaffTickets")
@@ -58,11 +343,54 @@ model User {
   wishlist            Wishlist?
   reviews             ProductReview[]
 
+  @@unique([tenantId, email])  // same email can exist in different tenants
+  @@unique([tenantId, googleId])  // same Google account can exist in different tenants
+  @@index([tenantId])
   @@index([email])
   @@index([role])
-  @@index([googleId])
   @@index([isVip])
 }
+
+// ============================================
+// OWNER AUDIT LOG
+// ============================================
+
+model OwnerAuditLog {
+  id          String   @id @default(uuid())
+  ownerId     String   // JWT subject (e.g. "admin-owner"), not a User FK
+  action      String   // CREATE_TENANT, SUSPEND_TENANT, VERIFY_DOMAIN, UPDATE_CONFIG, etc.
+  targetType  String   // TENANT, DOMAIN, USER, CONFIG
+  targetId    String
+  metadata    Json?    // Additional details about the action
+  ipAddress   String?
+  userAgent   String?
+  createdAt   DateTime @default(now())
+
+  // No FK relation - ownerId is JWT subject, not necessarily a User
+  @@index([ownerId])
+  @@index([action])
+  @@index([targetType])
+  @@index([createdAt])
+}
+
+// ============================================
+// OAUTH HANDOFF - Short-lived one-time codes for cross-domain auth
+// ============================================
+
+model OAuthHandoffCode {
+  id          String   @id @default(uuid())
+  code        String   @unique  // Random secure code
+  userId      String
+  tenantId    String
+  returnPath  String   @default("/")  // Where to redirect after exchange
+  expiresAt   DateTime             // TTL 60 seconds
+  usedAt      DateTime?            // Set when exchanged
+  createdAt   DateTime @default(now())
+
+  @@index([code])
+  @@index([expiresAt])
+}
+
 
 // ============================================
 // PRODUCTS & CATEGORIES
@@ -70,6 +398,7 @@ model User {
 
 model Category {
   id          String    @id @default(uuid())
+  tenantId    String?   // nullable during migration
   name        String
   slug        String    @unique
   description String?
@@ -84,9 +413,11 @@ model Category {
   parent   Category?  @relation("CategoryChildren", fields: [parentId], references: [id])
   children Category[] @relation("CategoryChildren")
 
-  // Products in this category
+  // Relations
+  tenant   Tenant?    @relation(fields: [tenantId], references: [id])
   products Product[]
 
+  @@index([tenantId])
   @@index([slug])
   @@index([parentId])
 }
@@ -112,6 +443,7 @@ enum DeviceGrade {
 
 model Product {
   id              String           @id @default(uuid())
+  tenantId        String?          // nullable during migration
   name            String
   slug            String           @unique
   description     String?
@@ -142,6 +474,7 @@ model Product {
   deviceGrade     DeviceGrade?     // Quality grade for used/refurbished
 
   // Relations
+  tenant            Tenant?            @relation(fields: [tenantId], references: [id])
   category          Category?          @relation(fields: [categoryId], references: [id])
   images            ProductImage[]
   orderItems        OrderItem[]
@@ -150,6 +483,7 @@ model Product {
   wishlistItems     WishlistItem[]
   stockNotifications StockNotification[]
 
+  @@index([tenantId])
   @@index([slug])
   @@index([categoryId])
   @@index([brand])
@@ -217,6 +551,7 @@ enum RefundReason {
 
 model Order {
   id                    String          @id @default(uuid())
+  tenantId              String?         // nullable during migration
   orderNumber           String          @unique
   userId                String?
   status                OrderStatus     @default(PENDING)
@@ -253,6 +588,7 @@ model Order {
   deliveredAt           DateTime?
 
   // Relations
+  tenant         Tenant?       @relation(fields: [tenantId], references: [id])
   user           User?         @relation(fields: [userId], references: [id])
   items          OrderItem[]
   refunds        Refund[]
@@ -260,6 +596,7 @@ model Order {
   discountCodeId String?
   statusHistory  OrderStatusHistory[]
 
+  @@index([tenantId])
   @@index([orderNumber])
   @@index([userId])
   @@index([status])
@@ -367,6 +704,7 @@ enum RepairStatus {
 
 model RepairTicket {
   id              String       @id @default(uuid())
+  tenantId        String?      // nullable during migration
   ticketNumber    String       @unique
   userId          String?
   serviceId       String?
@@ -405,10 +743,12 @@ model RepairTicket {
   updatedAt        DateTime     @updatedAt
 
   // Relations
+  tenant        Tenant?        @relation(fields: [tenantId], references: [id])
   user          User?          @relation("CustomerTickets", fields: [userId], references: [id])
   assignedStaff User?          @relation("StaffTickets", fields: [assignedStaffId], references: [id])
   service       RepairService? @relation(fields: [serviceId], references: [id])
 
+  @@index([tenantId])
   @@index([ticketNumber])
   @@index([userId])
   @@index([status])
@@ -456,16 +796,23 @@ model InventoryMovement {
 
 model Setting {
   id        String   @id @default(uuid())
-  key       String   @unique
+  tenantId  String?  // nullable during migration - null = global setting
+  key       String   
   value     Json
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  // Relations
+  tenant    Tenant?  @relation(fields: [tenantId], references: [id])
+
+  @@unique([tenantId, key])  // same key can exist per tenant
+  @@index([tenantId])
   @@index([key])
 }
 
 model ShippingZone {
   id          String   @id @default(uuid())
+  tenantId    String?  // nullable during migration
   name        String                    // "Belgium", "EU Zone 1"
   countries   String[]                  // ["BE"], ["NL", "LU", "DE"]
   rate        Decimal  @db.Decimal(10, 2)
@@ -478,6 +825,10 @@ model ShippingZone {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
+  // Relations
+  tenant      Tenant?  @relation(fields: [tenantId], references: [id])
+
+  @@index([tenantId])
   @@index([isActive])
 }
 
@@ -509,6 +860,7 @@ enum AppointmentPriority {
 
 model Appointment {
   id                 String            @id @default(uuid())
+  tenantId           String?           // nullable during migration
   
   // Customer info
   customerName       String
@@ -535,7 +887,11 @@ model Appointment {
   createdAt          DateTime          @default(now())
   updatedAt          DateTime          @updatedAt
 
-  @@unique([appointmentDate, timeSlot])  // Prevent double booking
+  // Relations
+  tenant             Tenant?           @relation(fields: [tenantId], references: [id])
+
+  @@unique([tenantId, appointmentDate, timeSlot])  // Prevent double booking per tenant
+  @@index([tenantId])
   @@index([appointmentDate])
   @@index([status])
   @@index([customerEmail])
@@ -563,6 +919,7 @@ enum TicketCategory {
 
 model Ticket {
   id            String         @id @default(uuid())
+  tenantId      String?        // nullable during migration
   caseId        String         @unique  // NEO-2024-001234
   sessionId     String         // Cookie-based session for returning users
   
@@ -581,6 +938,10 @@ model Ticket {
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
 
+  // Relations  
+  tenant        Tenant?        @relation(fields: [tenantId], references: [id])
+
+  @@index([tenantId])
   @@index([sessionId])
   @@index([caseId])
   @@index([status])
@@ -643,11 +1004,12 @@ model RepairDeviceType {
   @@index([sortOrder])
 }
 
-// Brands: Apple, Samsung
+// Brands: Apple, Samsung (per-tenant for flexibility)
 model RepairBrand {
   id           String   @id @default(uuid())
+  tenantId     String?  // Per-tenant brand catalog (nullable for migration)
   name         String           // "Apple", "Samsung"
-  slug         String   @unique // "apple", "samsung"
+  slug         String           // "apple", "samsung"
   logo         String?          // URL to brand logo
   deviceTypeId String
   sortOrder    Int      @default(0)
@@ -656,20 +1018,23 @@ model RepairBrand {
   updatedAt    DateTime @updatedAt
 
   // Relations
+  tenant       Tenant?  @relation("TenantRepairBrands", fields: [tenantId], references: [id])
   deviceType   RepairDeviceType @relation(fields: [deviceTypeId], references: [id], onDelete: Cascade)
   devices      RepairDevice[]
 
-  @@index([slug])
+  @@unique([tenantId, slug])
+  @@index([tenantId])
   @@index([deviceTypeId])
   @@index([isActive])
   @@index([sortOrder])
 }
 
-// Devices: iPhone 16 Pro Max, Galaxy S25 Ultra
+// Devices: iPhone 16 Pro Max, Galaxy S25 Ultra (per-tenant)
 model RepairDevice {
   id        String   @id @default(uuid())
+  tenantId  String?  // Per-tenant device catalog (nullable for migration)
   name      String           // "iPhone 16 Pro Max"
-  slug      String   @unique // "iphone-16-pro-max"
+  slug      String           // "iphone-16-pro-max"
   image     String?          // URL to device image
   brandId   String
   sortOrder Int      @default(0)
@@ -678,20 +1043,23 @@ model RepairDevice {
   updatedAt DateTime @updatedAt
 
   // Relations
+  tenant    Tenant?  @relation("TenantRepairDevices", fields: [tenantId], references: [id])
   brand     RepairBrand @relation(fields: [brandId], references: [id], onDelete: Cascade)
   services  RepairDeviceService[]
 
-  @@index([slug])
+  @@unique([tenantId, slug])
+  @@index([tenantId])
   @@index([brandId])
   @@index([isActive])
   @@index([sortOrder])
 }
 
-// Service Types: Scherm, Batterij, Oplaadpoort (master list)
+// Service Types: Scherm, Batterij, Oplaadpoort (per-tenant for customization)
 model RepairServiceType {
   id          String   @id @default(uuid())
-  name        String   @unique  // "Scherm", "Batterij"
-  slug        String   @unique  // "scherm", "batterij"
+  tenantId    String?  // Per-tenant service types (nullable for migration)
+  name        String   // "Scherm", "Batterij"
+  slug        String   // "scherm", "batterij"
   icon        String?           // URL to SVG icon
   description String?
   sortOrder   Int      @default(0)
@@ -700,16 +1068,19 @@ model RepairServiceType {
   updatedAt   DateTime @updatedAt
 
   // Relations
+  tenant         Tenant?  @relation("TenantRepairServiceTypes", fields: [tenantId], references: [id])
   deviceServices RepairDeviceService[]
 
-  @@index([slug])
+  @@unique([tenantId, slug])
+  @@index([tenantId])
   @@index([isActive])
   @@index([sortOrder])
 }
 
-// Device-specific service pricing
+// Device-specific service pricing (tenant-specific pricing)
 model RepairDeviceService {
   id          String   @id @default(uuid())
+  tenantId    String?  // nullable during migration - allows per-tenant pricing
   deviceId    String
   serviceId   String
   price       Decimal? @db.Decimal(10, 2) // null = "Op aanvraag"
@@ -721,10 +1092,12 @@ model RepairDeviceService {
   updatedAt   DateTime @updatedAt
 
   // Relations
+  tenant      Tenant?  @relation(fields: [tenantId], references: [id])
   device      RepairDevice @relation(fields: [deviceId], references: [id], onDelete: Cascade)
   service     RepairServiceType @relation(fields: [serviceId], references: [id], onDelete: Cascade)
 
-  @@unique([deviceId, serviceId])
+  @@unique([tenantId, deviceId, serviceId])
+  @@index([tenantId])
   @@index([deviceId])
   @@index([serviceId])
   @@index([isActive])
@@ -736,6 +1109,7 @@ model RepairDeviceService {
 
 model FeedbackRating {
   id                  String    @id @default(uuid())
+  tenantId            String?   // nullable during migration
   token               String    @unique  // Secure token for rating URL
   
   // Link to source (one of these will be set)
@@ -759,19 +1133,29 @@ model FeedbackRating {
   
   createdAt           DateTime  @default(now())
   ratedAt             DateTime?
+
+  // Relations
+  tenant              Tenant?   @relation(fields: [tenantId], references: [id])
   
+  @@index([tenantId])
   @@index([token])
   @@index([customerEmail])
   @@index([sourceType])
 }
 
-// Email unsubscribe list for marketing
+// Email unsubscribe list for marketing (per tenant)
 model EmailUnsubscribe {
   id          String   @id @default(uuid())
-  email       String   @unique
+  tenantId    String?  // nullable during migration
+  email       String   
   reason      String?
   createdAt   DateTime @default(now())
+
+  // Relations
+  tenant      Tenant?  @relation(fields: [tenantId], references: [id])
   
+  @@unique([tenantId, email])  // unique per tenant
+  @@index([tenantId])
   @@index([email])
 }
 
@@ -786,7 +1170,8 @@ enum DiscountType {
 
 model DiscountCode {
   id              String       @id @default(uuid())
-  code            String       @unique
+  tenantId        String?      // nullable during migration
+  code            String       
   description     String?
   type            DiscountType
   value           Decimal      @db.Decimal(10, 2) // e.g., 10 for 10% or €10
@@ -804,9 +1189,12 @@ model DiscountCode {
   createdAt       DateTime     @default(now())
   updatedAt       DateTime     @updatedAt
   
-  // Track which orders used this code
+  // Relations
+  tenant          Tenant?      @relation(fields: [tenantId], references: [id])
   orders          Order[]
   
+  @@unique([tenantId, code])  // unique codes per tenant
+  @@index([tenantId])
   @@index([code])
   @@index([isActive])
   @@index([startsAt])
@@ -822,6 +1210,7 @@ enum BannerPosition {
 
 model PromotionalBanner {
   id          String         @id @default(uuid())
+  tenantId    String?        // nullable during migration
   title       String
   message     String
   linkUrl     String?
@@ -835,7 +1224,11 @@ model PromotionalBanner {
   isActive    Boolean        @default(true)
   createdAt   DateTime       @default(now())
   updatedAt   DateTime       @updatedAt
+
+  // Relations
+  tenant      Tenant?        @relation(fields: [tenantId], references: [id])
   
+  @@index([tenantId])
   @@index([isActive])
   @@index([position])
   @@index([startsAt])
@@ -886,6 +1279,7 @@ enum AuditAction {
 
 model AuditLog {
   id            String      @id @default(uuid())
+  tenantId      String?     // nullable during migration
   
   // Who performed the action
   userId        String
@@ -909,7 +1303,11 @@ model AuditLog {
   userAgent     String?
   
   createdAt     DateTime    @default(now())
+
+  // Relations
+  tenant        Tenant?     @relation(fields: [tenantId], references: [id])
   
+  @@index([tenantId])
   @@index([userId])
   @@index([action])
   @@index([entityType])
@@ -1070,7 +1468,8 @@ enum InvoiceItemType {
 
 model Invoice {
   id              String         @id @default(uuid())
-  invoiceNumber   String         @unique  // INV-2024-0001
+  tenantId        String?        // nullable during migration
+  invoiceNumber   String         // INV-2024-0001 - unique per tenant
   type            InvoiceType    @default(SALE)
   status          InvoiceStatus  @default(DRAFT)
   
@@ -1107,8 +1506,11 @@ model Invoice {
   updatedAt       DateTime       @updatedAt
   
   // Relations
+  tenant          Tenant?        @relation(fields: [tenantId], references: [id])
   items           InvoiceItem[]
   
+  @@unique([tenantId, invoiceNumber])  // invoice numbers unique per tenant
+  @@index([tenantId])
   @@index([invoiceNumber])
   @@index([status])
   @@index([customerEmail])

@@ -1,4 +1,6 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+// API base URL - use empty string so requests go through Next.js rewrite proxy
+// This preserves the Host header for proper multi-tenant resolution
+const API_URL = '';
 
 interface ApiError {
     message: string;
@@ -118,13 +120,15 @@ class ApiClient {
             ...options.headers,
         };
 
-        if (token) {
+        // Only send Authorization header if we have a real JWT token (not cookie-based)
+        if (token && token !== 'cookie-based') {
             (headers as Record<string, string>)['Authorization'] = `Bearer ${token}`;
         }
 
         const response = await fetch(`${this.baseUrl}${endpoint}`, {
             ...options,
             headers,
+            credentials: 'include', // Always include cookies for cookie-based auth
         });
 
         const data = await response.json();
@@ -187,8 +191,24 @@ class ApiClient {
         return this.request<AuthResponse['user']>('/api/auth/me');
     }
 
-    getGoogleAuthUrl(): string {
-        return `${this.baseUrl}/api/auth/google`;
+    getGoogleAuthUrl(returnUrl: string = '/'): string {
+        // IMPORTANT: For Google OAuth, we need to bypass the proxy completely
+        // The proxy interferes with Google's redirect chain causing 400 errors
+        // Use the same origin as the current page (which goes through Cloudflare tunnel in production)
+        const tenant = typeof window !== 'undefined' ? window.location.host : '';
+        const params = new URLSearchParams({
+            tenant,
+            returnUrl,
+        });
+
+        // In browser, use window origin (respects Cloudflare tunnel)
+        // The key is to NOT go through Next.js API routes
+        if (typeof window !== 'undefined') {
+            // Use current origin - Cloudflare tunnel will route this correctly
+            return `${window.location.origin}/api/auth/google?${params.toString()}`;
+        }
+
+        return `${this.baseUrl}/api/auth/google?${params.toString()}`;
     }
 
     // Appointments endpoints
@@ -474,4 +494,50 @@ export const isAuthenticated = (): boolean => {
 };
 
 export type { AuthResponse, MessageResponse, ApiError };
+
+/**
+ * Helper function for admin API calls that uses relative URLs
+ * to go through the Next.js proxy for proper tenant resolution.
+ * 
+ * IMPORTANT: Do NOT use direct API URLs like localhost:3001 in admin pages.
+ * Always use this helper or relative paths (/api/...) to ensure the
+ * Host header is preserved for multi-tenant resolution.
+ */
+export const adminFetch = async (
+    endpoint: string,
+    options: RequestInit = {}
+): Promise<Response> => {
+    // Ensure endpoint starts with /api
+    const path = endpoint.startsWith('/api') ? endpoint : `/api${endpoint.startsWith('/') ? endpoint : '/' + endpoint}`;
+
+    // Get admin token if not provided in headers
+    const token = typeof window !== 'undefined' ? localStorage.getItem('adminAccessToken') : null;
+
+    const headers: HeadersInit = {
+        ...options.headers,
+    };
+
+    // Add auth header if we have a token and it's not already set
+    if (token && !('Authorization' in headers)) {
+        (headers as Record<string, string>)['Authorization'] = `Bearer ${token}`;
+    }
+
+    // Add Content-Type for JSON body if not set
+    if (options.body && typeof options.body === 'string' && !('Content-Type' in headers)) {
+        (headers as Record<string, string>)['Content-Type'] = 'application/json';
+    }
+
+    return fetch(path, {
+        ...options,
+        headers,
+    });
+};
+
+/**
+ * Returns the admin auth headers for fetch calls
+ */
+export const getAdminHeaders = (): Record<string, string> => {
+    const token = typeof window !== 'undefined' ? localStorage.getItem('adminAccessToken') : null;
+    return token ? { Authorization: `Bearer ${token}` } : {};
+};
 

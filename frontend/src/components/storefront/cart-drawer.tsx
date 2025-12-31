@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useCartStore } from "@/lib/store";
 import { Button } from "@/components/ui/button";
+import { getImageUrl } from "@/lib/image-utils";
 import { X, Plus, Minus, ShoppingBag, Trash2 } from "lucide-react";
 
 interface CartDrawerProps {
@@ -87,7 +88,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                                     <div className="w-20 h-20 bg-white rounded-lg overflow-hidden flex-shrink-0 border border-zinc-200">
                                         {item.image ? (
                                             <img
-                                                src={item.image}
+                                                src={getImageUrl(item.image)}
                                                 alt={item.name}
                                                 className="w-full h-full object-cover"
                                             />

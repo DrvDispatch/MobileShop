@@ -36,6 +36,7 @@ export type RepairBrandSumAggregateOutputType = {
 
 export type RepairBrandMinAggregateOutputType = {
   id: string | null
+  tenantId: string | null
   name: string | null
   slug: string | null
   logo: string | null
@@ -48,6 +49,7 @@ export type RepairBrandMinAggregateOutputType = {
 
 export type RepairBrandMaxAggregateOutputType = {
   id: string | null
+  tenantId: string | null
   name: string | null
   slug: string | null
   logo: string | null
@@ -60,6 +62,7 @@ export type RepairBrandMaxAggregateOutputType = {
 
 export type RepairBrandCountAggregateOutputType = {
   id: number
+  tenantId: number
   name: number
   slug: number
   logo: number
@@ -82,6 +85,7 @@ export type RepairBrandSumAggregateInputType = {
 
 export type RepairBrandMinAggregateInputType = {
   id?: true
+  tenantId?: true
   name?: true
   slug?: true
   logo?: true
@@ -94,6 +98,7 @@ export type RepairBrandMinAggregateInputType = {
 
 export type RepairBrandMaxAggregateInputType = {
   id?: true
+  tenantId?: true
   name?: true
   slug?: true
   logo?: true
@@ -106,6 +111,7 @@ export type RepairBrandMaxAggregateInputType = {
 
 export type RepairBrandCountAggregateInputType = {
   id?: true
+  tenantId?: true
   name?: true
   slug?: true
   logo?: true
@@ -205,6 +211,7 @@ export type RepairBrandGroupByArgs<ExtArgs extends runtime.Types.Extensions.Inte
 
 export type RepairBrandGroupByOutputType = {
   id: string
+  tenantId: string | null
   name: string
   slug: string
   logo: string | null
@@ -240,6 +247,7 @@ export type RepairBrandWhereInput = {
   OR?: Prisma.RepairBrandWhereInput[]
   NOT?: Prisma.RepairBrandWhereInput | Prisma.RepairBrandWhereInput[]
   id?: Prisma.StringFilter<"RepairBrand"> | string
+  tenantId?: Prisma.StringNullableFilter<"RepairBrand"> | string | null
   name?: Prisma.StringFilter<"RepairBrand"> | string
   slug?: Prisma.StringFilter<"RepairBrand"> | string
   logo?: Prisma.StringNullableFilter<"RepairBrand"> | string | null
@@ -248,12 +256,14 @@ export type RepairBrandWhereInput = {
   isActive?: Prisma.BoolFilter<"RepairBrand"> | boolean
   createdAt?: Prisma.DateTimeFilter<"RepairBrand"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"RepairBrand"> | Date | string
+  tenant?: Prisma.XOR<Prisma.TenantNullableScalarRelationFilter, Prisma.TenantWhereInput> | null
   deviceType?: Prisma.XOR<Prisma.RepairDeviceTypeScalarRelationFilter, Prisma.RepairDeviceTypeWhereInput>
   devices?: Prisma.RepairDeviceListRelationFilter
 }
 
 export type RepairBrandOrderByWithRelationInput = {
   id?: Prisma.SortOrder
+  tenantId?: Prisma.SortOrderInput | Prisma.SortOrder
   name?: Prisma.SortOrder
   slug?: Prisma.SortOrder
   logo?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -262,29 +272,34 @@ export type RepairBrandOrderByWithRelationInput = {
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  tenant?: Prisma.TenantOrderByWithRelationInput
   deviceType?: Prisma.RepairDeviceTypeOrderByWithRelationInput
   devices?: Prisma.RepairDeviceOrderByRelationAggregateInput
 }
 
 export type RepairBrandWhereUniqueInput = Prisma.AtLeast<{
   id?: string
-  slug?: string
+  tenantId_slug?: Prisma.RepairBrandTenantIdSlugCompoundUniqueInput
   AND?: Prisma.RepairBrandWhereInput | Prisma.RepairBrandWhereInput[]
   OR?: Prisma.RepairBrandWhereInput[]
   NOT?: Prisma.RepairBrandWhereInput | Prisma.RepairBrandWhereInput[]
+  tenantId?: Prisma.StringNullableFilter<"RepairBrand"> | string | null
   name?: Prisma.StringFilter<"RepairBrand"> | string
+  slug?: Prisma.StringFilter<"RepairBrand"> | string
   logo?: Prisma.StringNullableFilter<"RepairBrand"> | string | null
   deviceTypeId?: Prisma.StringFilter<"RepairBrand"> | string
   sortOrder?: Prisma.IntFilter<"RepairBrand"> | number
   isActive?: Prisma.BoolFilter<"RepairBrand"> | boolean
   createdAt?: Prisma.DateTimeFilter<"RepairBrand"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"RepairBrand"> | Date | string
+  tenant?: Prisma.XOR<Prisma.TenantNullableScalarRelationFilter, Prisma.TenantWhereInput> | null
   deviceType?: Prisma.XOR<Prisma.RepairDeviceTypeScalarRelationFilter, Prisma.RepairDeviceTypeWhereInput>
   devices?: Prisma.RepairDeviceListRelationFilter
-}, "id" | "slug">
+}, "id" | "tenantId_slug">
 
 export type RepairBrandOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
+  tenantId?: Prisma.SortOrderInput | Prisma.SortOrder
   name?: Prisma.SortOrder
   slug?: Prisma.SortOrder
   logo?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -305,6 +320,7 @@ export type RepairBrandScalarWhereWithAggregatesInput = {
   OR?: Prisma.RepairBrandScalarWhereWithAggregatesInput[]
   NOT?: Prisma.RepairBrandScalarWhereWithAggregatesInput | Prisma.RepairBrandScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"RepairBrand"> | string
+  tenantId?: Prisma.StringNullableWithAggregatesFilter<"RepairBrand"> | string | null
   name?: Prisma.StringWithAggregatesFilter<"RepairBrand"> | string
   slug?: Prisma.StringWithAggregatesFilter<"RepairBrand"> | string
   logo?: Prisma.StringNullableWithAggregatesFilter<"RepairBrand"> | string | null
@@ -324,12 +340,14 @@ export type RepairBrandCreateInput = {
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  tenant?: Prisma.TenantCreateNestedOneWithoutRepairBrandsInput
   deviceType: Prisma.RepairDeviceTypeCreateNestedOneWithoutBrandsInput
   devices?: Prisma.RepairDeviceCreateNestedManyWithoutBrandInput
 }
 
 export type RepairBrandUncheckedCreateInput = {
   id?: string
+  tenantId?: string | null
   name: string
   slug: string
   logo?: string | null
@@ -350,12 +368,14 @@ export type RepairBrandUpdateInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  tenant?: Prisma.TenantUpdateOneWithoutRepairBrandsNestedInput
   deviceType?: Prisma.RepairDeviceTypeUpdateOneRequiredWithoutBrandsNestedInput
   devices?: Prisma.RepairDeviceUpdateManyWithoutBrandNestedInput
 }
 
 export type RepairBrandUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  tenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -369,6 +389,7 @@ export type RepairBrandUncheckedUpdateInput = {
 
 export type RepairBrandCreateManyInput = {
   id?: string
+  tenantId?: string | null
   name: string
   slug: string
   logo?: string | null
@@ -392,6 +413,7 @@ export type RepairBrandUpdateManyMutationInput = {
 
 export type RepairBrandUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  tenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -412,8 +434,14 @@ export type RepairBrandOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
+export type RepairBrandTenantIdSlugCompoundUniqueInput = {
+  tenantId: string
+  slug: string
+}
+
 export type RepairBrandCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  tenantId?: Prisma.SortOrder
   name?: Prisma.SortOrder
   slug?: Prisma.SortOrder
   logo?: Prisma.SortOrder
@@ -430,6 +458,7 @@ export type RepairBrandAvgOrderByAggregateInput = {
 
 export type RepairBrandMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  tenantId?: Prisma.SortOrder
   name?: Prisma.SortOrder
   slug?: Prisma.SortOrder
   logo?: Prisma.SortOrder
@@ -442,6 +471,7 @@ export type RepairBrandMaxOrderByAggregateInput = {
 
 export type RepairBrandMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  tenantId?: Prisma.SortOrder
   name?: Prisma.SortOrder
   slug?: Prisma.SortOrder
   logo?: Prisma.SortOrder
@@ -459,6 +489,48 @@ export type RepairBrandSumOrderByAggregateInput = {
 export type RepairBrandScalarRelationFilter = {
   is?: Prisma.RepairBrandWhereInput
   isNot?: Prisma.RepairBrandWhereInput
+}
+
+export type RepairBrandCreateNestedManyWithoutTenantInput = {
+  create?: Prisma.XOR<Prisma.RepairBrandCreateWithoutTenantInput, Prisma.RepairBrandUncheckedCreateWithoutTenantInput> | Prisma.RepairBrandCreateWithoutTenantInput[] | Prisma.RepairBrandUncheckedCreateWithoutTenantInput[]
+  connectOrCreate?: Prisma.RepairBrandCreateOrConnectWithoutTenantInput | Prisma.RepairBrandCreateOrConnectWithoutTenantInput[]
+  createMany?: Prisma.RepairBrandCreateManyTenantInputEnvelope
+  connect?: Prisma.RepairBrandWhereUniqueInput | Prisma.RepairBrandWhereUniqueInput[]
+}
+
+export type RepairBrandUncheckedCreateNestedManyWithoutTenantInput = {
+  create?: Prisma.XOR<Prisma.RepairBrandCreateWithoutTenantInput, Prisma.RepairBrandUncheckedCreateWithoutTenantInput> | Prisma.RepairBrandCreateWithoutTenantInput[] | Prisma.RepairBrandUncheckedCreateWithoutTenantInput[]
+  connectOrCreate?: Prisma.RepairBrandCreateOrConnectWithoutTenantInput | Prisma.RepairBrandCreateOrConnectWithoutTenantInput[]
+  createMany?: Prisma.RepairBrandCreateManyTenantInputEnvelope
+  connect?: Prisma.RepairBrandWhereUniqueInput | Prisma.RepairBrandWhereUniqueInput[]
+}
+
+export type RepairBrandUpdateManyWithoutTenantNestedInput = {
+  create?: Prisma.XOR<Prisma.RepairBrandCreateWithoutTenantInput, Prisma.RepairBrandUncheckedCreateWithoutTenantInput> | Prisma.RepairBrandCreateWithoutTenantInput[] | Prisma.RepairBrandUncheckedCreateWithoutTenantInput[]
+  connectOrCreate?: Prisma.RepairBrandCreateOrConnectWithoutTenantInput | Prisma.RepairBrandCreateOrConnectWithoutTenantInput[]
+  upsert?: Prisma.RepairBrandUpsertWithWhereUniqueWithoutTenantInput | Prisma.RepairBrandUpsertWithWhereUniqueWithoutTenantInput[]
+  createMany?: Prisma.RepairBrandCreateManyTenantInputEnvelope
+  set?: Prisma.RepairBrandWhereUniqueInput | Prisma.RepairBrandWhereUniqueInput[]
+  disconnect?: Prisma.RepairBrandWhereUniqueInput | Prisma.RepairBrandWhereUniqueInput[]
+  delete?: Prisma.RepairBrandWhereUniqueInput | Prisma.RepairBrandWhereUniqueInput[]
+  connect?: Prisma.RepairBrandWhereUniqueInput | Prisma.RepairBrandWhereUniqueInput[]
+  update?: Prisma.RepairBrandUpdateWithWhereUniqueWithoutTenantInput | Prisma.RepairBrandUpdateWithWhereUniqueWithoutTenantInput[]
+  updateMany?: Prisma.RepairBrandUpdateManyWithWhereWithoutTenantInput | Prisma.RepairBrandUpdateManyWithWhereWithoutTenantInput[]
+  deleteMany?: Prisma.RepairBrandScalarWhereInput | Prisma.RepairBrandScalarWhereInput[]
+}
+
+export type RepairBrandUncheckedUpdateManyWithoutTenantNestedInput = {
+  create?: Prisma.XOR<Prisma.RepairBrandCreateWithoutTenantInput, Prisma.RepairBrandUncheckedCreateWithoutTenantInput> | Prisma.RepairBrandCreateWithoutTenantInput[] | Prisma.RepairBrandUncheckedCreateWithoutTenantInput[]
+  connectOrCreate?: Prisma.RepairBrandCreateOrConnectWithoutTenantInput | Prisma.RepairBrandCreateOrConnectWithoutTenantInput[]
+  upsert?: Prisma.RepairBrandUpsertWithWhereUniqueWithoutTenantInput | Prisma.RepairBrandUpsertWithWhereUniqueWithoutTenantInput[]
+  createMany?: Prisma.RepairBrandCreateManyTenantInputEnvelope
+  set?: Prisma.RepairBrandWhereUniqueInput | Prisma.RepairBrandWhereUniqueInput[]
+  disconnect?: Prisma.RepairBrandWhereUniqueInput | Prisma.RepairBrandWhereUniqueInput[]
+  delete?: Prisma.RepairBrandWhereUniqueInput | Prisma.RepairBrandWhereUniqueInput[]
+  connect?: Prisma.RepairBrandWhereUniqueInput | Prisma.RepairBrandWhereUniqueInput[]
+  update?: Prisma.RepairBrandUpdateWithWhereUniqueWithoutTenantInput | Prisma.RepairBrandUpdateWithWhereUniqueWithoutTenantInput[]
+  updateMany?: Prisma.RepairBrandUpdateManyWithWhereWithoutTenantInput | Prisma.RepairBrandUpdateManyWithWhereWithoutTenantInput[]
+  deleteMany?: Prisma.RepairBrandScalarWhereInput | Prisma.RepairBrandScalarWhereInput[]
 }
 
 export type RepairBrandCreateNestedManyWithoutDeviceTypeInput = {
@@ -517,6 +589,74 @@ export type RepairBrandUpdateOneRequiredWithoutDevicesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.RepairBrandUpdateToOneWithWhereWithoutDevicesInput, Prisma.RepairBrandUpdateWithoutDevicesInput>, Prisma.RepairBrandUncheckedUpdateWithoutDevicesInput>
 }
 
+export type RepairBrandCreateWithoutTenantInput = {
+  id?: string
+  name: string
+  slug: string
+  logo?: string | null
+  sortOrder?: number
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deviceType: Prisma.RepairDeviceTypeCreateNestedOneWithoutBrandsInput
+  devices?: Prisma.RepairDeviceCreateNestedManyWithoutBrandInput
+}
+
+export type RepairBrandUncheckedCreateWithoutTenantInput = {
+  id?: string
+  name: string
+  slug: string
+  logo?: string | null
+  deviceTypeId: string
+  sortOrder?: number
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  devices?: Prisma.RepairDeviceUncheckedCreateNestedManyWithoutBrandInput
+}
+
+export type RepairBrandCreateOrConnectWithoutTenantInput = {
+  where: Prisma.RepairBrandWhereUniqueInput
+  create: Prisma.XOR<Prisma.RepairBrandCreateWithoutTenantInput, Prisma.RepairBrandUncheckedCreateWithoutTenantInput>
+}
+
+export type RepairBrandCreateManyTenantInputEnvelope = {
+  data: Prisma.RepairBrandCreateManyTenantInput | Prisma.RepairBrandCreateManyTenantInput[]
+  skipDuplicates?: boolean
+}
+
+export type RepairBrandUpsertWithWhereUniqueWithoutTenantInput = {
+  where: Prisma.RepairBrandWhereUniqueInput
+  update: Prisma.XOR<Prisma.RepairBrandUpdateWithoutTenantInput, Prisma.RepairBrandUncheckedUpdateWithoutTenantInput>
+  create: Prisma.XOR<Prisma.RepairBrandCreateWithoutTenantInput, Prisma.RepairBrandUncheckedCreateWithoutTenantInput>
+}
+
+export type RepairBrandUpdateWithWhereUniqueWithoutTenantInput = {
+  where: Prisma.RepairBrandWhereUniqueInput
+  data: Prisma.XOR<Prisma.RepairBrandUpdateWithoutTenantInput, Prisma.RepairBrandUncheckedUpdateWithoutTenantInput>
+}
+
+export type RepairBrandUpdateManyWithWhereWithoutTenantInput = {
+  where: Prisma.RepairBrandScalarWhereInput
+  data: Prisma.XOR<Prisma.RepairBrandUpdateManyMutationInput, Prisma.RepairBrandUncheckedUpdateManyWithoutTenantInput>
+}
+
+export type RepairBrandScalarWhereInput = {
+  AND?: Prisma.RepairBrandScalarWhereInput | Prisma.RepairBrandScalarWhereInput[]
+  OR?: Prisma.RepairBrandScalarWhereInput[]
+  NOT?: Prisma.RepairBrandScalarWhereInput | Prisma.RepairBrandScalarWhereInput[]
+  id?: Prisma.StringFilter<"RepairBrand"> | string
+  tenantId?: Prisma.StringNullableFilter<"RepairBrand"> | string | null
+  name?: Prisma.StringFilter<"RepairBrand"> | string
+  slug?: Prisma.StringFilter<"RepairBrand"> | string
+  logo?: Prisma.StringNullableFilter<"RepairBrand"> | string | null
+  deviceTypeId?: Prisma.StringFilter<"RepairBrand"> | string
+  sortOrder?: Prisma.IntFilter<"RepairBrand"> | number
+  isActive?: Prisma.BoolFilter<"RepairBrand"> | boolean
+  createdAt?: Prisma.DateTimeFilter<"RepairBrand"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"RepairBrand"> | Date | string
+}
+
 export type RepairBrandCreateWithoutDeviceTypeInput = {
   id?: string
   name: string
@@ -526,11 +666,13 @@ export type RepairBrandCreateWithoutDeviceTypeInput = {
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  tenant?: Prisma.TenantCreateNestedOneWithoutRepairBrandsInput
   devices?: Prisma.RepairDeviceCreateNestedManyWithoutBrandInput
 }
 
 export type RepairBrandUncheckedCreateWithoutDeviceTypeInput = {
   id?: string
+  tenantId?: string | null
   name: string
   slug: string
   logo?: string | null
@@ -567,21 +709,6 @@ export type RepairBrandUpdateManyWithWhereWithoutDeviceTypeInput = {
   data: Prisma.XOR<Prisma.RepairBrandUpdateManyMutationInput, Prisma.RepairBrandUncheckedUpdateManyWithoutDeviceTypeInput>
 }
 
-export type RepairBrandScalarWhereInput = {
-  AND?: Prisma.RepairBrandScalarWhereInput | Prisma.RepairBrandScalarWhereInput[]
-  OR?: Prisma.RepairBrandScalarWhereInput[]
-  NOT?: Prisma.RepairBrandScalarWhereInput | Prisma.RepairBrandScalarWhereInput[]
-  id?: Prisma.StringFilter<"RepairBrand"> | string
-  name?: Prisma.StringFilter<"RepairBrand"> | string
-  slug?: Prisma.StringFilter<"RepairBrand"> | string
-  logo?: Prisma.StringNullableFilter<"RepairBrand"> | string | null
-  deviceTypeId?: Prisma.StringFilter<"RepairBrand"> | string
-  sortOrder?: Prisma.IntFilter<"RepairBrand"> | number
-  isActive?: Prisma.BoolFilter<"RepairBrand"> | boolean
-  createdAt?: Prisma.DateTimeFilter<"RepairBrand"> | Date | string
-  updatedAt?: Prisma.DateTimeFilter<"RepairBrand"> | Date | string
-}
-
 export type RepairBrandCreateWithoutDevicesInput = {
   id?: string
   name: string
@@ -591,11 +718,13 @@ export type RepairBrandCreateWithoutDevicesInput = {
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  tenant?: Prisma.TenantCreateNestedOneWithoutRepairBrandsInput
   deviceType: Prisma.RepairDeviceTypeCreateNestedOneWithoutBrandsInput
 }
 
 export type RepairBrandUncheckedCreateWithoutDevicesInput = {
   id?: string
+  tenantId?: string | null
   name: string
   slug: string
   logo?: string | null
@@ -631,10 +760,62 @@ export type RepairBrandUpdateWithoutDevicesInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  tenant?: Prisma.TenantUpdateOneWithoutRepairBrandsNestedInput
   deviceType?: Prisma.RepairDeviceTypeUpdateOneRequiredWithoutBrandsNestedInput
 }
 
 export type RepairBrandUncheckedUpdateWithoutDevicesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  tenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deviceTypeId?: Prisma.StringFieldUpdateOperationsInput | string
+  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type RepairBrandCreateManyTenantInput = {
+  id?: string
+  name: string
+  slug: string
+  logo?: string | null
+  deviceTypeId: string
+  sortOrder?: number
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type RepairBrandUpdateWithoutTenantInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deviceType?: Prisma.RepairDeviceTypeUpdateOneRequiredWithoutBrandsNestedInput
+  devices?: Prisma.RepairDeviceUpdateManyWithoutBrandNestedInput
+}
+
+export type RepairBrandUncheckedUpdateWithoutTenantInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deviceTypeId?: Prisma.StringFieldUpdateOperationsInput | string
+  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  devices?: Prisma.RepairDeviceUncheckedUpdateManyWithoutBrandNestedInput
+}
+
+export type RepairBrandUncheckedUpdateManyWithoutTenantInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
@@ -648,6 +829,7 @@ export type RepairBrandUncheckedUpdateWithoutDevicesInput = {
 
 export type RepairBrandCreateManyDeviceTypeInput = {
   id?: string
+  tenantId?: string | null
   name: string
   slug: string
   logo?: string | null
@@ -666,11 +848,13 @@ export type RepairBrandUpdateWithoutDeviceTypeInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  tenant?: Prisma.TenantUpdateOneWithoutRepairBrandsNestedInput
   devices?: Prisma.RepairDeviceUpdateManyWithoutBrandNestedInput
 }
 
 export type RepairBrandUncheckedUpdateWithoutDeviceTypeInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  tenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -683,6 +867,7 @@ export type RepairBrandUncheckedUpdateWithoutDeviceTypeInput = {
 
 export type RepairBrandUncheckedUpdateManyWithoutDeviceTypeInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  tenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   logo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -725,6 +910,7 @@ export type RepairBrandCountOutputTypeCountDevicesArgs<ExtArgs extends runtime.T
 
 export type RepairBrandSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  tenantId?: boolean
   name?: boolean
   slug?: boolean
   logo?: boolean
@@ -733,6 +919,7 @@ export type RepairBrandSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   isActive?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  tenant?: boolean | Prisma.RepairBrand$tenantArgs<ExtArgs>
   deviceType?: boolean | Prisma.RepairDeviceTypeDefaultArgs<ExtArgs>
   devices?: boolean | Prisma.RepairBrand$devicesArgs<ExtArgs>
   _count?: boolean | Prisma.RepairBrandCountOutputTypeDefaultArgs<ExtArgs>
@@ -740,6 +927,7 @@ export type RepairBrandSelect<ExtArgs extends runtime.Types.Extensions.InternalA
 
 export type RepairBrandSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  tenantId?: boolean
   name?: boolean
   slug?: boolean
   logo?: boolean
@@ -748,11 +936,13 @@ export type RepairBrandSelectCreateManyAndReturn<ExtArgs extends runtime.Types.E
   isActive?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  tenant?: boolean | Prisma.RepairBrand$tenantArgs<ExtArgs>
   deviceType?: boolean | Prisma.RepairDeviceTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["repairBrand"]>
 
 export type RepairBrandSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  tenantId?: boolean
   name?: boolean
   slug?: boolean
   logo?: boolean
@@ -761,11 +951,13 @@ export type RepairBrandSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.E
   isActive?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  tenant?: boolean | Prisma.RepairBrand$tenantArgs<ExtArgs>
   deviceType?: boolean | Prisma.RepairDeviceTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["repairBrand"]>
 
 export type RepairBrandSelectScalar = {
   id?: boolean
+  tenantId?: boolean
   name?: boolean
   slug?: boolean
   logo?: boolean
@@ -776,27 +968,32 @@ export type RepairBrandSelectScalar = {
   updatedAt?: boolean
 }
 
-export type RepairBrandOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "slug" | "logo" | "deviceTypeId" | "sortOrder" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["repairBrand"]>
+export type RepairBrandOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "tenantId" | "name" | "slug" | "logo" | "deviceTypeId" | "sortOrder" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["repairBrand"]>
 export type RepairBrandInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  tenant?: boolean | Prisma.RepairBrand$tenantArgs<ExtArgs>
   deviceType?: boolean | Prisma.RepairDeviceTypeDefaultArgs<ExtArgs>
   devices?: boolean | Prisma.RepairBrand$devicesArgs<ExtArgs>
   _count?: boolean | Prisma.RepairBrandCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type RepairBrandIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  tenant?: boolean | Prisma.RepairBrand$tenantArgs<ExtArgs>
   deviceType?: boolean | Prisma.RepairDeviceTypeDefaultArgs<ExtArgs>
 }
 export type RepairBrandIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  tenant?: boolean | Prisma.RepairBrand$tenantArgs<ExtArgs>
   deviceType?: boolean | Prisma.RepairDeviceTypeDefaultArgs<ExtArgs>
 }
 
 export type $RepairBrandPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "RepairBrand"
   objects: {
+    tenant: Prisma.$TenantPayload<ExtArgs> | null
     deviceType: Prisma.$RepairDeviceTypePayload<ExtArgs>
     devices: Prisma.$RepairDevicePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
+    tenantId: string | null
     name: string
     slug: string
     logo: string | null
@@ -1199,6 +1396,7 @@ readonly fields: RepairBrandFieldRefs;
  */
 export interface Prisma__RepairBrandClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  tenant<T extends Prisma.RepairBrand$tenantArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.RepairBrand$tenantArgs<ExtArgs>>): Prisma.Prisma__TenantClient<runtime.Types.Result.GetResult<Prisma.$TenantPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   deviceType<T extends Prisma.RepairDeviceTypeDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.RepairDeviceTypeDefaultArgs<ExtArgs>>): Prisma.Prisma__RepairDeviceTypeClient<runtime.Types.Result.GetResult<Prisma.$RepairDeviceTypePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   devices<T extends Prisma.RepairBrand$devicesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.RepairBrand$devicesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RepairDevicePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
@@ -1231,6 +1429,7 @@ export interface Prisma__RepairBrandClient<T, Null = never, ExtArgs extends runt
  */
 export interface RepairBrandFieldRefs {
   readonly id: Prisma.FieldRef<"RepairBrand", 'String'>
+  readonly tenantId: Prisma.FieldRef<"RepairBrand", 'String'>
   readonly name: Prisma.FieldRef<"RepairBrand", 'String'>
   readonly slug: Prisma.FieldRef<"RepairBrand", 'String'>
   readonly logo: Prisma.FieldRef<"RepairBrand", 'String'>
@@ -1632,6 +1831,25 @@ export type RepairBrandDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.I
    * Limit how many RepairBrands to delete.
    */
   limit?: number
+}
+
+/**
+ * RepairBrand.tenant
+ */
+export type RepairBrand$tenantArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Tenant
+   */
+  select?: Prisma.TenantSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Tenant
+   */
+  omit?: Prisma.TenantOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TenantInclude<ExtArgs> | null
+  where?: Prisma.TenantWhereInput
 }
 
 /**

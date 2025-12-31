@@ -160,11 +160,21 @@ export class InvoiceService {
         }
 
         for (const { key, value } of updates) {
-            await this.prisma.setting.upsert({
-                where: { key },
-                create: { key, value: value as object },
-                update: { value: value as object },
+            // Find existing global setting (tenantId = null)
+            const existing = await this.prisma.setting.findFirst({
+                where: { key, tenantId: null }
             });
+
+            if (existing) {
+                await this.prisma.setting.update({
+                    where: { id: existing.id },
+                    data: { value: value as object },
+                });
+            } else {
+                await this.prisma.setting.create({
+                    data: { key, value: value as object },
+                });
+            }
         }
     }
 

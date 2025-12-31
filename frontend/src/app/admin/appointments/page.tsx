@@ -329,7 +329,7 @@ export default function AdminAppointmentsPage() {
     const fetchAppointments = async () => {
         setIsLoading(true);
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/appointments`, {
+            const res = await fetch(`/api/appointments`, {
                 headers: getAuthHeaders(),
             });
             if (!res.ok) throw new Error("Failed to fetch appointments");
@@ -372,7 +372,7 @@ export default function AdminAppointmentsPage() {
     // Fetch available slots when reschedule date changes
     useEffect(() => {
         if (rescheduleDate) {
-            fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/appointments/slots?date=${rescheduleDate}`, {
+            fetch(`/api/appointments/slots?date=${rescheduleDate}`, {
                 headers: getAuthHeaders(),
             })
                 .then(res => res.json())
@@ -384,7 +384,7 @@ export default function AdminAppointmentsPage() {
     const updateAppointment = async (id: string, data: any) => {
         setIsSaving(true);
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/appointments/${id}`, {
+            const res = await fetch(`/api/appointments/${id}`, {
                 method: "PATCH",
                 headers: getAuthHeaders(),
                 body: JSON.stringify(data),
@@ -428,7 +428,7 @@ export default function AdminAppointmentsPage() {
     const deleteAppointment = async (id: string) => {
         if (!confirm("Weet u zeker dat u deze afspraak wilt verwijderen?")) return;
         try {
-            await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/appointments/${id}`, {
+            await fetch(`/api/appointments/${id}`, {
                 method: "DELETE",
                 headers: getAuthHeaders(),
             });

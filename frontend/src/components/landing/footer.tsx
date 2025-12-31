@@ -4,14 +4,16 @@ import Link from "next/link";
 import { Smartphone, MapPin, Phone, Mail, Loader2, CheckCircle, Send } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useSettingsStore } from "@/lib/store";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+import { useFeatures } from "@/contexts/FeatureContext";
 
 export function Footer() {
     const { settings, fetchSettings } = useSettingsStore();
     const [email, setEmail] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitResult, setSubmitResult] = useState<{ success: boolean; message: string } | null>(null);
+
+    // Feature flags
+    const { ecommerceEnabled, repairsEnabled } = useFeatures();
 
     useEffect(() => {
         fetchSettings();
@@ -27,7 +29,7 @@ export function Footer() {
         setSubmitResult(null);
 
         try {
-            const res = await fetch(`${API_URL}/api/marketing/subscribe`, {
+            const res = await fetch('/api/marketing/subscribe', {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email: email.trim() }),
@@ -43,6 +45,19 @@ export function Footer() {
             setIsSubmitting(false);
         }
     };
+
+    // Build footer columns dynamically based on features
+    // Rule: If column has zero items, remove the column entirely
+    const shopLinks = ecommerceEnabled ? [
+        { href: "/phones", label: "Toestellen" },
+        { href: "/accessories", label: "Accessoires" },
+    ] : [];
+
+    const dienstenLinks = [
+        ...(repairsEnabled ? [{ href: "/repair/book", label: "Reparaties" }] : []),
+        { href: "/contact", label: "Contact" },
+        { href: "/over-ons", label: "Over Ons" },
+    ];
 
     return (
         <footer className="bg-white border-t border-zinc-100">
@@ -95,8 +110,9 @@ export function Footer() {
             </div>
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-                    {/* Brand */}
+                {/* Dynamic grid based on number of columns */}
+                <div className={`grid grid-cols-2 ${shopLinks.length > 0 ? 'md:grid-cols-4' : 'md:grid-cols-3'} gap-8`}>
+                    {/* Brand - always shown */}
                     <div className="col-span-2 md:col-span-1">
                         <Link href="/" className="flex items-center gap-2 mb-4">
                             <Smartphone className="w-5 h-5 text-zinc-900" />
@@ -121,22 +137,33 @@ export function Footer() {
                         </div>
                     </div>
 
-                    {/* Shop */}
-                    <div>
-                        <h3 className="text-sm font-medium text-zinc-900 mb-4">Shop</h3>
-                        <ul className="space-y-2 text-sm text-zinc-500">
-                            <li><Link href="/phones" className="hover:text-zinc-900 transition-colors">Toestellen</Link></li>
-                            <li><Link href="/accessories" className="hover:text-zinc-900 transition-colors">Accessoires</Link></li>
-                        </ul>
-                    </div>
+                    {/* Shop - only if e-commerce enabled */}
+                    {shopLinks.length > 0 && (
+                        <div>
+                            <h3 className="text-sm font-medium text-zinc-900 mb-4">Shop</h3>
+                            <ul className="space-y-2 text-sm text-zinc-500">
+                                {shopLinks.map(link => (
+                                    <li key={link.href}>
+                                        <Link href={link.href} className="hover:text-zinc-900 transition-colors">
+                                            {link.label}
+                                        </Link>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
 
-                    {/* Diensten */}
+                    {/* Diensten - always shown but repairs links conditional */}
                     <div>
                         <h3 className="text-sm font-medium text-zinc-900 mb-4">Diensten</h3>
                         <ul className="space-y-2 text-sm text-zinc-500">
-                            <li><Link href="/repair/book" className="hover:text-zinc-900 transition-colors">Reparaties</Link></li>
-                            <li><Link href="/contact" className="hover:text-zinc-900 transition-colors">Contact</Link></li>
-                            <li><Link href="/over-ons" className="hover:text-zinc-900 transition-colors">Over Ons</Link></li>
+                            {dienstenLinks.map(link => (
+                                <li key={link.href}>
+                                    <Link href={link.href} className="hover:text-zinc-900 transition-colors">
+                                        {link.label}
+                                    </Link>
+                                </li>
+                            ))}
                         </ul>
                     </div>
 

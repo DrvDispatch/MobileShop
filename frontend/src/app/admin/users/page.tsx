@@ -46,7 +46,7 @@ interface UserDetail extends User {
     tickets: { id: string; subject: string; status: string; createdAt: string; _count?: { messages: number } }[];
 }
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+// All API calls use relative paths to go through Next.js proxy for tenant resolution
 
 const ROLE_CONFIG: Record<string, { color: string; bg: string; label: string }> = {
     ADMIN: { color: "text-red-700", bg: "bg-red-100 border-red-200", label: "Admin" },
@@ -156,7 +156,7 @@ export default function AdminUsersPage() {
             setIsLoading(true);
             const token = localStorage.getItem("adminAccessToken");
             const res = await fetch(
-                `${API_URL}/api/users?search=${search}&page=${page}&limit=20`,
+                `/api/users?search=${search}&page=${page}&limit=20`,
                 { headers: { Authorization: `Bearer ${token}` } }
             );
             const data = await res.json();
@@ -180,7 +180,7 @@ export default function AdminUsersPage() {
         try {
             setIsLoadingUser(true);
             const token = localStorage.getItem("adminAccessToken");
-            const res = await fetch(`${API_URL}/api/users/${userId}`, {
+            const res = await fetch(`/api/users/${userId}`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             const data = await res.json();
@@ -196,7 +196,7 @@ export default function AdminUsersPage() {
     const updateUserRole = async (userId: string, role: string) => {
         try {
             const token = localStorage.getItem("adminAccessToken");
-            await fetch(`${API_URL}/api/users/${userId}`, {
+            await fetch(`/api/users/${userId}`, {
                 method: "PATCH",
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -218,7 +218,7 @@ export default function AdminUsersPage() {
         try {
             setIsResetting(true);
             const token = localStorage.getItem("adminAccessToken");
-            await fetch(`${API_URL}/api/users/${resetUserId}/reset-password`, {
+            await fetch(`/api/users/${resetUserId}/reset-password`, {
                 method: "POST",
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -241,7 +241,7 @@ export default function AdminUsersPage() {
     const toggleVip = async (userId: string, isVip: boolean) => {
         try {
             const token = localStorage.getItem("adminAccessToken");
-            await fetch(`${API_URL}/api/users/${userId}/vip`, {
+            await fetch(`/api/users/${userId}/vip`, {
                 method: "PATCH",
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -261,7 +261,7 @@ export default function AdminUsersPage() {
     const updateNotes = async (userId: string, adminNotes: string) => {
         try {
             const token = localStorage.getItem("adminAccessToken");
-            await fetch(`${API_URL}/api/users/${userId}/notes`, {
+            await fetch(`/api/users/${userId}/notes`, {
                 method: "PATCH",
                 headers: {
                     Authorization: `Bearer ${token}`,

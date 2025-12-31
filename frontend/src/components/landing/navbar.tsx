@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { removeToken } from "@/lib/api";
 import { useCartStore } from "@/lib/store";
 import { CartDrawer } from "@/components/storefront";
+import { useFeatures } from "@/contexts/FeatureContext";
 import {
     Menu,
     X,
@@ -62,6 +63,9 @@ export function Navbar() {
     const [showSearch, setShowSearch] = useState(false);
     const [isCartOpen, setIsCartOpen] = useState(false);
 
+    // Feature flags from context
+    const { ecommerceEnabled, repairsEnabled } = useFeatures();
+
     // Get cart count from Zustand store
     const cartItemCount = useCartStore((state) => state.getItemCount());
 
@@ -95,13 +99,15 @@ export function Navbar() {
         return false;
     };
 
+    // Build nav items based on enabled features
+    // Rule: If feature is OFF, nav item simply doesn't exist (no disabled states)
     const navItems = [
-        { href: "/phones", label: "Toestellen" },
-        { href: "/accessories", label: "Accessoires" },
-        { href: "/repair/book", label: "Reparaties" },
-        { href: "/track", label: "Track & Trace" },
+        ecommerceEnabled && { href: "/phones", label: "Toestellen" },
+        ecommerceEnabled && { href: "/accessories", label: "Accessoires" },
+        repairsEnabled && { href: "/repair/book", label: "Reparaties" },
+        repairsEnabled && { href: "/track", label: "Track & Trace" },
         { href: "/contact", label: "Contact" },
-    ];
+    ].filter(Boolean) as { href: string; label: string }[];
 
     return (
         <>
@@ -168,18 +174,20 @@ export function Navbar() {
                                 </button>
                             )}
 
-                            {/* Cart with Badge - Opens Drawer */}
-                            <button
-                                onClick={() => setIsCartOpen(true)}
-                                className="p-3 text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100 rounded-xl transition-colors relative"
-                            >
-                                <ShoppingCart className="w-6 h-6" />
-                                {mounted && cartItemCount > 0 && (
-                                    <span className="absolute top-0 right-0 w-6 h-6 bg-zinc-900 text-white text-sm font-bold rounded-full flex items-center justify-center">
-                                        {cartItemCount > 9 ? "9+" : cartItemCount}
-                                    </span>
-                                )}
-                            </button>
+                            {/* Cart with Badge - Only show if e-commerce enabled */}
+                            {ecommerceEnabled && (
+                                <button
+                                    onClick={() => setIsCartOpen(true)}
+                                    className="p-3 text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100 rounded-xl transition-colors relative"
+                                >
+                                    <ShoppingCart className="w-6 h-6" />
+                                    {mounted && cartItemCount > 0 && (
+                                        <span className="absolute top-0 right-0 w-6 h-6 bg-zinc-900 text-white text-sm font-bold rounded-full flex items-center justify-center">
+                                            {cartItemCount > 9 ? "9+" : cartItemCount}
+                                        </span>
+                                    )}
+                                </button>
+                            )}
 
                             {mounted && isLoggedIn ? (
                                 <div className="flex items-center gap-2">
@@ -218,17 +226,19 @@ export function Navbar() {
 
                         {/* Mobile Actions */}
                         <div className="flex md:hidden items-center gap-2">
-                            <button
-                                onClick={() => setIsCartOpen(true)}
-                                className="p-2 text-zinc-600 relative"
-                            >
-                                <ShoppingCart className="w-5 h-5" />
-                                {mounted && cartItemCount > 0 && (
-                                    <span className="absolute -top-1 -right-1 w-4 h-4 bg-zinc-900 text-white text-xs rounded-full flex items-center justify-center">
-                                        {cartItemCount > 9 ? "9+" : cartItemCount}
-                                    </span>
-                                )}
-                            </button>
+                            {ecommerceEnabled && (
+                                <button
+                                    onClick={() => setIsCartOpen(true)}
+                                    className="p-2 text-zinc-600 relative"
+                                >
+                                    <ShoppingCart className="w-5 h-5" />
+                                    {mounted && cartItemCount > 0 && (
+                                        <span className="absolute -top-1 -right-1 w-4 h-4 bg-zinc-900 text-white text-xs rounded-full flex items-center justify-center">
+                                            {cartItemCount > 9 ? "9+" : cartItemCount}
+                                        </span>
+                                    )}
+                                </button>
+                            )}
                             <button
                                 className="p-2 text-zinc-600"
                                 onClick={() => setIsMenuOpen(!isMenuOpen)}

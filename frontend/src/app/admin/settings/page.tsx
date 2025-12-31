@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Save, Loader2 } from "lucide-react";
 import { useSettingsStore } from "@/lib/store";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+// All API calls use relative paths to go through Next.js proxy for tenant resolution
 
 const getAdminHeaders = () => {
     const token = localStorage.getItem("adminAccessToken");
@@ -92,7 +92,7 @@ export default function AdminSettingsPage() {
 
             // Save each setting via PUT /api/settings/:key
             for (const setting of settingsToSave) {
-                const res = await fetch(`${API_URL}/api/settings/${setting.key}`, {
+                const res = await fetch(`/api/settings/${setting.key}`, {
                     method: "PUT",
                     headers: getAdminHeaders(),
                     body: JSON.stringify({ value: setting.value }),

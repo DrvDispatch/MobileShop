@@ -44,6 +44,7 @@ export type ShippingZoneSumAggregateOutputType = {
 
 export type ShippingZoneMinAggregateOutputType = {
   id: string | null
+  tenantId: string | null
   name: string | null
   rate: runtime.Decimal | null
   freeAbove: runtime.Decimal | null
@@ -58,6 +59,7 @@ export type ShippingZoneMinAggregateOutputType = {
 
 export type ShippingZoneMaxAggregateOutputType = {
   id: string | null
+  tenantId: string | null
   name: string | null
   rate: runtime.Decimal | null
   freeAbove: runtime.Decimal | null
@@ -72,6 +74,7 @@ export type ShippingZoneMaxAggregateOutputType = {
 
 export type ShippingZoneCountAggregateOutputType = {
   id: number
+  tenantId: number
   name: number
   countries: number
   rate: number
@@ -105,6 +108,7 @@ export type ShippingZoneSumAggregateInputType = {
 
 export type ShippingZoneMinAggregateInputType = {
   id?: true
+  tenantId?: true
   name?: true
   rate?: true
   freeAbove?: true
@@ -119,6 +123,7 @@ export type ShippingZoneMinAggregateInputType = {
 
 export type ShippingZoneMaxAggregateInputType = {
   id?: true
+  tenantId?: true
   name?: true
   rate?: true
   freeAbove?: true
@@ -133,6 +138,7 @@ export type ShippingZoneMaxAggregateInputType = {
 
 export type ShippingZoneCountAggregateInputType = {
   id?: true
+  tenantId?: true
   name?: true
   countries?: true
   rate?: true
@@ -235,6 +241,7 @@ export type ShippingZoneGroupByArgs<ExtArgs extends runtime.Types.Extensions.Int
 
 export type ShippingZoneGroupByOutputType = {
   id: string
+  tenantId: string | null
   name: string
   countries: string[]
   rate: runtime.Decimal
@@ -273,6 +280,7 @@ export type ShippingZoneWhereInput = {
   OR?: Prisma.ShippingZoneWhereInput[]
   NOT?: Prisma.ShippingZoneWhereInput | Prisma.ShippingZoneWhereInput[]
   id?: Prisma.StringFilter<"ShippingZone"> | string
+  tenantId?: Prisma.StringNullableFilter<"ShippingZone"> | string | null
   name?: Prisma.StringFilter<"ShippingZone"> | string
   countries?: Prisma.StringNullableListFilter<"ShippingZone">
   rate?: Prisma.DecimalFilter<"ShippingZone"> | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -284,10 +292,12 @@ export type ShippingZoneWhereInput = {
   sortOrder?: Prisma.IntFilter<"ShippingZone"> | number
   createdAt?: Prisma.DateTimeFilter<"ShippingZone"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"ShippingZone"> | Date | string
+  tenant?: Prisma.XOR<Prisma.TenantNullableScalarRelationFilter, Prisma.TenantWhereInput> | null
 }
 
 export type ShippingZoneOrderByWithRelationInput = {
   id?: Prisma.SortOrder
+  tenantId?: Prisma.SortOrderInput | Prisma.SortOrder
   name?: Prisma.SortOrder
   countries?: Prisma.SortOrder
   rate?: Prisma.SortOrder
@@ -299,6 +309,7 @@ export type ShippingZoneOrderByWithRelationInput = {
   sortOrder?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  tenant?: Prisma.TenantOrderByWithRelationInput
 }
 
 export type ShippingZoneWhereUniqueInput = Prisma.AtLeast<{
@@ -306,6 +317,7 @@ export type ShippingZoneWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.ShippingZoneWhereInput | Prisma.ShippingZoneWhereInput[]
   OR?: Prisma.ShippingZoneWhereInput[]
   NOT?: Prisma.ShippingZoneWhereInput | Prisma.ShippingZoneWhereInput[]
+  tenantId?: Prisma.StringNullableFilter<"ShippingZone"> | string | null
   name?: Prisma.StringFilter<"ShippingZone"> | string
   countries?: Prisma.StringNullableListFilter<"ShippingZone">
   rate?: Prisma.DecimalFilter<"ShippingZone"> | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -317,10 +329,12 @@ export type ShippingZoneWhereUniqueInput = Prisma.AtLeast<{
   sortOrder?: Prisma.IntFilter<"ShippingZone"> | number
   createdAt?: Prisma.DateTimeFilter<"ShippingZone"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"ShippingZone"> | Date | string
+  tenant?: Prisma.XOR<Prisma.TenantNullableScalarRelationFilter, Prisma.TenantWhereInput> | null
 }, "id">
 
 export type ShippingZoneOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
+  tenantId?: Prisma.SortOrderInput | Prisma.SortOrder
   name?: Prisma.SortOrder
   countries?: Prisma.SortOrder
   rate?: Prisma.SortOrder
@@ -344,6 +358,7 @@ export type ShippingZoneScalarWhereWithAggregatesInput = {
   OR?: Prisma.ShippingZoneScalarWhereWithAggregatesInput[]
   NOT?: Prisma.ShippingZoneScalarWhereWithAggregatesInput | Prisma.ShippingZoneScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"ShippingZone"> | string
+  tenantId?: Prisma.StringNullableWithAggregatesFilter<"ShippingZone"> | string | null
   name?: Prisma.StringWithAggregatesFilter<"ShippingZone"> | string
   countries?: Prisma.StringNullableListFilter<"ShippingZone">
   rate?: Prisma.DecimalWithAggregatesFilter<"ShippingZone"> | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -370,10 +385,12 @@ export type ShippingZoneCreateInput = {
   sortOrder?: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  tenant?: Prisma.TenantCreateNestedOneWithoutShippingZonesInput
 }
 
 export type ShippingZoneUncheckedCreateInput = {
   id?: string
+  tenantId?: string | null
   name: string
   countries?: Prisma.ShippingZoneCreatecountriesInput | string[]
   rate: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -400,10 +417,12 @@ export type ShippingZoneUpdateInput = {
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  tenant?: Prisma.TenantUpdateOneWithoutShippingZonesNestedInput
 }
 
 export type ShippingZoneUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  tenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   countries?: Prisma.ShippingZoneUpdatecountriesInput | string[]
   rate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -419,6 +438,7 @@ export type ShippingZoneUncheckedUpdateInput = {
 
 export type ShippingZoneCreateManyInput = {
   id?: string
+  tenantId?: string | null
   name: string
   countries?: Prisma.ShippingZoneCreatecountriesInput | string[]
   rate: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -449,6 +469,7 @@ export type ShippingZoneUpdateManyMutationInput = {
 
 export type ShippingZoneUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  tenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   countries?: Prisma.ShippingZoneUpdatecountriesInput | string[]
   rate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -462,16 +483,19 @@ export type ShippingZoneUncheckedUpdateManyInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
-export type StringNullableListFilter<$PrismaModel = never> = {
-  equals?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel> | null
-  has?: string | Prisma.StringFieldRefInput<$PrismaModel> | null
-  hasEvery?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
-  hasSome?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
-  isEmpty?: boolean
+export type ShippingZoneListRelationFilter = {
+  every?: Prisma.ShippingZoneWhereInput
+  some?: Prisma.ShippingZoneWhereInput
+  none?: Prisma.ShippingZoneWhereInput
+}
+
+export type ShippingZoneOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
 }
 
 export type ShippingZoneCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  tenantId?: Prisma.SortOrder
   name?: Prisma.SortOrder
   countries?: Prisma.SortOrder
   rate?: Prisma.SortOrder
@@ -495,6 +519,7 @@ export type ShippingZoneAvgOrderByAggregateInput = {
 
 export type ShippingZoneMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  tenantId?: Prisma.SortOrder
   name?: Prisma.SortOrder
   rate?: Prisma.SortOrder
   freeAbove?: Prisma.SortOrder
@@ -509,6 +534,7 @@ export type ShippingZoneMaxOrderByAggregateInput = {
 
 export type ShippingZoneMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  tenantId?: Prisma.SortOrder
   name?: Prisma.SortOrder
   rate?: Prisma.SortOrder
   freeAbove?: Prisma.SortOrder
@@ -529,6 +555,48 @@ export type ShippingZoneSumOrderByAggregateInput = {
   sortOrder?: Prisma.SortOrder
 }
 
+export type ShippingZoneCreateNestedManyWithoutTenantInput = {
+  create?: Prisma.XOR<Prisma.ShippingZoneCreateWithoutTenantInput, Prisma.ShippingZoneUncheckedCreateWithoutTenantInput> | Prisma.ShippingZoneCreateWithoutTenantInput[] | Prisma.ShippingZoneUncheckedCreateWithoutTenantInput[]
+  connectOrCreate?: Prisma.ShippingZoneCreateOrConnectWithoutTenantInput | Prisma.ShippingZoneCreateOrConnectWithoutTenantInput[]
+  createMany?: Prisma.ShippingZoneCreateManyTenantInputEnvelope
+  connect?: Prisma.ShippingZoneWhereUniqueInput | Prisma.ShippingZoneWhereUniqueInput[]
+}
+
+export type ShippingZoneUncheckedCreateNestedManyWithoutTenantInput = {
+  create?: Prisma.XOR<Prisma.ShippingZoneCreateWithoutTenantInput, Prisma.ShippingZoneUncheckedCreateWithoutTenantInput> | Prisma.ShippingZoneCreateWithoutTenantInput[] | Prisma.ShippingZoneUncheckedCreateWithoutTenantInput[]
+  connectOrCreate?: Prisma.ShippingZoneCreateOrConnectWithoutTenantInput | Prisma.ShippingZoneCreateOrConnectWithoutTenantInput[]
+  createMany?: Prisma.ShippingZoneCreateManyTenantInputEnvelope
+  connect?: Prisma.ShippingZoneWhereUniqueInput | Prisma.ShippingZoneWhereUniqueInput[]
+}
+
+export type ShippingZoneUpdateManyWithoutTenantNestedInput = {
+  create?: Prisma.XOR<Prisma.ShippingZoneCreateWithoutTenantInput, Prisma.ShippingZoneUncheckedCreateWithoutTenantInput> | Prisma.ShippingZoneCreateWithoutTenantInput[] | Prisma.ShippingZoneUncheckedCreateWithoutTenantInput[]
+  connectOrCreate?: Prisma.ShippingZoneCreateOrConnectWithoutTenantInput | Prisma.ShippingZoneCreateOrConnectWithoutTenantInput[]
+  upsert?: Prisma.ShippingZoneUpsertWithWhereUniqueWithoutTenantInput | Prisma.ShippingZoneUpsertWithWhereUniqueWithoutTenantInput[]
+  createMany?: Prisma.ShippingZoneCreateManyTenantInputEnvelope
+  set?: Prisma.ShippingZoneWhereUniqueInput | Prisma.ShippingZoneWhereUniqueInput[]
+  disconnect?: Prisma.ShippingZoneWhereUniqueInput | Prisma.ShippingZoneWhereUniqueInput[]
+  delete?: Prisma.ShippingZoneWhereUniqueInput | Prisma.ShippingZoneWhereUniqueInput[]
+  connect?: Prisma.ShippingZoneWhereUniqueInput | Prisma.ShippingZoneWhereUniqueInput[]
+  update?: Prisma.ShippingZoneUpdateWithWhereUniqueWithoutTenantInput | Prisma.ShippingZoneUpdateWithWhereUniqueWithoutTenantInput[]
+  updateMany?: Prisma.ShippingZoneUpdateManyWithWhereWithoutTenantInput | Prisma.ShippingZoneUpdateManyWithWhereWithoutTenantInput[]
+  deleteMany?: Prisma.ShippingZoneScalarWhereInput | Prisma.ShippingZoneScalarWhereInput[]
+}
+
+export type ShippingZoneUncheckedUpdateManyWithoutTenantNestedInput = {
+  create?: Prisma.XOR<Prisma.ShippingZoneCreateWithoutTenantInput, Prisma.ShippingZoneUncheckedCreateWithoutTenantInput> | Prisma.ShippingZoneCreateWithoutTenantInput[] | Prisma.ShippingZoneUncheckedCreateWithoutTenantInput[]
+  connectOrCreate?: Prisma.ShippingZoneCreateOrConnectWithoutTenantInput | Prisma.ShippingZoneCreateOrConnectWithoutTenantInput[]
+  upsert?: Prisma.ShippingZoneUpsertWithWhereUniqueWithoutTenantInput | Prisma.ShippingZoneUpsertWithWhereUniqueWithoutTenantInput[]
+  createMany?: Prisma.ShippingZoneCreateManyTenantInputEnvelope
+  set?: Prisma.ShippingZoneWhereUniqueInput | Prisma.ShippingZoneWhereUniqueInput[]
+  disconnect?: Prisma.ShippingZoneWhereUniqueInput | Prisma.ShippingZoneWhereUniqueInput[]
+  delete?: Prisma.ShippingZoneWhereUniqueInput | Prisma.ShippingZoneWhereUniqueInput[]
+  connect?: Prisma.ShippingZoneWhereUniqueInput | Prisma.ShippingZoneWhereUniqueInput[]
+  update?: Prisma.ShippingZoneUpdateWithWhereUniqueWithoutTenantInput | Prisma.ShippingZoneUpdateWithWhereUniqueWithoutTenantInput[]
+  updateMany?: Prisma.ShippingZoneUpdateManyWithWhereWithoutTenantInput | Prisma.ShippingZoneUpdateManyWithWhereWithoutTenantInput[]
+  deleteMany?: Prisma.ShippingZoneScalarWhereInput | Prisma.ShippingZoneScalarWhereInput[]
+}
+
 export type ShippingZoneCreatecountriesInput = {
   set: string[]
 }
@@ -538,10 +606,146 @@ export type ShippingZoneUpdatecountriesInput = {
   push?: string | string[]
 }
 
+export type ShippingZoneCreateWithoutTenantInput = {
+  id?: string
+  name: string
+  countries?: Prisma.ShippingZoneCreatecountriesInput | string[]
+  rate: runtime.Decimal | runtime.DecimalJsLike | number | string
+  freeAbove?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  minDays?: number
+  maxDays?: number
+  carrier?: string | null
+  isActive?: boolean
+  sortOrder?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type ShippingZoneUncheckedCreateWithoutTenantInput = {
+  id?: string
+  name: string
+  countries?: Prisma.ShippingZoneCreatecountriesInput | string[]
+  rate: runtime.Decimal | runtime.DecimalJsLike | number | string
+  freeAbove?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  minDays?: number
+  maxDays?: number
+  carrier?: string | null
+  isActive?: boolean
+  sortOrder?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type ShippingZoneCreateOrConnectWithoutTenantInput = {
+  where: Prisma.ShippingZoneWhereUniqueInput
+  create: Prisma.XOR<Prisma.ShippingZoneCreateWithoutTenantInput, Prisma.ShippingZoneUncheckedCreateWithoutTenantInput>
+}
+
+export type ShippingZoneCreateManyTenantInputEnvelope = {
+  data: Prisma.ShippingZoneCreateManyTenantInput | Prisma.ShippingZoneCreateManyTenantInput[]
+  skipDuplicates?: boolean
+}
+
+export type ShippingZoneUpsertWithWhereUniqueWithoutTenantInput = {
+  where: Prisma.ShippingZoneWhereUniqueInput
+  update: Prisma.XOR<Prisma.ShippingZoneUpdateWithoutTenantInput, Prisma.ShippingZoneUncheckedUpdateWithoutTenantInput>
+  create: Prisma.XOR<Prisma.ShippingZoneCreateWithoutTenantInput, Prisma.ShippingZoneUncheckedCreateWithoutTenantInput>
+}
+
+export type ShippingZoneUpdateWithWhereUniqueWithoutTenantInput = {
+  where: Prisma.ShippingZoneWhereUniqueInput
+  data: Prisma.XOR<Prisma.ShippingZoneUpdateWithoutTenantInput, Prisma.ShippingZoneUncheckedUpdateWithoutTenantInput>
+}
+
+export type ShippingZoneUpdateManyWithWhereWithoutTenantInput = {
+  where: Prisma.ShippingZoneScalarWhereInput
+  data: Prisma.XOR<Prisma.ShippingZoneUpdateManyMutationInput, Prisma.ShippingZoneUncheckedUpdateManyWithoutTenantInput>
+}
+
+export type ShippingZoneScalarWhereInput = {
+  AND?: Prisma.ShippingZoneScalarWhereInput | Prisma.ShippingZoneScalarWhereInput[]
+  OR?: Prisma.ShippingZoneScalarWhereInput[]
+  NOT?: Prisma.ShippingZoneScalarWhereInput | Prisma.ShippingZoneScalarWhereInput[]
+  id?: Prisma.StringFilter<"ShippingZone"> | string
+  tenantId?: Prisma.StringNullableFilter<"ShippingZone"> | string | null
+  name?: Prisma.StringFilter<"ShippingZone"> | string
+  countries?: Prisma.StringNullableListFilter<"ShippingZone">
+  rate?: Prisma.DecimalFilter<"ShippingZone"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  freeAbove?: Prisma.DecimalNullableFilter<"ShippingZone"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  minDays?: Prisma.IntFilter<"ShippingZone"> | number
+  maxDays?: Prisma.IntFilter<"ShippingZone"> | number
+  carrier?: Prisma.StringNullableFilter<"ShippingZone"> | string | null
+  isActive?: Prisma.BoolFilter<"ShippingZone"> | boolean
+  sortOrder?: Prisma.IntFilter<"ShippingZone"> | number
+  createdAt?: Prisma.DateTimeFilter<"ShippingZone"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"ShippingZone"> | Date | string
+}
+
+export type ShippingZoneCreateManyTenantInput = {
+  id?: string
+  name: string
+  countries?: Prisma.ShippingZoneCreatecountriesInput | string[]
+  rate: runtime.Decimal | runtime.DecimalJsLike | number | string
+  freeAbove?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  minDays?: number
+  maxDays?: number
+  carrier?: string | null
+  isActive?: boolean
+  sortOrder?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type ShippingZoneUpdateWithoutTenantInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  countries?: Prisma.ShippingZoneUpdatecountriesInput | string[]
+  rate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  freeAbove?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  minDays?: Prisma.IntFieldUpdateOperationsInput | number
+  maxDays?: Prisma.IntFieldUpdateOperationsInput | number
+  carrier?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type ShippingZoneUncheckedUpdateWithoutTenantInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  countries?: Prisma.ShippingZoneUpdatecountriesInput | string[]
+  rate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  freeAbove?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  minDays?: Prisma.IntFieldUpdateOperationsInput | number
+  maxDays?: Prisma.IntFieldUpdateOperationsInput | number
+  carrier?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type ShippingZoneUncheckedUpdateManyWithoutTenantInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  countries?: Prisma.ShippingZoneUpdatecountriesInput | string[]
+  rate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  freeAbove?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  minDays?: Prisma.IntFieldUpdateOperationsInput | number
+  maxDays?: Prisma.IntFieldUpdateOperationsInput | number
+  carrier?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
 
 
 export type ShippingZoneSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  tenantId?: boolean
   name?: boolean
   countries?: boolean
   rate?: boolean
@@ -553,10 +757,12 @@ export type ShippingZoneSelect<ExtArgs extends runtime.Types.Extensions.Internal
   sortOrder?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  tenant?: boolean | Prisma.ShippingZone$tenantArgs<ExtArgs>
 }, ExtArgs["result"]["shippingZone"]>
 
 export type ShippingZoneSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  tenantId?: boolean
   name?: boolean
   countries?: boolean
   rate?: boolean
@@ -568,10 +774,12 @@ export type ShippingZoneSelectCreateManyAndReturn<ExtArgs extends runtime.Types.
   sortOrder?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  tenant?: boolean | Prisma.ShippingZone$tenantArgs<ExtArgs>
 }, ExtArgs["result"]["shippingZone"]>
 
 export type ShippingZoneSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  tenantId?: boolean
   name?: boolean
   countries?: boolean
   rate?: boolean
@@ -583,10 +791,12 @@ export type ShippingZoneSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.
   sortOrder?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  tenant?: boolean | Prisma.ShippingZone$tenantArgs<ExtArgs>
 }, ExtArgs["result"]["shippingZone"]>
 
 export type ShippingZoneSelectScalar = {
   id?: boolean
+  tenantId?: boolean
   name?: boolean
   countries?: boolean
   rate?: boolean
@@ -600,13 +810,25 @@ export type ShippingZoneSelectScalar = {
   updatedAt?: boolean
 }
 
-export type ShippingZoneOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "countries" | "rate" | "freeAbove" | "minDays" | "maxDays" | "carrier" | "isActive" | "sortOrder" | "createdAt" | "updatedAt", ExtArgs["result"]["shippingZone"]>
+export type ShippingZoneOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "tenantId" | "name" | "countries" | "rate" | "freeAbove" | "minDays" | "maxDays" | "carrier" | "isActive" | "sortOrder" | "createdAt" | "updatedAt", ExtArgs["result"]["shippingZone"]>
+export type ShippingZoneInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  tenant?: boolean | Prisma.ShippingZone$tenantArgs<ExtArgs>
+}
+export type ShippingZoneIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  tenant?: boolean | Prisma.ShippingZone$tenantArgs<ExtArgs>
+}
+export type ShippingZoneIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  tenant?: boolean | Prisma.ShippingZone$tenantArgs<ExtArgs>
+}
 
 export type $ShippingZonePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "ShippingZone"
-  objects: {}
+  objects: {
+    tenant: Prisma.$TenantPayload<ExtArgs> | null
+  }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
+    tenantId: string | null
     name: string
     countries: string[]
     rate: runtime.Decimal
@@ -1012,6 +1234,7 @@ readonly fields: ShippingZoneFieldRefs;
  */
 export interface Prisma__ShippingZoneClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  tenant<T extends Prisma.ShippingZone$tenantArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ShippingZone$tenantArgs<ExtArgs>>): Prisma.Prisma__TenantClient<runtime.Types.Result.GetResult<Prisma.$TenantPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1042,6 +1265,7 @@ export interface Prisma__ShippingZoneClient<T, Null = never, ExtArgs extends run
  */
 export interface ShippingZoneFieldRefs {
   readonly id: Prisma.FieldRef<"ShippingZone", 'String'>
+  readonly tenantId: Prisma.FieldRef<"ShippingZone", 'String'>
   readonly name: Prisma.FieldRef<"ShippingZone", 'String'>
   readonly countries: Prisma.FieldRef<"ShippingZone", 'String[]'>
   readonly rate: Prisma.FieldRef<"ShippingZone", 'Decimal'>
@@ -1070,6 +1294,10 @@ export type ShippingZoneFindUniqueArgs<ExtArgs extends runtime.Types.Extensions.
    */
   omit?: Prisma.ShippingZoneOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ShippingZoneInclude<ExtArgs> | null
+  /**
    * Filter, which ShippingZone to fetch.
    */
   where: Prisma.ShippingZoneWhereUniqueInput
@@ -1088,6 +1316,10 @@ export type ShippingZoneFindUniqueOrThrowArgs<ExtArgs extends runtime.Types.Exte
    */
   omit?: Prisma.ShippingZoneOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ShippingZoneInclude<ExtArgs> | null
+  /**
    * Filter, which ShippingZone to fetch.
    */
   where: Prisma.ShippingZoneWhereUniqueInput
@@ -1105,6 +1337,10 @@ export type ShippingZoneFindFirstArgs<ExtArgs extends runtime.Types.Extensions.I
    * Omit specific fields from the ShippingZone
    */
   omit?: Prisma.ShippingZoneOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ShippingZoneInclude<ExtArgs> | null
   /**
    * Filter, which ShippingZone to fetch.
    */
@@ -1154,6 +1390,10 @@ export type ShippingZoneFindFirstOrThrowArgs<ExtArgs extends runtime.Types.Exten
    */
   omit?: Prisma.ShippingZoneOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ShippingZoneInclude<ExtArgs> | null
+  /**
    * Filter, which ShippingZone to fetch.
    */
   where?: Prisma.ShippingZoneWhereInput
@@ -1202,6 +1442,10 @@ export type ShippingZoneFindManyArgs<ExtArgs extends runtime.Types.Extensions.In
    */
   omit?: Prisma.ShippingZoneOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ShippingZoneInclude<ExtArgs> | null
+  /**
    * Filter, which ShippingZones to fetch.
    */
   where?: Prisma.ShippingZoneWhereInput
@@ -1245,6 +1489,10 @@ export type ShippingZoneCreateArgs<ExtArgs extends runtime.Types.Extensions.Inte
    */
   omit?: Prisma.ShippingZoneOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ShippingZoneInclude<ExtArgs> | null
+  /**
    * The data needed to create a ShippingZone.
    */
   data: Prisma.XOR<Prisma.ShippingZoneCreateInput, Prisma.ShippingZoneUncheckedCreateInput>
@@ -1278,6 +1526,10 @@ export type ShippingZoneCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Ex
    */
   data: Prisma.ShippingZoneCreateManyInput | Prisma.ShippingZoneCreateManyInput[]
   skipDuplicates?: boolean
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ShippingZoneIncludeCreateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1292,6 +1544,10 @@ export type ShippingZoneUpdateArgs<ExtArgs extends runtime.Types.Extensions.Inte
    * Omit specific fields from the ShippingZone
    */
   omit?: Prisma.ShippingZoneOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ShippingZoneInclude<ExtArgs> | null
   /**
    * The data needed to update a ShippingZone.
    */
@@ -1344,6 +1600,10 @@ export type ShippingZoneUpdateManyAndReturnArgs<ExtArgs extends runtime.Types.Ex
    * Limit how many ShippingZones to update.
    */
   limit?: number
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ShippingZoneIncludeUpdateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1358,6 +1618,10 @@ export type ShippingZoneUpsertArgs<ExtArgs extends runtime.Types.Extensions.Inte
    * Omit specific fields from the ShippingZone
    */
   omit?: Prisma.ShippingZoneOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ShippingZoneInclude<ExtArgs> | null
   /**
    * The filter to search for the ShippingZone to update in case it exists.
    */
@@ -1385,6 +1649,10 @@ export type ShippingZoneDeleteArgs<ExtArgs extends runtime.Types.Extensions.Inte
    */
   omit?: Prisma.ShippingZoneOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ShippingZoneInclude<ExtArgs> | null
+  /**
    * Filter which ShippingZone to delete.
    */
   where: Prisma.ShippingZoneWhereUniqueInput
@@ -1405,6 +1673,25 @@ export type ShippingZoneDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.
 }
 
 /**
+ * ShippingZone.tenant
+ */
+export type ShippingZone$tenantArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Tenant
+   */
+  select?: Prisma.TenantSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Tenant
+   */
+  omit?: Prisma.TenantOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TenantInclude<ExtArgs> | null
+  where?: Prisma.TenantWhereInput
+}
+
+/**
  * ShippingZone without action
  */
 export type ShippingZoneDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1416,4 +1703,8 @@ export type ShippingZoneDefaultArgs<ExtArgs extends runtime.Types.Extensions.Int
    * Omit specific fields from the ShippingZone
    */
   omit?: Prisma.ShippingZoneOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ShippingZoneInclude<ExtArgs> | null
 }

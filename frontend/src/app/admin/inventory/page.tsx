@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { getImageUrl } from "@/lib/image-utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -17,7 +18,7 @@ import {
     X,
 } from "lucide-react";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+// All API calls use relative paths to go through Next.js proxy for tenant resolution
 
 interface Product {
     id: string;
@@ -75,16 +76,16 @@ export default function AdminInventoryPage() {
         const token = localStorage.getItem("adminAccessToken");
         try {
             const [productsRes, lowStockRes, movementsRes, summaryRes] = await Promise.all([
-                fetch(`${API_URL}/api/inventory/products`, {
+                fetch(`/api/inventory/products`, {
                     headers: { Authorization: `Bearer ${token}` },
                 }),
-                fetch(`${API_URL}/api/inventory/low-stock?threshold=10`, {
+                fetch(`/api/inventory/low-stock?threshold=10`, {
                     headers: { Authorization: `Bearer ${token}` },
                 }),
-                fetch(`${API_URL}/api/inventory/movements?limit=50`, {
+                fetch(`/api/inventory/movements?limit=50`, {
                     headers: { Authorization: `Bearer ${token}` },
                 }),
-                fetch(`${API_URL}/api/inventory/summary`, {
+                fetch(`/api/inventory/summary`, {
                     headers: { Authorization: `Bearer ${token}` },
                 }),
             ]);
@@ -113,7 +114,7 @@ export default function AdminInventoryPage() {
 
         try {
             const token = localStorage.getItem("adminAccessToken");
-            const res = await fetch(`${API_URL}/api/inventory/adjust`, {
+            const res = await fetch(`/api/inventory/adjust`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -223,8 +224,8 @@ export default function AdminInventoryPage() {
                         key={tab.id}
                         onClick={() => setActiveTab(tab.id as typeof activeTab)}
                         className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors ${activeTab === tab.id
-                                ? "border-zinc-900 text-zinc-900"
-                                : "border-transparent text-zinc-500 hover:text-zinc-700"
+                            ? "border-zinc-900 text-zinc-900"
+                            : "border-transparent text-zinc-500 hover:text-zinc-700"
                             }`}
                     >
                         <tab.icon className="w-4 h-4" />
@@ -245,7 +246,7 @@ export default function AdminInventoryPage() {
                             <div key={product.id} className="bg-white rounded-lg p-3 border border-yellow-100 flex items-center gap-3">
                                 <div className="w-10 h-10 bg-zinc-100 rounded flex items-center justify-center flex-shrink-0">
                                     {product.images[0] ? (
-                                        <img src={product.images[0].url} alt="" className="w-full h-full object-cover rounded" />
+                                        <img src={getImageUrl(product.images[0].url)} alt="" className="w-full h-full object-cover rounded" />
                                     ) : (
                                         <Package className="w-5 h-5 text-zinc-400" />
                                     )}
@@ -319,7 +320,7 @@ export default function AdminInventoryPage() {
                                                 <div className="flex items-center gap-3">
                                                     <div className="w-10 h-10 bg-zinc-100 rounded flex items-center justify-center flex-shrink-0">
                                                         {product.images[0] ? (
-                                                            <img src={product.images[0].url} alt="" className="w-full h-full object-cover rounded" />
+                                                            <img src={getImageUrl(product.images[0].url)} alt="" className="w-full h-full object-cover rounded" />
                                                         ) : (
                                                             <Package className="w-5 h-5 text-zinc-400" />
                                                         )}
@@ -330,8 +331,8 @@ export default function AdminInventoryPage() {
                                             <td className="px-4 py-3 text-sm text-zinc-500">{product.sku || "-"}</td>
                                             <td className="px-4 py-3 text-right">
                                                 <span className={`font-semibold ${product.stockQty === 0 ? "text-red-600" :
-                                                        product.stockQty <= product.lowStockThreshold ? "text-yellow-600" :
-                                                            "text-zinc-900"
+                                                    product.stockQty <= product.lowStockThreshold ? "text-yellow-600" :
+                                                        "text-zinc-900"
                                                     }`}>
                                                     {product.stockQty}
                                                 </span>

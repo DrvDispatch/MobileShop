@@ -14,6 +14,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { UserRole } from '../../generated/prisma/client.js';
+import { TenantId } from '../tenant/tenant.decorator';
 import { TicketsService } from './tickets.service';
 import { CreateTicketDto, AddMessageDto, UpdateTicketDto, TicketStatus } from './dto';
 
@@ -25,29 +26,29 @@ export class TicketsController {
     // Public endpoint - customers can create tickets
     @Post()
     @ApiOperation({ summary: 'Create a new support ticket (public)' })
-    create(@Body() dto: CreateTicketDto) {
-        return this.ticketsService.create(dto);
+    create(@TenantId() tenantId: string, @Body() dto: CreateTicketDto) {
+        return this.ticketsService.create(tenantId, dto);
     }
 
     // Public endpoint - get tickets by session ID (for returning users)
     @Get('session/:sessionId')
     @ApiOperation({ summary: 'Get tickets by session ID' })
-    findBySession(@Param('sessionId') sessionId: string) {
-        return this.ticketsService.findBySession(sessionId);
+    findBySession(@TenantId() tenantId: string, @Param('sessionId') sessionId: string) {
+        return this.ticketsService.findBySession(tenantId, sessionId);
     }
 
     // Public endpoint - get ticket by case ID
     @Get('case/:caseId')
     @ApiOperation({ summary: 'Get ticket by case ID' })
-    findByCaseId(@Param('caseId') caseId: string) {
-        return this.ticketsService.findByCaseId(caseId);
+    findByCaseId(@TenantId() tenantId: string, @Param('caseId') caseId: string) {
+        return this.ticketsService.findByCaseId(tenantId, caseId);
     }
 
     // Public endpoint - add message to ticket
     @Post(':id/messages')
     @ApiOperation({ summary: 'Add message to ticket' })
-    addMessage(@Param('id') id: string, @Body() dto: AddMessageDto) {
-        return this.ticketsService.addMessage(id, dto);
+    addMessage(@TenantId() tenantId: string, @Param('id') id: string, @Body() dto: AddMessageDto) {
+        return this.ticketsService.addMessage(tenantId, id, dto);
     }
 
     // Admin endpoints below
@@ -57,8 +58,8 @@ export class TicketsController {
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Get all tickets (admin)' })
     @ApiQuery({ name: 'status', required: false, enum: TicketStatus })
-    findAll(@Query('status') status?: TicketStatus) {
-        return this.ticketsService.findAll({ status });
+    findAll(@TenantId() tenantId: string, @Query('status') status?: TicketStatus) {
+        return this.ticketsService.findAll(tenantId, { status });
     }
 
     @Get(':id')
@@ -66,8 +67,8 @@ export class TicketsController {
     @Roles(UserRole.ADMIN, UserRole.STAFF)
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Get ticket by ID (admin)' })
-    findOne(@Param('id') id: string) {
-        return this.ticketsService.findOne(id);
+    findOne(@TenantId() tenantId: string, @Param('id') id: string) {
+        return this.ticketsService.findOne(tenantId, id);
     }
 
     @Patch(':id')
@@ -75,8 +76,8 @@ export class TicketsController {
     @Roles(UserRole.ADMIN, UserRole.STAFF)
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Update ticket status (admin)' })
-    update(@Param('id') id: string, @Body() dto: UpdateTicketDto) {
-        return this.ticketsService.update(id, dto);
+    update(@TenantId() tenantId: string, @Param('id') id: string, @Body() dto: UpdateTicketDto) {
+        return this.ticketsService.update(tenantId, id, dto);
     }
 
     @Delete(':id')
@@ -84,7 +85,7 @@ export class TicketsController {
     @Roles(UserRole.ADMIN)
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Delete a closed ticket (admin only)' })
-    delete(@Param('id') id: string) {
-        return this.ticketsService.delete(id);
+    delete(@TenantId() tenantId: string, @Param('id') id: string) {
+        return this.ticketsService.delete(tenantId, id);
     }
 }

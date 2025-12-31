@@ -18,10 +18,50 @@ export { Prisma }
 export * as $Enums from './enums.js'
 export * from './enums.js';
 /**
+ * Model Tenant
+ * 
+ */
+export type Tenant = Prisma.TenantModel
+/**
+ * Model TenantDomain
+ * 
+ */
+export type TenantDomain = Prisma.TenantDomainModel
+/**
+ * Model TenantConfig
+ * 
+ */
+export type TenantConfig = Prisma.TenantConfigModel
+/**
+ * Model TenantFeature
+ * 
+ */
+export type TenantFeature = Prisma.TenantFeatureModel
+/**
+ * Model TenantHomepage
+ * 
+ */
+export type TenantHomepage = Prisma.TenantHomepageModel
+/**
+ * Model TenantPage
+ * 
+ */
+export type TenantPage = Prisma.TenantPageModel
+/**
  * Model User
  * 
  */
 export type User = Prisma.UserModel
+/**
+ * Model OwnerAuditLog
+ * 
+ */
+export type OwnerAuditLog = Prisma.OwnerAuditLogModel
+/**
+ * Model OAuthHandoffCode
+ * 
+ */
+export type OAuthHandoffCode = Prisma.OAuthHandoffCodeModel
 /**
  * Model Category
  * 

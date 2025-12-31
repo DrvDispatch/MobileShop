@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { CheckCircle, ChevronDown, AlertCircle, Loader2 } from "lucide-react";
 
 // Backend has global prefix 'api' so we need to ensure /api is in the URL
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+const API_BASE = '';
 const API_URL = API_BASE.endsWith('/api') ? API_BASE : `${API_BASE}/api`;
 
 function UnsubscribeContent() {

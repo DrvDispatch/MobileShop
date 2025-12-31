@@ -9,6 +9,9 @@ export interface JwtPayload {
     sub: string;
     email: string;
     role: string;
+    tenantId?: string | null;  // null = OWNER/platform, undefined = legacy token
+    isImpersonating?: boolean;  // true if owner is impersonating a tenant user
+    impersonatedBy?: string;    // owner ID who is impersonating
 }
 
 @Injectable()
@@ -24,13 +27,26 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         }
 
         super({
-            jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+            jwtFromRequest: ExtractJwt.fromExtractors([
+                ExtractJwt.fromAuthHeaderAsBearerToken(),
+                (request) => {
+                    // Also extract from cookie for cookie-based auth
+                    const token = request?.cookies?.auth_token;
+                    if (token) {
+                        console.log('[JWT Strategy] Extracted token from cookie');
+                    } else {
+                        console.log('[JWT Strategy] No token in cookie, cookies:', Object.keys(request?.cookies || {}));
+                    }
+                    return token;
+                },
+            ]),
             ignoreExpiration: false,
             secretOrKey: secret,
+            passReqToCallback: true, // Pass request to validate() for tenant verification
         });
     }
 
-    async validate(payload: JwtPayload) {
+    async validate(request: any, payload: JwtPayload) {
         // Handle hardcoded super admin login (super-admin token)
         if (payload.sub === 'super-admin' && payload.role === 'ADMIN') {
             return {
@@ -39,6 +55,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
                 role: 'ADMIN',
                 name: 'Naderi',
                 isSuperAdmin: true,
+                tenantId: null,  // Platform-level access
             };
         }
 
@@ -49,6 +66,21 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
                 email: payload.email,
                 role: 'ADMIN',
                 name: 'Admin',
+                tenantId: null,  // Platform-level access
+            };
+        }
+
+        // OWNER role has platform-level access (no tenant restriction)
+        if (payload.role === 'OWNER') {
+            const user = await this.authService.validateUser(payload.sub);
+            if (!user) {
+                throw new UnauthorizedException();
+            }
+            return {
+                ...user,
+                tenantId: null,  // Platform-level access
+                isImpersonating: payload.isImpersonating || false,
+                impersonatedBy: payload.impersonatedBy || null,
             };
         }
 
@@ -57,12 +89,34 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
             throw new UnauthorizedException();
         }
 
+        // CRITICAL: Validate that token's tenantId matches the request's tenantId
+        // This prevents users logged into Tenant A from accessing Tenant B
+        const requestTenantId = request?.tenantId;
+        const tokenTenantId = payload.tenantId ?? user.tenantId;
+
+        // Skip tenant validation if:
+        // 1. Request has no tenantId (owner panel routes, etc.)
+        // 2. User is impersonating (owner impersonation mode)
+        if (requestTenantId && !payload.isImpersonating) {
+            if (tokenTenantId !== requestTenantId) {
+                console.log(`[JWT Strategy] Tenant mismatch: token=${tokenTenantId}, request=${requestTenantId}`);
+                throw new UnauthorizedException('Session not valid for this tenant');
+            }
+        }
+
         // Update lastActiveAt for online status tracking (fire and forget)
         this.prisma.user.update({
             where: { id: payload.sub },
             data: { lastActiveAt: new Date() },
         }).catch(() => { }); // Silently ignore errors
 
-        return user;
+        // Return user with tenantId from token (for validation purposes)
+        // Include impersonation flags for audit/visibility
+        return {
+            ...user,
+            tenantId: tokenTenantId ?? null,
+            isImpersonating: payload.isImpersonating || false,
+            impersonatedBy: payload.impersonatedBy || null,
+        };
     }
 }

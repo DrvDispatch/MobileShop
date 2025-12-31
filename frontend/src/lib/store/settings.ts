@@ -90,7 +90,7 @@ export const useSettingsStore = create<SettingsStore>((set, get) => ({
 
         set({ isLoading: true, error: null });
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/api/settings/public`);
+            const response = await fetch('/api/settings/public');
             if (!response.ok) {
                 throw new Error('Failed to fetch settings');
             }
@@ -107,7 +107,7 @@ export const useSettingsStore = create<SettingsStore>((set, get) => ({
     refreshSettings: async () => {
         set({ isLoading: true, error: null });
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/api/settings/public`);
+            const response = await fetch('/api/settings/public');
             if (!response.ok) {
                 throw new Error('Failed to fetch settings');
             }

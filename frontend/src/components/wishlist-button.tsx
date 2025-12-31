@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+const API_URL = '';
 
 interface WishlistButtonProps {
     productId: string;
@@ -91,8 +91,8 @@ export function WishlistButton({ productId, className = "", variant = "icon" }: 
             onClick={toggleWishlist}
             disabled={isLoading}
             className={`p-2 rounded-full transition-all hover:scale-110 ${isInWishlist
-                    ? "bg-red-100 text-red-500"
-                    : "bg-white/80 text-zinc-400 hover:text-red-500 hover:bg-red-50"
+                ? "bg-red-100 text-red-500"
+                : "bg-white/80 text-zinc-400 hover:text-red-500 hover:bg-red-50"
                 } ${className}`}
             title={isInWishlist ? "Verwijderen uit verlanglijstje" : "Toevoegen aan verlanglijstje"}
         >

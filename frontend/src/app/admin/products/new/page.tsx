@@ -165,7 +165,7 @@ export default function AddProductPage() {
     const loadAssets = async () => {
         setIsLoadingAssets(true);
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"}/api/upload/assets?folder=devices&limit=250`, {
+            const response = await fetch(`/api/upload/assets?folder=devices&limit=250`, {
                 headers: { "Authorization": `Bearer ${localStorage.getItem("adminAccessToken")}` },
             });
 
@@ -217,7 +217,7 @@ export default function AddProductPage() {
             formData.append("file", file);
             formData.append("modelHint", `${brand} ${modelName}`);
 
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"}/api/gemini/analyze`, {
+            const response = await fetch(`/api/gemini/analyze`, {
                 method: "POST",
                 headers: {
                     "Authorization": `Bearer ${localStorage.getItem("adminAccessToken")}`,
@@ -257,7 +257,7 @@ export default function AddProductPage() {
         try {
             const fullModelName = storage ? `${modelName} ${storage}` : modelName;
 
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"}/api/gemini/generate`, {
+            const response = await fetch(`/api/gemini/generate`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -311,7 +311,7 @@ export default function AddProductPage() {
         try {
             const fullModelName = storage ? `${modelName} ${storage}` : modelName;
 
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"}/api/gemini/generate`, {
+            const response = await fetch(`/api/gemini/generate`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

@@ -6,7 +6,7 @@
  */
 
 const PRODUCTION_STORAGE_PATH = '/storage';
-const LOCAL_MINIO_URL = 'http://localhost:9002';
+const LOCAL_MINIO_URL = 'http://localhost:9000';  // MinIO local port
 const PRODUCTION_MINIO_URL = process.env.NEXT_PUBLIC_MINIO_URL || 'https://smartphoneservice.be/storage';
 
 /**
@@ -17,6 +17,12 @@ export function getLocalImageUrl(productionUrl: string): string {
 
     try {
         const url = new URL(productionUrl);
+
+        // Handle localhost:9002 (backend-stored) → localhost:9000 (frontend-accessible)
+        if (url.hostname === 'localhost' && url.port === '9002') {
+            return `${LOCAL_MINIO_URL}${url.pathname}`;
+        }
+
         // Handle both old subdomain and new path-based routing
         if (url.hostname.includes('smartphoneservice')) {
             // Extract path - remove /storage prefix if present (path-based routing)

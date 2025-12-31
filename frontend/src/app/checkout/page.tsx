@@ -8,9 +8,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useCartStore } from "@/lib/store";
 import { api, getToken } from "@/lib/api";
+import { getImageUrl } from "@/lib/image-utils";
 import { ShoppingBag, ChevronLeft, Truck, MapPin, CreditCard, AlertCircle, Tag, Check, X, Loader2 } from "lucide-react";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+const API_URL = '';
 
 // Country phone prefixes
 const COUNTRY_CODES = [
@@ -401,7 +402,7 @@ export default function CheckoutPage() {
                                         <div key={item.id} className="flex gap-3">
                                             <div className="w-16 h-16 bg-zinc-100 rounded-lg overflow-hidden flex-shrink-0">
                                                 {item.image ? (
-                                                    <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                                                    <img src={getImageUrl(item.image)} alt={item.name} className="w-full h-full object-cover" />
                                                 ) : (
                                                     <div className="w-full h-full flex items-center justify-center text-zinc-400">
                                                         <ShoppingBag className="w-6 h-6" />

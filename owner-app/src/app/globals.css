@@ -1,0 +1,85 @@
+@import "tailwindcss";
+
+/* Custom status badge utilities */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 9999px;
+  padding-left: 0.625rem;
+  padding-right: 0.625rem;
+  padding-top: 0.125rem;
+  padding-bottom: 0.125rem;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-weight: 600;
+}
+
+.status-draft {
+  background-color: rgb(243 244 246);
+  color: rgb(31 41 55);
+}
+
+.dark .status-draft {
+  background-color: rgb(31 41 55);
+  color: rgb(229 231 235);
+}
+
+.status-active {
+  background-color: rgb(220 252 231);
+  color: rgb(22 101 52);
+}
+
+.dark .status-active {
+  background-color: rgb(20 83 45);
+  color: rgb(187 247 208);
+}
+
+.status-suspended {
+  background-color: rgb(254 249 195);
+  color: rgb(133 77 14);
+}
+
+.dark .status-suspended {
+  background-color: rgb(113 63 18);
+  color: rgb(253 230 138);
+}
+
+.status-archived {
+  background-color: rgb(254 226 226);
+  color: rgb(153 27 27);
+}
+
+.dark .status-archived {
+  background-color: rgb(127 29 29);
+  color: rgb(252 165 165);
+}
+
+.verification-pending {
+  background-color: rgb(219 234 254);
+  color: rgb(30 64 175);
+}
+
+.dark .verification-pending {
+  background-color: rgb(30 58 138);
+  color: rgb(191 219 254);
+}
+
+.verification-verified {
+  background-color: rgb(220 252 231);
+  color: rgb(22 101 52);
+}
+
+.dark .verification-verified {
+  background-color: rgb(20 83 45);
+  color: rgb(187 247 208);
+}
+
+.verification-failed {
+  background-color: rgb(254 226 226);
+  color: rgb(153 27 27);
+}
+
+.dark .verification-failed {
+  background-color: rgb(127 29 29);
+  color: rgb(252 165 165);
+}

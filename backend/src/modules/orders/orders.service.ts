@@ -194,6 +194,7 @@ export class OrdersService {
         }
 
         // Create Stripe session with discount if applicable
+        // Include tenantId in metadata for debugging and safety validation
         const sessionParams: Stripe.Checkout.SessionCreateParams = {
             mode: 'payment',
             payment_method_types: ['card'],
@@ -203,6 +204,7 @@ export class OrdersService {
                 orderId: order.id,
                 orderNumber: order.orderNumber,
                 discountCodeId: discountCodeId || '',
+                tenantId: tenantId,  // Belt & suspenders: explicit tenant binding
             },
             success_url: `${frontendUrl}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
             cancel_url: `${frontendUrl}/cart?cancelled=true`,
@@ -303,7 +305,27 @@ export class OrdersService {
             return;
         }
 
-        // Get the order with items to send email
+        // Get the order first to validate tenant consistency
+        const existingOrder = await this.prisma.order.findUnique({
+            where: { id: orderId },
+            select: { id: true, tenantId: true },
+        });
+
+        if (!existingOrder) {
+            this.logger.error(`Order not found for orderId: ${orderId}`);
+            return;
+        }
+
+        // Belt & suspenders: validate tenant consistency
+        const sessionTenantId = session.metadata?.tenantId;
+        if (sessionTenantId && existingOrder.tenantId && sessionTenantId !== existingOrder.tenantId) {
+            this.logger.error(
+                `CRITICAL: Stripe tenant mismatch! Session tenantId: ${sessionTenantId}, Order tenantId: ${existingOrder.tenantId}`
+            );
+            throw new Error('Stripe tenant mismatch - possible security issue');
+        }
+
+        // Update the order to PAID status
         const order = await this.prisma.order.update({
             where: { id: orderId },
             data: {
@@ -314,7 +336,7 @@ export class OrdersService {
             include: { items: true },
         });
 
-        this.logger.log(`Order ${orderId} marked as paid`);
+        this.logger.log(`Order ${orderId} marked as paid (tenant: ${order.tenantId})`);
 
         // Increment discount code usage if one was applied
         if (order.discountCodeId) {

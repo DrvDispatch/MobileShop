@@ -38,6 +38,7 @@ export type RepairTicketSumAggregateOutputType = {
 
 export type RepairTicketMinAggregateOutputType = {
   id: string | null
+  tenantId: string | null
   ticketNumber: string | null
   userId: string | null
   serviceId: string | null
@@ -67,6 +68,7 @@ export type RepairTicketMinAggregateOutputType = {
 
 export type RepairTicketMaxAggregateOutputType = {
   id: string | null
+  tenantId: string | null
   ticketNumber: string | null
   userId: string | null
   serviceId: string | null
@@ -96,6 +98,7 @@ export type RepairTicketMaxAggregateOutputType = {
 
 export type RepairTicketCountAggregateOutputType = {
   id: number
+  tenantId: number
   ticketNumber: number
   userId: number
   serviceId: number
@@ -138,6 +141,7 @@ export type RepairTicketSumAggregateInputType = {
 
 export type RepairTicketMinAggregateInputType = {
   id?: true
+  tenantId?: true
   ticketNumber?: true
   userId?: true
   serviceId?: true
@@ -167,6 +171,7 @@ export type RepairTicketMinAggregateInputType = {
 
 export type RepairTicketMaxAggregateInputType = {
   id?: true
+  tenantId?: true
   ticketNumber?: true
   userId?: true
   serviceId?: true
@@ -196,6 +201,7 @@ export type RepairTicketMaxAggregateInputType = {
 
 export type RepairTicketCountAggregateInputType = {
   id?: true
+  tenantId?: true
   ticketNumber?: true
   userId?: true
   serviceId?: true
@@ -313,6 +319,7 @@ export type RepairTicketGroupByArgs<ExtArgs extends runtime.Types.Extensions.Int
 
 export type RepairTicketGroupByOutputType = {
   id: string
+  tenantId: string | null
   ticketNumber: string
   userId: string | null
   serviceId: string | null
@@ -366,6 +373,7 @@ export type RepairTicketWhereInput = {
   OR?: Prisma.RepairTicketWhereInput[]
   NOT?: Prisma.RepairTicketWhereInput | Prisma.RepairTicketWhereInput[]
   id?: Prisma.StringFilter<"RepairTicket"> | string
+  tenantId?: Prisma.StringNullableFilter<"RepairTicket"> | string | null
   ticketNumber?: Prisma.StringFilter<"RepairTicket"> | string
   userId?: Prisma.StringNullableFilter<"RepairTicket"> | string | null
   serviceId?: Prisma.StringNullableFilter<"RepairTicket"> | string | null
@@ -392,6 +400,7 @@ export type RepairTicketWhereInput = {
   pickedUpAt?: Prisma.DateTimeNullableFilter<"RepairTicket"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"RepairTicket"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"RepairTicket"> | Date | string
+  tenant?: Prisma.XOR<Prisma.TenantNullableScalarRelationFilter, Prisma.TenantWhereInput> | null
   user?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   assignedStaff?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   service?: Prisma.XOR<Prisma.RepairServiceNullableScalarRelationFilter, Prisma.RepairServiceWhereInput> | null
@@ -399,6 +408,7 @@ export type RepairTicketWhereInput = {
 
 export type RepairTicketOrderByWithRelationInput = {
   id?: Prisma.SortOrder
+  tenantId?: Prisma.SortOrderInput | Prisma.SortOrder
   ticketNumber?: Prisma.SortOrder
   userId?: Prisma.SortOrderInput | Prisma.SortOrder
   serviceId?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -425,6 +435,7 @@ export type RepairTicketOrderByWithRelationInput = {
   pickedUpAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  tenant?: Prisma.TenantOrderByWithRelationInput
   user?: Prisma.UserOrderByWithRelationInput
   assignedStaff?: Prisma.UserOrderByWithRelationInput
   service?: Prisma.RepairServiceOrderByWithRelationInput
@@ -436,6 +447,7 @@ export type RepairTicketWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.RepairTicketWhereInput | Prisma.RepairTicketWhereInput[]
   OR?: Prisma.RepairTicketWhereInput[]
   NOT?: Prisma.RepairTicketWhereInput | Prisma.RepairTicketWhereInput[]
+  tenantId?: Prisma.StringNullableFilter<"RepairTicket"> | string | null
   userId?: Prisma.StringNullableFilter<"RepairTicket"> | string | null
   serviceId?: Prisma.StringNullableFilter<"RepairTicket"> | string | null
   assignedStaffId?: Prisma.StringNullableFilter<"RepairTicket"> | string | null
@@ -461,6 +473,7 @@ export type RepairTicketWhereUniqueInput = Prisma.AtLeast<{
   pickedUpAt?: Prisma.DateTimeNullableFilter<"RepairTicket"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"RepairTicket"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"RepairTicket"> | Date | string
+  tenant?: Prisma.XOR<Prisma.TenantNullableScalarRelationFilter, Prisma.TenantWhereInput> | null
   user?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   assignedStaff?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   service?: Prisma.XOR<Prisma.RepairServiceNullableScalarRelationFilter, Prisma.RepairServiceWhereInput> | null
@@ -468,6 +481,7 @@ export type RepairTicketWhereUniqueInput = Prisma.AtLeast<{
 
 export type RepairTicketOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
+  tenantId?: Prisma.SortOrderInput | Prisma.SortOrder
   ticketNumber?: Prisma.SortOrder
   userId?: Prisma.SortOrderInput | Prisma.SortOrder
   serviceId?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -506,6 +520,7 @@ export type RepairTicketScalarWhereWithAggregatesInput = {
   OR?: Prisma.RepairTicketScalarWhereWithAggregatesInput[]
   NOT?: Prisma.RepairTicketScalarWhereWithAggregatesInput | Prisma.RepairTicketScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"RepairTicket"> | string
+  tenantId?: Prisma.StringNullableWithAggregatesFilter<"RepairTicket"> | string | null
   ticketNumber?: Prisma.StringWithAggregatesFilter<"RepairTicket"> | string
   userId?: Prisma.StringNullableWithAggregatesFilter<"RepairTicket"> | string | null
   serviceId?: Prisma.StringNullableWithAggregatesFilter<"RepairTicket"> | string | null
@@ -559,6 +574,7 @@ export type RepairTicketCreateInput = {
   pickedUpAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  tenant?: Prisma.TenantCreateNestedOneWithoutRepairTicketsInput
   user?: Prisma.UserCreateNestedOneWithoutRepairTicketsInput
   assignedStaff?: Prisma.UserCreateNestedOneWithoutAssignedRepairsInput
   service?: Prisma.RepairServiceCreateNestedOneWithoutRepairTicketsInput
@@ -566,6 +582,7 @@ export type RepairTicketCreateInput = {
 
 export type RepairTicketUncheckedCreateInput = {
   id?: string
+  tenantId?: string | null
   ticketNumber: string
   userId?: string | null
   serviceId?: string | null
@@ -619,6 +636,7 @@ export type RepairTicketUpdateInput = {
   pickedUpAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  tenant?: Prisma.TenantUpdateOneWithoutRepairTicketsNestedInput
   user?: Prisma.UserUpdateOneWithoutRepairTicketsNestedInput
   assignedStaff?: Prisma.UserUpdateOneWithoutAssignedRepairsNestedInput
   service?: Prisma.RepairServiceUpdateOneWithoutRepairTicketsNestedInput
@@ -626,6 +644,7 @@ export type RepairTicketUpdateInput = {
 
 export type RepairTicketUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  tenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ticketNumber?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   serviceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -656,6 +675,7 @@ export type RepairTicketUncheckedUpdateInput = {
 
 export type RepairTicketCreateManyInput = {
   id?: string
+  tenantId?: string | null
   ticketNumber: string
   userId?: string | null
   serviceId?: string | null
@@ -713,6 +733,7 @@ export type RepairTicketUpdateManyMutationInput = {
 
 export type RepairTicketUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  tenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ticketNumber?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   serviceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -753,6 +774,7 @@ export type RepairTicketOrderByRelationAggregateInput = {
 
 export type RepairTicketCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  tenantId?: Prisma.SortOrder
   ticketNumber?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   serviceId?: Prisma.SortOrder
@@ -788,6 +810,7 @@ export type RepairTicketAvgOrderByAggregateInput = {
 
 export type RepairTicketMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  tenantId?: Prisma.SortOrder
   ticketNumber?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   serviceId?: Prisma.SortOrder
@@ -817,6 +840,7 @@ export type RepairTicketMaxOrderByAggregateInput = {
 
 export type RepairTicketMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  tenantId?: Prisma.SortOrder
   ticketNumber?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   serviceId?: Prisma.SortOrder
@@ -847,6 +871,48 @@ export type RepairTicketMinOrderByAggregateInput = {
 export type RepairTicketSumOrderByAggregateInput = {
   estimatedPrice?: Prisma.SortOrder
   finalPrice?: Prisma.SortOrder
+}
+
+export type RepairTicketCreateNestedManyWithoutTenantInput = {
+  create?: Prisma.XOR<Prisma.RepairTicketCreateWithoutTenantInput, Prisma.RepairTicketUncheckedCreateWithoutTenantInput> | Prisma.RepairTicketCreateWithoutTenantInput[] | Prisma.RepairTicketUncheckedCreateWithoutTenantInput[]
+  connectOrCreate?: Prisma.RepairTicketCreateOrConnectWithoutTenantInput | Prisma.RepairTicketCreateOrConnectWithoutTenantInput[]
+  createMany?: Prisma.RepairTicketCreateManyTenantInputEnvelope
+  connect?: Prisma.RepairTicketWhereUniqueInput | Prisma.RepairTicketWhereUniqueInput[]
+}
+
+export type RepairTicketUncheckedCreateNestedManyWithoutTenantInput = {
+  create?: Prisma.XOR<Prisma.RepairTicketCreateWithoutTenantInput, Prisma.RepairTicketUncheckedCreateWithoutTenantInput> | Prisma.RepairTicketCreateWithoutTenantInput[] | Prisma.RepairTicketUncheckedCreateWithoutTenantInput[]
+  connectOrCreate?: Prisma.RepairTicketCreateOrConnectWithoutTenantInput | Prisma.RepairTicketCreateOrConnectWithoutTenantInput[]
+  createMany?: Prisma.RepairTicketCreateManyTenantInputEnvelope
+  connect?: Prisma.RepairTicketWhereUniqueInput | Prisma.RepairTicketWhereUniqueInput[]
+}
+
+export type RepairTicketUpdateManyWithoutTenantNestedInput = {
+  create?: Prisma.XOR<Prisma.RepairTicketCreateWithoutTenantInput, Prisma.RepairTicketUncheckedCreateWithoutTenantInput> | Prisma.RepairTicketCreateWithoutTenantInput[] | Prisma.RepairTicketUncheckedCreateWithoutTenantInput[]
+  connectOrCreate?: Prisma.RepairTicketCreateOrConnectWithoutTenantInput | Prisma.RepairTicketCreateOrConnectWithoutTenantInput[]
+  upsert?: Prisma.RepairTicketUpsertWithWhereUniqueWithoutTenantInput | Prisma.RepairTicketUpsertWithWhereUniqueWithoutTenantInput[]
+  createMany?: Prisma.RepairTicketCreateManyTenantInputEnvelope
+  set?: Prisma.RepairTicketWhereUniqueInput | Prisma.RepairTicketWhereUniqueInput[]
+  disconnect?: Prisma.RepairTicketWhereUniqueInput | Prisma.RepairTicketWhereUniqueInput[]
+  delete?: Prisma.RepairTicketWhereUniqueInput | Prisma.RepairTicketWhereUniqueInput[]
+  connect?: Prisma.RepairTicketWhereUniqueInput | Prisma.RepairTicketWhereUniqueInput[]
+  update?: Prisma.RepairTicketUpdateWithWhereUniqueWithoutTenantInput | Prisma.RepairTicketUpdateWithWhereUniqueWithoutTenantInput[]
+  updateMany?: Prisma.RepairTicketUpdateManyWithWhereWithoutTenantInput | Prisma.RepairTicketUpdateManyWithWhereWithoutTenantInput[]
+  deleteMany?: Prisma.RepairTicketScalarWhereInput | Prisma.RepairTicketScalarWhereInput[]
+}
+
+export type RepairTicketUncheckedUpdateManyWithoutTenantNestedInput = {
+  create?: Prisma.XOR<Prisma.RepairTicketCreateWithoutTenantInput, Prisma.RepairTicketUncheckedCreateWithoutTenantInput> | Prisma.RepairTicketCreateWithoutTenantInput[] | Prisma.RepairTicketUncheckedCreateWithoutTenantInput[]
+  connectOrCreate?: Prisma.RepairTicketCreateOrConnectWithoutTenantInput | Prisma.RepairTicketCreateOrConnectWithoutTenantInput[]
+  upsert?: Prisma.RepairTicketUpsertWithWhereUniqueWithoutTenantInput | Prisma.RepairTicketUpsertWithWhereUniqueWithoutTenantInput[]
+  createMany?: Prisma.RepairTicketCreateManyTenantInputEnvelope
+  set?: Prisma.RepairTicketWhereUniqueInput | Prisma.RepairTicketWhereUniqueInput[]
+  disconnect?: Prisma.RepairTicketWhereUniqueInput | Prisma.RepairTicketWhereUniqueInput[]
+  delete?: Prisma.RepairTicketWhereUniqueInput | Prisma.RepairTicketWhereUniqueInput[]
+  connect?: Prisma.RepairTicketWhereUniqueInput | Prisma.RepairTicketWhereUniqueInput[]
+  update?: Prisma.RepairTicketUpdateWithWhereUniqueWithoutTenantInput | Prisma.RepairTicketUpdateWithWhereUniqueWithoutTenantInput[]
+  updateMany?: Prisma.RepairTicketUpdateManyWithWhereWithoutTenantInput | Prisma.RepairTicketUpdateManyWithWhereWithoutTenantInput[]
+  deleteMany?: Prisma.RepairTicketScalarWhereInput | Prisma.RepairTicketScalarWhereInput[]
 }
 
 export type RepairTicketCreateNestedManyWithoutUserInput = {
@@ -979,6 +1045,126 @@ export type EnumRepairStatusFieldUpdateOperationsInput = {
   set?: $Enums.RepairStatus
 }
 
+export type RepairTicketCreateWithoutTenantInput = {
+  id?: string
+  ticketNumber: string
+  status?: $Enums.RepairStatus
+  customerName: string
+  customerEmail: string
+  customerPhone: string
+  deviceBrand: string
+  deviceModel: string
+  deviceSerial?: string | null
+  devicePassword?: string | null
+  deviceNotes?: string | null
+  issueDescription: string
+  diagnosis?: string | null
+  workPerformed?: string | null
+  partsUsed?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  estimatedPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  finalPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  isPaid?: boolean
+  receivedAt?: Date | string
+  diagnosedAt?: Date | string | null
+  completedAt?: Date | string | null
+  pickedUpAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  user?: Prisma.UserCreateNestedOneWithoutRepairTicketsInput
+  assignedStaff?: Prisma.UserCreateNestedOneWithoutAssignedRepairsInput
+  service?: Prisma.RepairServiceCreateNestedOneWithoutRepairTicketsInput
+}
+
+export type RepairTicketUncheckedCreateWithoutTenantInput = {
+  id?: string
+  ticketNumber: string
+  userId?: string | null
+  serviceId?: string | null
+  assignedStaffId?: string | null
+  status?: $Enums.RepairStatus
+  customerName: string
+  customerEmail: string
+  customerPhone: string
+  deviceBrand: string
+  deviceModel: string
+  deviceSerial?: string | null
+  devicePassword?: string | null
+  deviceNotes?: string | null
+  issueDescription: string
+  diagnosis?: string | null
+  workPerformed?: string | null
+  partsUsed?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  estimatedPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  finalPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  isPaid?: boolean
+  receivedAt?: Date | string
+  diagnosedAt?: Date | string | null
+  completedAt?: Date | string | null
+  pickedUpAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type RepairTicketCreateOrConnectWithoutTenantInput = {
+  where: Prisma.RepairTicketWhereUniqueInput
+  create: Prisma.XOR<Prisma.RepairTicketCreateWithoutTenantInput, Prisma.RepairTicketUncheckedCreateWithoutTenantInput>
+}
+
+export type RepairTicketCreateManyTenantInputEnvelope = {
+  data: Prisma.RepairTicketCreateManyTenantInput | Prisma.RepairTicketCreateManyTenantInput[]
+  skipDuplicates?: boolean
+}
+
+export type RepairTicketUpsertWithWhereUniqueWithoutTenantInput = {
+  where: Prisma.RepairTicketWhereUniqueInput
+  update: Prisma.XOR<Prisma.RepairTicketUpdateWithoutTenantInput, Prisma.RepairTicketUncheckedUpdateWithoutTenantInput>
+  create: Prisma.XOR<Prisma.RepairTicketCreateWithoutTenantInput, Prisma.RepairTicketUncheckedCreateWithoutTenantInput>
+}
+
+export type RepairTicketUpdateWithWhereUniqueWithoutTenantInput = {
+  where: Prisma.RepairTicketWhereUniqueInput
+  data: Prisma.XOR<Prisma.RepairTicketUpdateWithoutTenantInput, Prisma.RepairTicketUncheckedUpdateWithoutTenantInput>
+}
+
+export type RepairTicketUpdateManyWithWhereWithoutTenantInput = {
+  where: Prisma.RepairTicketScalarWhereInput
+  data: Prisma.XOR<Prisma.RepairTicketUpdateManyMutationInput, Prisma.RepairTicketUncheckedUpdateManyWithoutTenantInput>
+}
+
+export type RepairTicketScalarWhereInput = {
+  AND?: Prisma.RepairTicketScalarWhereInput | Prisma.RepairTicketScalarWhereInput[]
+  OR?: Prisma.RepairTicketScalarWhereInput[]
+  NOT?: Prisma.RepairTicketScalarWhereInput | Prisma.RepairTicketScalarWhereInput[]
+  id?: Prisma.StringFilter<"RepairTicket"> | string
+  tenantId?: Prisma.StringNullableFilter<"RepairTicket"> | string | null
+  ticketNumber?: Prisma.StringFilter<"RepairTicket"> | string
+  userId?: Prisma.StringNullableFilter<"RepairTicket"> | string | null
+  serviceId?: Prisma.StringNullableFilter<"RepairTicket"> | string | null
+  assignedStaffId?: Prisma.StringNullableFilter<"RepairTicket"> | string | null
+  status?: Prisma.EnumRepairStatusFilter<"RepairTicket"> | $Enums.RepairStatus
+  customerName?: Prisma.StringFilter<"RepairTicket"> | string
+  customerEmail?: Prisma.StringFilter<"RepairTicket"> | string
+  customerPhone?: Prisma.StringFilter<"RepairTicket"> | string
+  deviceBrand?: Prisma.StringFilter<"RepairTicket"> | string
+  deviceModel?: Prisma.StringFilter<"RepairTicket"> | string
+  deviceSerial?: Prisma.StringNullableFilter<"RepairTicket"> | string | null
+  devicePassword?: Prisma.StringNullableFilter<"RepairTicket"> | string | null
+  deviceNotes?: Prisma.StringNullableFilter<"RepairTicket"> | string | null
+  issueDescription?: Prisma.StringFilter<"RepairTicket"> | string
+  diagnosis?: Prisma.StringNullableFilter<"RepairTicket"> | string | null
+  workPerformed?: Prisma.StringNullableFilter<"RepairTicket"> | string | null
+  partsUsed?: Prisma.JsonNullableFilter<"RepairTicket">
+  estimatedPrice?: Prisma.DecimalNullableFilter<"RepairTicket"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  finalPrice?: Prisma.DecimalNullableFilter<"RepairTicket"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  isPaid?: Prisma.BoolFilter<"RepairTicket"> | boolean
+  receivedAt?: Prisma.DateTimeFilter<"RepairTicket"> | Date | string
+  diagnosedAt?: Prisma.DateTimeNullableFilter<"RepairTicket"> | Date | string | null
+  completedAt?: Prisma.DateTimeNullableFilter<"RepairTicket"> | Date | string | null
+  pickedUpAt?: Prisma.DateTimeNullableFilter<"RepairTicket"> | Date | string | null
+  createdAt?: Prisma.DateTimeFilter<"RepairTicket"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"RepairTicket"> | Date | string
+}
+
 export type RepairTicketCreateWithoutUserInput = {
   id?: string
   ticketNumber: string
@@ -1004,12 +1190,14 @@ export type RepairTicketCreateWithoutUserInput = {
   pickedUpAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  tenant?: Prisma.TenantCreateNestedOneWithoutRepairTicketsInput
   assignedStaff?: Prisma.UserCreateNestedOneWithoutAssignedRepairsInput
   service?: Prisma.RepairServiceCreateNestedOneWithoutRepairTicketsInput
 }
 
 export type RepairTicketUncheckedCreateWithoutUserInput = {
   id?: string
+  tenantId?: string | null
   ticketNumber: string
   serviceId?: string | null
   assignedStaffId?: string | null
@@ -1072,12 +1260,14 @@ export type RepairTicketCreateWithoutAssignedStaffInput = {
   pickedUpAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  tenant?: Prisma.TenantCreateNestedOneWithoutRepairTicketsInput
   user?: Prisma.UserCreateNestedOneWithoutRepairTicketsInput
   service?: Prisma.RepairServiceCreateNestedOneWithoutRepairTicketsInput
 }
 
 export type RepairTicketUncheckedCreateWithoutAssignedStaffInput = {
   id?: string
+  tenantId?: string | null
   ticketNumber: string
   userId?: string | null
   serviceId?: string | null
@@ -1131,39 +1321,6 @@ export type RepairTicketUpdateManyWithWhereWithoutUserInput = {
   data: Prisma.XOR<Prisma.RepairTicketUpdateManyMutationInput, Prisma.RepairTicketUncheckedUpdateManyWithoutUserInput>
 }
 
-export type RepairTicketScalarWhereInput = {
-  AND?: Prisma.RepairTicketScalarWhereInput | Prisma.RepairTicketScalarWhereInput[]
-  OR?: Prisma.RepairTicketScalarWhereInput[]
-  NOT?: Prisma.RepairTicketScalarWhereInput | Prisma.RepairTicketScalarWhereInput[]
-  id?: Prisma.StringFilter<"RepairTicket"> | string
-  ticketNumber?: Prisma.StringFilter<"RepairTicket"> | string
-  userId?: Prisma.StringNullableFilter<"RepairTicket"> | string | null
-  serviceId?: Prisma.StringNullableFilter<"RepairTicket"> | string | null
-  assignedStaffId?: Prisma.StringNullableFilter<"RepairTicket"> | string | null
-  status?: Prisma.EnumRepairStatusFilter<"RepairTicket"> | $Enums.RepairStatus
-  customerName?: Prisma.StringFilter<"RepairTicket"> | string
-  customerEmail?: Prisma.StringFilter<"RepairTicket"> | string
-  customerPhone?: Prisma.StringFilter<"RepairTicket"> | string
-  deviceBrand?: Prisma.StringFilter<"RepairTicket"> | string
-  deviceModel?: Prisma.StringFilter<"RepairTicket"> | string
-  deviceSerial?: Prisma.StringNullableFilter<"RepairTicket"> | string | null
-  devicePassword?: Prisma.StringNullableFilter<"RepairTicket"> | string | null
-  deviceNotes?: Prisma.StringNullableFilter<"RepairTicket"> | string | null
-  issueDescription?: Prisma.StringFilter<"RepairTicket"> | string
-  diagnosis?: Prisma.StringNullableFilter<"RepairTicket"> | string | null
-  workPerformed?: Prisma.StringNullableFilter<"RepairTicket"> | string | null
-  partsUsed?: Prisma.JsonNullableFilter<"RepairTicket">
-  estimatedPrice?: Prisma.DecimalNullableFilter<"RepairTicket"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  finalPrice?: Prisma.DecimalNullableFilter<"RepairTicket"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  isPaid?: Prisma.BoolFilter<"RepairTicket"> | boolean
-  receivedAt?: Prisma.DateTimeFilter<"RepairTicket"> | Date | string
-  diagnosedAt?: Prisma.DateTimeNullableFilter<"RepairTicket"> | Date | string | null
-  completedAt?: Prisma.DateTimeNullableFilter<"RepairTicket"> | Date | string | null
-  pickedUpAt?: Prisma.DateTimeNullableFilter<"RepairTicket"> | Date | string | null
-  createdAt?: Prisma.DateTimeFilter<"RepairTicket"> | Date | string
-  updatedAt?: Prisma.DateTimeFilter<"RepairTicket"> | Date | string
-}
-
 export type RepairTicketUpsertWithWhereUniqueWithoutAssignedStaffInput = {
   where: Prisma.RepairTicketWhereUniqueInput
   update: Prisma.XOR<Prisma.RepairTicketUpdateWithoutAssignedStaffInput, Prisma.RepairTicketUncheckedUpdateWithoutAssignedStaffInput>
@@ -1205,12 +1362,14 @@ export type RepairTicketCreateWithoutServiceInput = {
   pickedUpAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  tenant?: Prisma.TenantCreateNestedOneWithoutRepairTicketsInput
   user?: Prisma.UserCreateNestedOneWithoutRepairTicketsInput
   assignedStaff?: Prisma.UserCreateNestedOneWithoutAssignedRepairsInput
 }
 
 export type RepairTicketUncheckedCreateWithoutServiceInput = {
   id?: string
+  tenantId?: string | null
   ticketNumber: string
   userId?: string | null
   assignedStaffId?: string | null
@@ -1264,8 +1423,129 @@ export type RepairTicketUpdateManyWithWhereWithoutServiceInput = {
   data: Prisma.XOR<Prisma.RepairTicketUpdateManyMutationInput, Prisma.RepairTicketUncheckedUpdateManyWithoutServiceInput>
 }
 
+export type RepairTicketCreateManyTenantInput = {
+  id?: string
+  ticketNumber: string
+  userId?: string | null
+  serviceId?: string | null
+  assignedStaffId?: string | null
+  status?: $Enums.RepairStatus
+  customerName: string
+  customerEmail: string
+  customerPhone: string
+  deviceBrand: string
+  deviceModel: string
+  deviceSerial?: string | null
+  devicePassword?: string | null
+  deviceNotes?: string | null
+  issueDescription: string
+  diagnosis?: string | null
+  workPerformed?: string | null
+  partsUsed?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  estimatedPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  finalPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  isPaid?: boolean
+  receivedAt?: Date | string
+  diagnosedAt?: Date | string | null
+  completedAt?: Date | string | null
+  pickedUpAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type RepairTicketUpdateWithoutTenantInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  ticketNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumRepairStatusFieldUpdateOperationsInput | $Enums.RepairStatus
+  customerName?: Prisma.StringFieldUpdateOperationsInput | string
+  customerEmail?: Prisma.StringFieldUpdateOperationsInput | string
+  customerPhone?: Prisma.StringFieldUpdateOperationsInput | string
+  deviceBrand?: Prisma.StringFieldUpdateOperationsInput | string
+  deviceModel?: Prisma.StringFieldUpdateOperationsInput | string
+  deviceSerial?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  devicePassword?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deviceNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  issueDescription?: Prisma.StringFieldUpdateOperationsInput | string
+  diagnosis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  workPerformed?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  partsUsed?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  estimatedPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  finalPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  isPaid?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  receivedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  diagnosedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pickedUpAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneWithoutRepairTicketsNestedInput
+  assignedStaff?: Prisma.UserUpdateOneWithoutAssignedRepairsNestedInput
+  service?: Prisma.RepairServiceUpdateOneWithoutRepairTicketsNestedInput
+}
+
+export type RepairTicketUncheckedUpdateWithoutTenantInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  ticketNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serviceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  assignedStaffId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumRepairStatusFieldUpdateOperationsInput | $Enums.RepairStatus
+  customerName?: Prisma.StringFieldUpdateOperationsInput | string
+  customerEmail?: Prisma.StringFieldUpdateOperationsInput | string
+  customerPhone?: Prisma.StringFieldUpdateOperationsInput | string
+  deviceBrand?: Prisma.StringFieldUpdateOperationsInput | string
+  deviceModel?: Prisma.StringFieldUpdateOperationsInput | string
+  deviceSerial?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  devicePassword?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deviceNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  issueDescription?: Prisma.StringFieldUpdateOperationsInput | string
+  diagnosis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  workPerformed?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  partsUsed?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  estimatedPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  finalPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  isPaid?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  receivedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  diagnosedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pickedUpAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type RepairTicketUncheckedUpdateManyWithoutTenantInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  ticketNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serviceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  assignedStaffId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumRepairStatusFieldUpdateOperationsInput | $Enums.RepairStatus
+  customerName?: Prisma.StringFieldUpdateOperationsInput | string
+  customerEmail?: Prisma.StringFieldUpdateOperationsInput | string
+  customerPhone?: Prisma.StringFieldUpdateOperationsInput | string
+  deviceBrand?: Prisma.StringFieldUpdateOperationsInput | string
+  deviceModel?: Prisma.StringFieldUpdateOperationsInput | string
+  deviceSerial?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  devicePassword?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deviceNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  issueDescription?: Prisma.StringFieldUpdateOperationsInput | string
+  diagnosis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  workPerformed?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  partsUsed?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  estimatedPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  finalPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  isPaid?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  receivedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  diagnosedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pickedUpAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
 export type RepairTicketCreateManyUserInput = {
   id?: string
+  tenantId?: string | null
   ticketNumber: string
   serviceId?: string | null
   assignedStaffId?: string | null
@@ -1295,6 +1575,7 @@ export type RepairTicketCreateManyUserInput = {
 
 export type RepairTicketCreateManyAssignedStaffInput = {
   id?: string
+  tenantId?: string | null
   ticketNumber: string
   userId?: string | null
   serviceId?: string | null
@@ -1347,12 +1628,14 @@ export type RepairTicketUpdateWithoutUserInput = {
   pickedUpAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  tenant?: Prisma.TenantUpdateOneWithoutRepairTicketsNestedInput
   assignedStaff?: Prisma.UserUpdateOneWithoutAssignedRepairsNestedInput
   service?: Prisma.RepairServiceUpdateOneWithoutRepairTicketsNestedInput
 }
 
 export type RepairTicketUncheckedUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  tenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ticketNumber?: Prisma.StringFieldUpdateOperationsInput | string
   serviceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   assignedStaffId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1382,6 +1665,7 @@ export type RepairTicketUncheckedUpdateWithoutUserInput = {
 
 export type RepairTicketUncheckedUpdateManyWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  tenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ticketNumber?: Prisma.StringFieldUpdateOperationsInput | string
   serviceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   assignedStaffId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1434,12 +1718,14 @@ export type RepairTicketUpdateWithoutAssignedStaffInput = {
   pickedUpAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  tenant?: Prisma.TenantUpdateOneWithoutRepairTicketsNestedInput
   user?: Prisma.UserUpdateOneWithoutRepairTicketsNestedInput
   service?: Prisma.RepairServiceUpdateOneWithoutRepairTicketsNestedInput
 }
 
 export type RepairTicketUncheckedUpdateWithoutAssignedStaffInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  tenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ticketNumber?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   serviceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1469,6 +1755,7 @@ export type RepairTicketUncheckedUpdateWithoutAssignedStaffInput = {
 
 export type RepairTicketUncheckedUpdateManyWithoutAssignedStaffInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  tenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ticketNumber?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   serviceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1498,6 +1785,7 @@ export type RepairTicketUncheckedUpdateManyWithoutAssignedStaffInput = {
 
 export type RepairTicketCreateManyServiceInput = {
   id?: string
+  tenantId?: string | null
   ticketNumber: string
   userId?: string | null
   assignedStaffId?: string | null
@@ -1550,12 +1838,14 @@ export type RepairTicketUpdateWithoutServiceInput = {
   pickedUpAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  tenant?: Prisma.TenantUpdateOneWithoutRepairTicketsNestedInput
   user?: Prisma.UserUpdateOneWithoutRepairTicketsNestedInput
   assignedStaff?: Prisma.UserUpdateOneWithoutAssignedRepairsNestedInput
 }
 
 export type RepairTicketUncheckedUpdateWithoutServiceInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  tenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ticketNumber?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   assignedStaffId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1585,6 +1875,7 @@ export type RepairTicketUncheckedUpdateWithoutServiceInput = {
 
 export type RepairTicketUncheckedUpdateManyWithoutServiceInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  tenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ticketNumber?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   assignedStaffId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1616,6 +1907,7 @@ export type RepairTicketUncheckedUpdateManyWithoutServiceInput = {
 
 export type RepairTicketSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  tenantId?: boolean
   ticketNumber?: boolean
   userId?: boolean
   serviceId?: boolean
@@ -1642,6 +1934,7 @@ export type RepairTicketSelect<ExtArgs extends runtime.Types.Extensions.Internal
   pickedUpAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  tenant?: boolean | Prisma.RepairTicket$tenantArgs<ExtArgs>
   user?: boolean | Prisma.RepairTicket$userArgs<ExtArgs>
   assignedStaff?: boolean | Prisma.RepairTicket$assignedStaffArgs<ExtArgs>
   service?: boolean | Prisma.RepairTicket$serviceArgs<ExtArgs>
@@ -1649,6 +1942,7 @@ export type RepairTicketSelect<ExtArgs extends runtime.Types.Extensions.Internal
 
 export type RepairTicketSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  tenantId?: boolean
   ticketNumber?: boolean
   userId?: boolean
   serviceId?: boolean
@@ -1675,6 +1969,7 @@ export type RepairTicketSelectCreateManyAndReturn<ExtArgs extends runtime.Types.
   pickedUpAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  tenant?: boolean | Prisma.RepairTicket$tenantArgs<ExtArgs>
   user?: boolean | Prisma.RepairTicket$userArgs<ExtArgs>
   assignedStaff?: boolean | Prisma.RepairTicket$assignedStaffArgs<ExtArgs>
   service?: boolean | Prisma.RepairTicket$serviceArgs<ExtArgs>
@@ -1682,6 +1977,7 @@ export type RepairTicketSelectCreateManyAndReturn<ExtArgs extends runtime.Types.
 
 export type RepairTicketSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  tenantId?: boolean
   ticketNumber?: boolean
   userId?: boolean
   serviceId?: boolean
@@ -1708,6 +2004,7 @@ export type RepairTicketSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.
   pickedUpAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  tenant?: boolean | Prisma.RepairTicket$tenantArgs<ExtArgs>
   user?: boolean | Prisma.RepairTicket$userArgs<ExtArgs>
   assignedStaff?: boolean | Prisma.RepairTicket$assignedStaffArgs<ExtArgs>
   service?: boolean | Prisma.RepairTicket$serviceArgs<ExtArgs>
@@ -1715,6 +2012,7 @@ export type RepairTicketSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.
 
 export type RepairTicketSelectScalar = {
   id?: boolean
+  tenantId?: boolean
   ticketNumber?: boolean
   userId?: boolean
   serviceId?: boolean
@@ -1743,18 +2041,21 @@ export type RepairTicketSelectScalar = {
   updatedAt?: boolean
 }
 
-export type RepairTicketOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "ticketNumber" | "userId" | "serviceId" | "assignedStaffId" | "status" | "customerName" | "customerEmail" | "customerPhone" | "deviceBrand" | "deviceModel" | "deviceSerial" | "devicePassword" | "deviceNotes" | "issueDescription" | "diagnosis" | "workPerformed" | "partsUsed" | "estimatedPrice" | "finalPrice" | "isPaid" | "receivedAt" | "diagnosedAt" | "completedAt" | "pickedUpAt" | "createdAt" | "updatedAt", ExtArgs["result"]["repairTicket"]>
+export type RepairTicketOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "tenantId" | "ticketNumber" | "userId" | "serviceId" | "assignedStaffId" | "status" | "customerName" | "customerEmail" | "customerPhone" | "deviceBrand" | "deviceModel" | "deviceSerial" | "devicePassword" | "deviceNotes" | "issueDescription" | "diagnosis" | "workPerformed" | "partsUsed" | "estimatedPrice" | "finalPrice" | "isPaid" | "receivedAt" | "diagnosedAt" | "completedAt" | "pickedUpAt" | "createdAt" | "updatedAt", ExtArgs["result"]["repairTicket"]>
 export type RepairTicketInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  tenant?: boolean | Prisma.RepairTicket$tenantArgs<ExtArgs>
   user?: boolean | Prisma.RepairTicket$userArgs<ExtArgs>
   assignedStaff?: boolean | Prisma.RepairTicket$assignedStaffArgs<ExtArgs>
   service?: boolean | Prisma.RepairTicket$serviceArgs<ExtArgs>
 }
 export type RepairTicketIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  tenant?: boolean | Prisma.RepairTicket$tenantArgs<ExtArgs>
   user?: boolean | Prisma.RepairTicket$userArgs<ExtArgs>
   assignedStaff?: boolean | Prisma.RepairTicket$assignedStaffArgs<ExtArgs>
   service?: boolean | Prisma.RepairTicket$serviceArgs<ExtArgs>
 }
 export type RepairTicketIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  tenant?: boolean | Prisma.RepairTicket$tenantArgs<ExtArgs>
   user?: boolean | Prisma.RepairTicket$userArgs<ExtArgs>
   assignedStaff?: boolean | Prisma.RepairTicket$assignedStaffArgs<ExtArgs>
   service?: boolean | Prisma.RepairTicket$serviceArgs<ExtArgs>
@@ -1763,12 +2064,14 @@ export type RepairTicketIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types
 export type $RepairTicketPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "RepairTicket"
   objects: {
+    tenant: Prisma.$TenantPayload<ExtArgs> | null
     user: Prisma.$UserPayload<ExtArgs> | null
     assignedStaff: Prisma.$UserPayload<ExtArgs> | null
     service: Prisma.$RepairServicePayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
+    tenantId: string | null
     ticketNumber: string
     userId: string | null
     serviceId: string | null
@@ -2189,6 +2492,7 @@ readonly fields: RepairTicketFieldRefs;
  */
 export interface Prisma__RepairTicketClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  tenant<T extends Prisma.RepairTicket$tenantArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.RepairTicket$tenantArgs<ExtArgs>>): Prisma.Prisma__TenantClient<runtime.Types.Result.GetResult<Prisma.$TenantPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   user<T extends Prisma.RepairTicket$userArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.RepairTicket$userArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   assignedStaff<T extends Prisma.RepairTicket$assignedStaffArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.RepairTicket$assignedStaffArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   service<T extends Prisma.RepairTicket$serviceArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.RepairTicket$serviceArgs<ExtArgs>>): Prisma.Prisma__RepairServiceClient<runtime.Types.Result.GetResult<Prisma.$RepairServicePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
@@ -2222,6 +2526,7 @@ export interface Prisma__RepairTicketClient<T, Null = never, ExtArgs extends run
  */
 export interface RepairTicketFieldRefs {
   readonly id: Prisma.FieldRef<"RepairTicket", 'String'>
+  readonly tenantId: Prisma.FieldRef<"RepairTicket", 'String'>
   readonly ticketNumber: Prisma.FieldRef<"RepairTicket", 'String'>
   readonly userId: Prisma.FieldRef<"RepairTicket", 'String'>
   readonly serviceId: Prisma.FieldRef<"RepairTicket", 'String'>
@@ -2641,6 +2946,25 @@ export type RepairTicketDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.
    * Limit how many RepairTickets to delete.
    */
   limit?: number
+}
+
+/**
+ * RepairTicket.tenant
+ */
+export type RepairTicket$tenantArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Tenant
+   */
+  select?: Prisma.TenantSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Tenant
+   */
+  omit?: Prisma.TenantOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TenantInclude<ExtArgs> | null
+  where?: Prisma.TenantWhereInput
 }
 
 /**

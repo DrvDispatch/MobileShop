@@ -17,7 +17,7 @@ import {
     Calendar,
 } from "lucide-react";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+// All API calls use relative paths to go through Next.js proxy for tenant resolution
 
 interface Banner {
     id: string;
@@ -73,7 +73,7 @@ export default function AdminBannersPage() {
     const fetchBanners = async () => {
         setIsLoading(true);
         try {
-            const res = await fetch(`${API_URL}/api/banners`, {
+            const res = await fetch(`/api/banners`, {
                 headers: getAdminHeaders(),
             });
             if (res.ok) {
@@ -154,8 +154,8 @@ export default function AdminBannersPage() {
             };
 
             const url = editingId
-                ? `${API_URL}/api/banners/${editingId}`
-                : `${API_URL}/api/banners`;
+                ? `/api/banners/${editingId}`
+                : `/api/banners`;
             const method = editingId ? "PATCH" : "POST";
 
             const res = await fetch(url, {
@@ -184,7 +184,7 @@ export default function AdminBannersPage() {
         if (!confirm("Weet je zeker dat je deze banner wilt verwijderen?")) return;
 
         try {
-            const res = await fetch(`${API_URL}/api/banners/${id}`, {
+            const res = await fetch(`/api/banners/${id}`, {
                 method: "DELETE",
                 headers: getAdminHeaders(),
             });
@@ -199,7 +199,7 @@ export default function AdminBannersPage() {
 
     const handleToggleActive = async (banner: Banner) => {
         try {
-            const res = await fetch(`${API_URL}/api/banners/${banner.id}`, {
+            const res = await fetch(`/api/banners/${banner.id}`, {
                 method: "PATCH",
                 headers: getAdminHeaders(),
                 body: JSON.stringify({ isActive: !banner.isActive }),
@@ -250,8 +250,8 @@ export default function AdminBannersPage() {
                         <div
                             key={banner.id}
                             className={`bg-white rounded-xl border overflow-hidden ${!banner.isActive || isExpired(banner)
-                                    ? "border-zinc-200 opacity-60"
-                                    : "border-zinc-200"
+                                ? "border-zinc-200 opacity-60"
+                                : "border-zinc-200"
                                 }`}
                         >
                             {/* Preview */}

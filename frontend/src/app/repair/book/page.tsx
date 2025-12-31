@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Navbar, Footer } from "@/components/landing";
 import { Button } from "@/components/ui/button";
 import { api } from "@/lib/api";
+import { getImageUrl } from "@/lib/image-utils";
 import {
     ChevronLeft,
     Smartphone,
@@ -21,8 +22,6 @@ import {
     Search,
     Wrench,
 } from "lucide-react";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 
 // Types
 interface DeviceType {
@@ -131,7 +130,7 @@ export default function BookRepairPage() {
     const fetchDeviceTypes = async () => {
         setIsLoading(true);
         try {
-            const response = await fetch(`${API_URL}/api/repairs/device-types`);
+            const response = await fetch('/api/repairs/device-types');
             const data = await response.json();
             setDeviceTypes(data || []);
         } catch (err) {
@@ -149,7 +148,7 @@ export default function BookRepairPage() {
     const fetchBrands = async (deviceTypeSlug: string) => {
         setIsLoading(true);
         try {
-            const response = await fetch(`${API_URL}/api/repairs/brands?deviceType=${deviceTypeSlug}`);
+            const response = await fetch(`/api/repairs/brands?deviceType=${deviceTypeSlug}`);
             const data = await response.json();
             setBrands(data || []);
         } catch (err) {
@@ -163,7 +162,7 @@ export default function BookRepairPage() {
     const fetchDevices = async (brandSlug: string) => {
         setIsLoading(true);
         try {
-            const response = await fetch(`${API_URL}/api/repairs/devices?brand=${brandSlug}`);
+            const response = await fetch(`/api/repairs/devices?brand=${brandSlug}`);
             const data = await response.json();
             setDevices(data || []);
         } catch (err) {
@@ -177,7 +176,7 @@ export default function BookRepairPage() {
     const fetchRepairs = async (deviceSlug: string) => {
         setIsLoading(true);
         try {
-            const response = await fetch(`${API_URL}/api/repairs/services/${deviceSlug}`);
+            const response = await fetch(`/api/repairs/services/${deviceSlug}`);
             const data = await response.json();
             setRepairs(data || []);
         } catch (err) {
@@ -191,7 +190,7 @@ export default function BookRepairPage() {
     const fetchAvailableSlots = async (date: Date) => {
         try {
             const dateStr = date.toISOString().split("T")[0];
-            const response = await fetch(`${API_URL}/api/appointments/available-slots?date=${dateStr}`);
+            const response = await fetch(`/api/appointments/available-slots?date=${dateStr}`);
             const data = await response.json();
             setAvailableSlots(data.slots || TIME_SLOTS);
         } catch {
@@ -318,7 +317,7 @@ export default function BookRepairPage() {
         setError(null);
 
         try {
-            const response = await fetch(`${API_URL}/api/appointments`, {
+            const response = await fetch('/api/appointments', {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -437,7 +436,7 @@ export default function BookRepairPage() {
                                     ) : dt.slug === "tablet" ? (
                                         <Tablet className="w-12 h-12 text-zinc-600" />
                                     ) : dt.icon ? (
-                                        <img src={dt.icon} alt={dt.name} className="w-12 h-12 object-contain" />
+                                        <img src={getImageUrl(dt.icon)} alt={dt.name} className="w-12 h-12 object-contain" />
                                     ) : (
                                         <Smartphone className="w-12 h-12 text-zinc-600" />
                                     )}
@@ -462,7 +461,7 @@ export default function BookRepairPage() {
                                 >
                                     <div className="aspect-[3/2] flex items-center justify-center mb-2">
                                         {brand.logo ? (
-                                            <img src={brand.logo} alt={brand.name} className="max-h-12 object-contain" />
+                                            <img src={getImageUrl(brand.logo)} alt={brand.name} className="max-h-12 object-contain" />
                                         ) : (
                                             <span className="text-xl font-bold text-zinc-600">{brand.name}</span>
                                         )}
@@ -504,7 +503,7 @@ export default function BookRepairPage() {
                                     >
                                         <div className="aspect-square flex items-center justify-center mb-2 bg-zinc-50 rounded-lg">
                                             {device.image ? (
-                                                <img src={device.image} alt={device.name} className="max-h-24 object-contain" />
+                                                <img src={getImageUrl(device.image)} alt={device.name} className="max-h-24 object-contain" />
                                             ) : (
                                                 <Smartphone className="w-12 h-12 text-zinc-300" />
                                             )}
@@ -527,7 +526,7 @@ export default function BookRepairPage() {
                                 <div className="w-24 h-24 sm:w-32 sm:h-32 bg-zinc-50 rounded-xl flex items-center justify-center flex-shrink-0">
                                     {selectedDevice?.image ? (
                                         <img
-                                            src={selectedDevice.image}
+                                            src={getImageUrl(selectedDevice.image)}
                                             alt={selectedDevice.name}
                                             className="max-w-full max-h-full object-contain"
                                         />
@@ -561,7 +560,7 @@ export default function BookRepairPage() {
                                         {/* Icon */}
                                         <div className="w-14 h-14 mx-auto mb-3 bg-zinc-100 rounded-xl flex items-center justify-center group-hover:bg-zinc-200 transition-colors">
                                             {repair.service?.icon ? (
-                                                <img src={repair.service.icon} alt="" className="w-8 h-8 object-contain" />
+                                                <img src={getImageUrl(repair.service.icon)} alt="" className="w-8 h-8 object-contain" />
                                             ) : (
                                                 <Smartphone className="w-7 h-7 text-zinc-600" />
                                             )}
@@ -593,7 +592,7 @@ export default function BookRepairPage() {
                                 <div className="w-20 h-20 sm:w-24 sm:h-24 bg-zinc-50 rounded-xl flex items-center justify-center flex-shrink-0">
                                     {selectedDevice?.image ? (
                                         <img
-                                            src={selectedDevice.image}
+                                            src={getImageUrl(selectedDevice.image)}
                                             alt={selectedDevice.name}
                                             className="max-w-full max-h-full object-contain"
                                         />
@@ -609,7 +608,7 @@ export default function BookRepairPage() {
                                     <div className="flex items-center gap-2 mt-1">
                                         <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-700">
                                             {selectedRepair?.service?.icon ? (
-                                                <img src={selectedRepair.service.icon} alt="" className="w-4 h-4" />
+                                                <img src={getImageUrl(selectedRepair.service.icon)} alt="" className="w-4 h-4" />
                                             ) : (
                                                 <Wrench className="w-3.5 h-3.5" />
                                             )}
@@ -691,7 +690,7 @@ export default function BookRepairPage() {
                                 <div className="w-20 h-20 sm:w-24 sm:h-24 bg-zinc-50 rounded-xl flex items-center justify-center flex-shrink-0">
                                     {selectedDevice?.image ? (
                                         <img
-                                            src={selectedDevice.image}
+                                            src={getImageUrl(selectedDevice.image)}
                                             alt={selectedDevice.name}
                                             className="max-w-full max-h-full object-contain"
                                         />
@@ -707,7 +706,7 @@ export default function BookRepairPage() {
                                     <div className="flex flex-wrap items-center gap-2 mt-1">
                                         <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-700">
                                             {selectedRepair?.service?.icon ? (
-                                                <img src={selectedRepair.service.icon} alt="" className="w-4 h-4" />
+                                                <img src={getImageUrl(selectedRepair.service.icon)} alt="" className="w-4 h-4" />
                                             ) : (
                                                 <Wrench className="w-3.5 h-3.5" />
                                             )}

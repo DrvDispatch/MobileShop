@@ -1,0 +1,17 @@
+{
+    "extends": "./tsconfig.json",
+    "compilerOptions": {
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "noEmit": true,
+        "allowJs": true,
+        "esModuleInterop": true
+    },
+    "ts-node": {
+        "transpileOnly": true
+    },
+    "include": [
+        "prisma/**/*",
+        "src/**/*"
+    ]
+}

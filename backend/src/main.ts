@@ -23,6 +23,23 @@ async function bootstrap() {
   }));
   app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
+  // Simple cookie parser middleware
+  app.use((req: any, _res: any, next: any) => {
+    req.cookies = {};
+    const cookieHeader = req.headers.cookie;
+    if (cookieHeader) {
+      cookieHeader.split(';').forEach((cookie: string) => {
+        const [name, ...rest] = cookie.split('=');
+        req.cookies[name.trim()] = decodeURIComponent(rest.join('='));
+      });
+      // Log if auth_token cookie is present
+      if (req.cookies['auth_token']) {
+        console.log('[Cookie Parser] Found auth_token cookie');
+      }
+    }
+    next();
+  });
+
   // Global prefix
   app.setGlobalPrefix('api');
 

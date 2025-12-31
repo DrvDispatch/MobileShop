@@ -3,6 +3,52 @@ import { Request, Response, NextFunction } from 'express';
 import { PrismaService } from '../../prisma/prisma.service';
 
 // Extend Express Request to include tenant context
+// Feature flags type for request context
+export interface TenantFeatures {
+    ecommerceEnabled: boolean;
+    refurbishedGrading: boolean;
+    wishlistEnabled: boolean;
+    stockNotifications: boolean;
+    couponsEnabled: boolean;
+    repairsEnabled: boolean;
+    quoteOnRequest: boolean;
+    mailInRepairs: boolean;
+    walkInQueue: boolean;
+    ticketsEnabled: boolean;
+    liveChatWidget: boolean;
+    invoicingEnabled: boolean;
+    vatCalculation: boolean;
+    pdfGeneration: boolean;
+    inventoryEnabled: boolean;
+    advancedInventory: boolean;
+    employeeManagement: boolean;
+    maxAdminUsers: number;
+    analyticsEnabled: boolean;
+}
+
+// Default features (used when no TenantFeature record exists)
+export const DEFAULT_FEATURES: TenantFeatures = {
+    ecommerceEnabled: true,
+    refurbishedGrading: true,
+    wishlistEnabled: true,
+    stockNotifications: true,
+    couponsEnabled: true,
+    repairsEnabled: true,
+    quoteOnRequest: false,
+    mailInRepairs: false,
+    walkInQueue: false,
+    ticketsEnabled: true,
+    liveChatWidget: true,
+    invoicingEnabled: true,
+    vatCalculation: true,
+    pdfGeneration: true,
+    inventoryEnabled: true,
+    advancedInventory: false,
+    employeeManagement: false,
+    maxAdminUsers: 1,
+    analyticsEnabled: true,
+};
+
 declare global {
     namespace Express {
         interface Request {
@@ -35,6 +81,7 @@ declare global {
                 };
             };
             tenantId?: string;
+            features?: TenantFeatures;  // Feature flags for current tenant
         }
     }
 }
@@ -44,14 +91,52 @@ export class TenantMiddleware implements NestMiddleware {
     private readonly logger = new Logger(TenantMiddleware.name);
 
     // Cache tenant lookups for performance (TTL: 5 minutes)
-    private tenantCache = new Map<string, { tenant: Express.Request['tenant']; expiresAt: number }>();
+    // Static so it can be invalidated from OwnerService when tenant status changes
+    private static tenantCache = new Map<string, { tenant: Express.Request['tenant']; expiresAt: number }>();
     private readonly CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
 
     constructor(private readonly prisma: PrismaService) { }
 
+    /**
+     * Invalidate cache for a specific domain or all domains for a tenant
+     * Call this when tenant status changes (suspend, activate, archive)
+     */
+    static invalidateCache(domainOrTenantId?: string): void {
+        if (!domainOrTenantId) {
+            // Clear all cache
+            TenantMiddleware.tenantCache.clear();
+            return;
+        }
+
+        // Try to find and delete by domain or tenantId
+        for (const [domain, entry] of TenantMiddleware.tenantCache.entries()) {
+            if (domain === domainOrTenantId || entry.tenant?.id === domainOrTenantId) {
+                TenantMiddleware.tenantCache.delete(domain);
+            }
+        }
+    }
+
     async use(req: Request, res: Response, next: NextFunction) {
-        // Extract domain from Host header
-        const host = req.get('host');
+        // Skip tenant resolution for owner panel routes (platform-level)
+        // Use originalUrl because req.path is stripped by Express when using global prefix
+        const path = req.originalUrl?.split('?')[0] || req.path || req.url.split('?')[0];
+
+        // Check for owner routes - handles both /owner/* and /api/owner/* patterns
+        // Also skip logout to allow cleanup for suspended tenants
+        // Skip Google OAuth routes (platform-level, not tenant-specific)
+        const skipPaths = [
+            '/owner', '/api/owner',
+            '/auth/owner-login', '/api/auth/owner-login',
+            '/auth/logout', '/api/auth/logout',
+            '/auth/google', '/api/auth/google',  // OAuth initiation + callback
+        ];
+
+        if (skipPaths.some(p => path.startsWith(p) || path === p)) {
+            return next();
+        }
+
+        // Extract domain from Host header (prefer x-forwarded-host for proxied requests)
+        const host = req.get('x-forwarded-host') || req.get('host');
 
         if (!host) {
             this.logger.warn('No host header found in request');
@@ -74,21 +159,46 @@ export class TenantMiddleware implements NestMiddleware {
         }
 
         // Check cache first
-        const cachedEntry = this.tenantCache.get(normalizedDomain);
+        const cachedEntry = TenantMiddleware.tenantCache.get(normalizedDomain);
         if (cachedEntry && cachedEntry.expiresAt > Date.now()) {
+            // CRITICAL: Still enforce status check even from cache
+            if (cachedEntry.tenant?.status !== 'ACTIVE') {
+                const status = cachedEntry.tenant?.status;
+                this.logger.warn(`Cached tenant ${cachedEntry.tenant?.slug} is not active (status: ${status})`);
+
+                // Invalidate cache so next request re-fetches from DB
+                TenantMiddleware.tenantCache.delete(normalizedDomain);
+
+                if (status === 'SUSPENDED') {
+                    return res.status(403).json({
+                        statusCode: 403,
+                        message: 'This account has been suspended',
+                        error: 'Tenant Suspended',
+                        code: 'TENANT_SUSPENDED'
+                    });
+                }
+
+                return res.status(503).json({
+                    statusCode: 503,
+                    message: 'This shop is temporarily unavailable',
+                    error: 'Service Unavailable'
+                });
+            }
+
             req.tenant = cachedEntry.tenant;
             req.tenantId = cachedEntry.tenant?.id;
             return next();
         }
 
         try {
-            // Look up tenant by domain
+            // Look up tenant by domain with config and features
             const tenantDomain = await this.prisma.tenantDomain.findUnique({
                 where: { domain: normalizedDomain },
                 include: {
                     tenant: {
                         include: {
-                            config: true
+                            config: true,
+                            features: true  // Load TenantFeature for request context
                         }
                     }
                 }
@@ -104,7 +214,20 @@ export class TenantMiddleware implements NestMiddleware {
             }
 
             if (tenantDomain.tenant.status !== 'ACTIVE') {
-                this.logger.warn(`Tenant ${tenantDomain.tenant.slug} is not active (status: ${tenantDomain.tenant.status})`);
+                const status = tenantDomain.tenant.status;
+                this.logger.warn(`Tenant ${tenantDomain.tenant.slug} is not active (status: ${status})`);
+
+                // SUSPENDED: Return 403 with specific error code for frontend handling
+                if (status === 'SUSPENDED') {
+                    return res.status(403).json({
+                        statusCode: 403,
+                        message: 'This account has been suspended',
+                        error: 'Tenant Suspended',
+                        code: 'TENANT_SUSPENDED'
+                    });
+                }
+
+                // ARCHIVED or other: Return 503 Service Unavailable
                 return res.status(503).json({
                     statusCode: 503,
                     message: 'This shop is temporarily unavailable',
@@ -143,7 +266,7 @@ export class TenantMiddleware implements NestMiddleware {
             };
 
             // Cache the result
-            this.tenantCache.set(normalizedDomain, {
+            TenantMiddleware.tenantCache.set(normalizedDomain, {
                 tenant: tenantContext,
                 expiresAt: Date.now() + this.CACHE_TTL_MS
             });
@@ -151,6 +274,30 @@ export class TenantMiddleware implements NestMiddleware {
             // Attach to request
             req.tenant = tenantContext;
             req.tenantId = tenantContext.id;
+
+            // Attach features to request (use defaults if no TenantFeature record)
+            const tenantFeatures = tenantDomain.tenant.features;
+            req.features = tenantFeatures ? {
+                ecommerceEnabled: tenantFeatures.ecommerceEnabled,
+                refurbishedGrading: tenantFeatures.refurbishedGrading,
+                wishlistEnabled: tenantFeatures.wishlistEnabled,
+                stockNotifications: tenantFeatures.stockNotifications,
+                couponsEnabled: tenantFeatures.couponsEnabled,
+                repairsEnabled: tenantFeatures.repairsEnabled,
+                quoteOnRequest: tenantFeatures.quoteOnRequest,
+                mailInRepairs: tenantFeatures.mailInRepairs,
+                walkInQueue: tenantFeatures.walkInQueue,
+                ticketsEnabled: tenantFeatures.ticketsEnabled,
+                liveChatWidget: tenantFeatures.liveChatWidget,
+                invoicingEnabled: tenantFeatures.invoicingEnabled,
+                vatCalculation: tenantFeatures.vatCalculation,
+                pdfGeneration: tenantFeatures.pdfGeneration,
+                inventoryEnabled: tenantFeatures.inventoryEnabled,
+                advancedInventory: tenantFeatures.advancedInventory,
+                employeeManagement: tenantFeatures.employeeManagement,
+                maxAdminUsers: tenantFeatures.maxAdminUsers,
+                analyticsEnabled: tenantFeatures.analyticsEnabled,
+            } : DEFAULT_FEATURES;
 
             next();
         } catch (error) {
@@ -191,14 +338,14 @@ export class TenantMiddleware implements NestMiddleware {
 
     // Method to invalidate cache for a specific domain (call after tenant updates)
     invalidateCache(domain: string) {
-        this.tenantCache.delete(domain);
+        TenantMiddleware.tenantCache.delete(domain);
     }
 
     // Method to invalidate all cache entries for a tenant
     invalidateTenantCache(tenantId: string) {
-        for (const [domain, entry] of this.tenantCache.entries()) {
+        for (const [domain, entry] of TenantMiddleware.tenantCache.entries()) {
             if (entry.tenant?.id === tenantId) {
-                this.tenantCache.delete(domain);
+                TenantMiddleware.tenantCache.delete(domain);
             }
         }
     }

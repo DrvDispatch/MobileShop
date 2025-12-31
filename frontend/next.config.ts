@@ -1,6 +1,11 @@
 import type { NextConfig } from "next";
+import path from "path";
 
 const nextConfig: NextConfig = {
+  // Fix for Turbopack incorrectly inferring workspace root
+  turbopack: {
+    root: path.resolve(__dirname),
+  },
   output: "standalone", // Required for Docker deployment
   images: {
     remotePatterns: [
@@ -23,6 +28,10 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  // Note: API routes in src/app/api/* now handle proxying to backend
+  // with proper Host header preservation for multi-tenant resolution
 };
 
 export default nextConfig;
+
+

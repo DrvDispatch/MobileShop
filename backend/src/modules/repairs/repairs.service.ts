@@ -112,9 +112,9 @@ export class RepairsService {
         });
     }
 
-    async getBrandBySlug(slug: string) {
-        const brand = await this.prisma.repairBrand.findUnique({
-            where: { slug },
+    async getBrandBySlug(slug: string, tenantId?: string) {
+        const brand = await this.prisma.repairBrand.findFirst({
+            where: { slug, tenantId },
             include: {
                 deviceType: true,
                 devices: { where: { isActive: true }, orderBy: { sortOrder: 'asc' } },
@@ -152,9 +152,9 @@ export class RepairsService {
         });
     }
 
-    async getDeviceBySlug(slug: string) {
-        const device = await this.prisma.repairDevice.findUnique({
-            where: { slug },
+    async getDeviceBySlug(slug: string, tenantId?: string) {
+        const device = await this.prisma.repairDevice.findFirst({
+            where: { slug, tenantId },
             include: {
                 brand: { include: { deviceType: true } },
                 services: {
@@ -191,9 +191,9 @@ export class RepairsService {
         });
     }
 
-    async getServiceTypeBySlug(slug: string) {
-        const serviceType = await this.prisma.repairServiceType.findUnique({
-            where: { slug },
+    async getServiceTypeBySlug(slug: string, tenantId?: string) {
+        const serviceType = await this.prisma.repairServiceType.findFirst({
+            where: { slug, tenantId },
         });
         if (!serviceType) throw new NotFoundException('Service type not found');
         return serviceType;
@@ -303,17 +303,27 @@ export class RepairsService {
 
             // Process smartphones
             if (categories.smartphones?.length) {
-                const brand = await this.prisma.repairBrand.upsert({
-                    where: { slug: `${brandSlug}-smartphone` },
-                    update: { logo: this.getBrandLogoUrl(brandName) },
-                    create: {
-                        name: brandName,
-                        slug: `${brandSlug}-smartphone`,
-                        deviceTypeId: smartphoneType.id,
-                        logo: this.getBrandLogoUrl(brandName),
-                        sortOrder: brandName === 'Apple' ? 1 : 10,
-                    },
+                // Find or create brand for this device type
+                const brandSlugFull = `${brandSlug}-smartphone`;
+                let brand = await this.prisma.repairBrand.findFirst({
+                    where: { slug: brandSlugFull, tenantId: null },
                 });
+                if (!brand) {
+                    brand = await this.prisma.repairBrand.create({
+                        data: {
+                            name: brandName,
+                            slug: brandSlugFull,
+                            deviceTypeId: smartphoneType.id,
+                            logo: this.getBrandLogoUrl(brandName),
+                            sortOrder: brandName === 'Apple' ? 1 : 10,
+                        },
+                    });
+                } else {
+                    brand = await this.prisma.repairBrand.update({
+                        where: { id: brand.id },
+                        data: { logo: this.getBrandLogoUrl(brandName) },
+                    });
+                }
                 stats.brands++;
 
                 // Bulk create devices
@@ -338,17 +348,27 @@ export class RepairsService {
 
             // Process tablets
             if (categories.tablets?.length) {
-                const brand = await this.prisma.repairBrand.upsert({
-                    where: { slug: `${brandSlug}-tablet` },
-                    update: { logo: this.getBrandLogoUrl(brandName) },
-                    create: {
-                        name: brandName,
-                        slug: `${brandSlug}-tablet`,
-                        deviceTypeId: tabletType.id,
-                        logo: this.getBrandLogoUrl(brandName),
-                        sortOrder: brandName === 'Apple' ? 1 : 10,
-                    },
+                // Find or create brand for tablet type
+                const brandSlugFull = `${brandSlug}-tablet`;
+                let brand = await this.prisma.repairBrand.findFirst({
+                    where: { slug: brandSlugFull, tenantId: null },
                 });
+                if (!brand) {
+                    brand = await this.prisma.repairBrand.create({
+                        data: {
+                            name: brandName,
+                            slug: brandSlugFull,
+                            deviceTypeId: tabletType.id,
+                            logo: this.getBrandLogoUrl(brandName),
+                            sortOrder: brandName === 'Apple' ? 1 : 10,
+                        },
+                    });
+                } else {
+                    brand = await this.prisma.repairBrand.update({
+                        where: { id: brand.id },
+                        data: { logo: this.getBrandLogoUrl(brandName) },
+                    });
+                }
                 stats.brands++;
 
                 const deviceData = categories.tablets.map(d => ({

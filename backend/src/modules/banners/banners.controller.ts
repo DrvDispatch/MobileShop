@@ -6,6 +6,7 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { BannerPosition } from '../../generated/prisma/client.js';
+import { TenantId } from '../tenant/tenant.decorator';
 
 @ApiTags('Banners')
 @Controller('banners')
@@ -18,8 +19,8 @@ export class BannersController {
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Create a new promotional banner' })
     @ApiResponse({ status: 201, description: 'Banner created' })
-    create(@Body() dto: CreateBannerDto) {
-        return this.bannersService.create(dto);
+    create(@TenantId() tenantId: string, @Body() dto: CreateBannerDto) {
+        return this.bannersService.create(tenantId, dto);
     }
 
     @Get()
@@ -28,16 +29,16 @@ export class BannersController {
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Get all promotional banners' })
     @ApiResponse({ status: 200, description: 'List of banners' })
-    findAll() {
-        return this.bannersService.findAll();
+    findAll(@TenantId() tenantId: string) {
+        return this.bannersService.findAll(tenantId);
     }
 
     @Get('active')
     @ApiOperation({ summary: 'Get active banners for display' })
     @ApiQuery({ name: 'position', required: false, enum: BannerPosition })
     @ApiResponse({ status: 200, description: 'Active banners' })
-    getActive(@Query('position') position?: BannerPosition) {
-        return this.bannersService.getActiveBanners(position);
+    getActive(@TenantId() tenantId: string, @Query('position') position?: BannerPosition) {
+        return this.bannersService.getActiveBanners(tenantId, position);
     }
 
     @Get(':id')
@@ -46,8 +47,8 @@ export class BannersController {
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Get a single banner' })
     @ApiResponse({ status: 200, description: 'Banner details' })
-    findOne(@Param('id') id: string) {
-        return this.bannersService.findOne(id);
+    findOne(@TenantId() tenantId: string, @Param('id') id: string) {
+        return this.bannersService.findOne(tenantId, id);
     }
 
     @Patch(':id')
@@ -56,8 +57,8 @@ export class BannersController {
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Update a banner' })
     @ApiResponse({ status: 200, description: 'Banner updated' })
-    update(@Param('id') id: string, @Body() dto: UpdateBannerDto) {
-        return this.bannersService.update(id, dto);
+    update(@TenantId() tenantId: string, @Param('id') id: string, @Body() dto: UpdateBannerDto) {
+        return this.bannersService.update(tenantId, id, dto);
     }
 
     @Delete(':id')
@@ -66,7 +67,8 @@ export class BannersController {
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Delete a banner' })
     @ApiResponse({ status: 200, description: 'Banner deleted' })
-    remove(@Param('id') id: string) {
-        return this.bannersService.remove(id);
+    remove(@TenantId() tenantId: string, @Param('id') id: string) {
+        return this.bannersService.remove(tenantId, id);
     }
 }
+

@@ -104,7 +104,7 @@ export default function OrderDetailPage() {
                 return;
             }
 
-            const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+            // Use relative path for tenant resolution
 
             // Get or create session ID - must match chat widget's key
             let sessionId = localStorage.getItem('chat_session_id');
@@ -114,7 +114,7 @@ export default function OrderDetailPage() {
             }
 
             // Create a support ticket for the refund request
-            const response = await fetch(`${API_URL}/api/tickets`, {
+            const response = await fetch(`/api/tickets`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

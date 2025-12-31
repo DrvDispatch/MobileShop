@@ -23,7 +23,8 @@
     "prisma:push": "prisma db push",
     "prisma:studio": "prisma studio",
     "db:seed": "tsx prisma/seed.ts",
-    "db:cleanup": "tsx prisma/cleanup-demo-data.ts"
+    "db:cleanup": "tsx prisma/cleanup-demo-data.ts",
+    "upload:assets": "tsx scripts/upload-assets-to-minio.ts"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
@@ -47,12 +48,14 @@
     "@stripe/stripe-js": "^8.6.0",
     "@types/multer": "^2.0.0",
     "@types/passport-google-oauth20": "^2.0.17",
+    "axios": "^1.13.2",
     "bcrypt": "^6.0.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.3",
     "crypto": "^1.0.1",
     "dotenv": "^17.2.3",
     "express": "^4.21.2",
+    "google-auth-library": "^10.5.0",
     "minio": "^8.0.6",
     "multer": "^2.0.2",
     "passport": "^0.7.0",

@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import { io, Socket } from "socket.io-client";
 import { MessageCircle, X, Send, Loader2, ChevronRight, User, Headphones, Check, CheckCheck, Paperclip, Image as ImageIcon, FileText, Smile } from "lucide-react";
+import { useTenantOptional } from "@/lib/TenantProvider";
 
 interface Attachment {
     url: string;
@@ -92,6 +93,8 @@ function formatMessage(text: string): React.ReactNode {
 
 export function ChatWidget() {
     const pathname = usePathname();
+    const tenant = useTenantOptional();
+    const shopName = tenant?.branding.shopName || 'Klantenservice';
     const [isOpen, setIsOpen] = useState(false);
     const [view, setView] = useState<"list" | "new" | "chat">("list");
     const [tickets, setTickets] = useState<Ticket[]>([]);
@@ -152,7 +155,7 @@ export function ChatWidget() {
             formData.append("type", "tickets");
 
             try {
-                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/upload`, {
+                const res = await fetch(`/api/upload`, {
                     method: "POST",
                     body: formData,
                     signal,
@@ -276,7 +279,7 @@ export function ChatWidget() {
         if (!sessionId) return;
         setIsLoading(true);
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/tickets/session/${sessionId}`);
+            const res = await fetch(`/api/tickets/session/${sessionId}`);
             if (res.ok) {
                 const data = await res.json();
                 setTickets(data);
@@ -313,7 +316,7 @@ export function ChatWidget() {
                 finalMessage = `**Bestelnummer:** ${orderNumber}\n\n${message}`;
             }
 
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/tickets`, {
+            const res = await fetch(`/api/tickets`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -362,7 +365,7 @@ export function ChatWidget() {
             };
             console.log('Sending message payload:', JSON.stringify(payload, null, 2));
 
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/tickets/${activeTicket.id}/messages`, {
+            const res = await fetch(`/api/tickets/${activeTicket.id}/messages`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload),
@@ -428,7 +431,7 @@ export function ChatWidget() {
                                     <MessageCircle className="w-5 h-5" />
                                 </div>
                                 <div>
-                                    <h3 className="font-bold text-lg">Smartphone Service</h3>
+                                    <h3 className="font-bold text-lg">{shopName}</h3>
                                     <div className="flex items-center gap-1.5 text-xs text-zinc-400">
                                         <span className={`w-2 h-2 rounded-full ${isConnected ? "bg-emerald-500" : "bg-zinc-500"}`} />
                                         {view === "chat" && activeTicket

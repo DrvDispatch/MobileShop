@@ -9,10 +9,49 @@
 * 🟢 You can import this file directly.
 */
 
+export const TenantStatus = {
+  DRAFT: 'DRAFT',
+  SEEDING: 'SEEDING',
+  ACTIVE: 'ACTIVE',
+  SUSPENDED: 'SUSPENDED',
+  ARCHIVED: 'ARCHIVED'
+} as const
+
+export type TenantStatus = (typeof TenantStatus)[keyof typeof TenantStatus]
+
+
+export const CloudflareDomainStatus = {
+  PENDING: 'PENDING',
+  ACTIVE: 'ACTIVE',
+  DNS_CONFIGURED: 'DNS_CONFIGURED',
+  ERROR: 'ERROR'
+} as const
+
+export type CloudflareDomainStatus = (typeof CloudflareDomainStatus)[keyof typeof CloudflareDomainStatus]
+
+
+export const DomainVerificationStatus = {
+  PENDING: 'PENDING',
+  VERIFIED: 'VERIFIED',
+  FAILED: 'FAILED'
+} as const
+
+export type DomainVerificationStatus = (typeof DomainVerificationStatus)[keyof typeof DomainVerificationStatus]
+
+
+export const CmsStatus = {
+  DRAFT: 'DRAFT',
+  PUBLISHED: 'PUBLISHED'
+} as const
+
+export type CmsStatus = (typeof CmsStatus)[keyof typeof CmsStatus]
+
+
 export const UserRole = {
   CUSTOMER: 'CUSTOMER',
   STAFF: 'STAFF',
-  ADMIN: 'ADMIN'
+  ADMIN: 'ADMIN',
+  OWNER: 'OWNER'
 } as const
 
 export type UserRole = (typeof UserRole)[keyof typeof UserRole]

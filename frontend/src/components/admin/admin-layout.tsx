@@ -4,6 +4,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { api, AuthResponse } from "@/lib/api";
+import { useFeatures } from "@/contexts/FeatureContext";
 import {
     LayoutDashboard,
     Package,
@@ -46,63 +47,80 @@ interface NavSection {
     items: NavItem[];
 }
 
-// Grouped navigation for better UX
-const navigationSections: NavSection[] = [
-    {
-        title: "",
-        items: [
-            { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
-        ]
-    },
-    {
-        title: "Verkoop",
-        items: [
-            { name: "Bestellingen", href: "/admin/orders", icon: ShoppingCart },
-            { name: "Terugbetalingen", href: "/admin/refunds", icon: RotateCcw },
-            { name: "Producten", href: "/admin/products", icon: Package },
-            { name: "Galerij", href: "/admin/gallery", icon: ImageIcon },
-        ]
-    },
-    {
-        title: "Reparaties",
-        items: [
-            { name: "Afspraken", href: "/admin/appointments", icon: Calendar },
-            { name: "Prijzen & Services", href: "/admin/repairs", icon: Wrench },
-            { name: "Toestellen Beheren", href: "/admin/devices", icon: Smartphone },
-        ]
-    },
-    {
-        title: "Klanten",
-        items: [
-            { name: "Gebruikers", href: "/admin/users", icon: Users },
-            { name: "Support Tickets", href: "/admin/tickets", icon: Ticket },
-            { name: "Marketing", href: "/admin/marketing", icon: Mail },
-        ]
-    },
-    {
-        title: "Promoties",
-        items: [
-            { name: "Kortingscodes", href: "/admin/discounts", icon: Percent },
-            { name: "Banners", href: "/admin/banners", icon: Megaphone },
-        ]
-    },
-    {
-        title: "Logistiek",
-        items: [
-            { name: "Voorraadbeheer", href: "/admin/inventory", icon: Boxes },
-            { name: "Verzending", href: "/admin/shipping", icon: Truck },
-        ]
-    },
-    {
-        title: "Systeem",
-        items: [
-            { name: "Facturen", href: "/admin/invoice", icon: FileText },
-            { name: "Instellingen", href: "/admin/settings", icon: Settings },
-            { name: "Export Data", href: "/admin/export", icon: Download },
-            { name: "Activiteitenlog", href: "/admin/audit-logs", icon: Activity },
-        ]
-    },
-];
+/**
+ * Build navigation sections dynamically based on feature flags
+ * Rule: Admin should never see a tab they cannot open
+ */
+function getNavigationSections(features: {
+    ecommerceEnabled: boolean;
+    repairsEnabled: boolean;
+    ticketsEnabled: boolean;
+    invoicingEnabled: boolean;
+    inventoryEnabled: boolean;
+}): NavSection[] {
+    return [
+        {
+            title: "",
+            items: [
+                { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
+            ]
+        },
+        // Verkoop section - only if e-commerce enabled
+        ...(features.ecommerceEnabled ? [{
+            title: "Verkoop",
+            items: [
+                { name: "Bestellingen", href: "/admin/orders", icon: ShoppingCart },
+                { name: "Terugbetalingen", href: "/admin/refunds", icon: RotateCcw },
+                { name: "Producten", href: "/admin/products", icon: Package },
+                { name: "Galerij", href: "/admin/gallery", icon: ImageIcon },
+            ]
+        }] : []),
+        // Reparaties section - only if repairs enabled
+        ...(features.repairsEnabled ? [{
+            title: "Reparaties",
+            items: [
+                { name: "Afspraken", href: "/admin/appointments", icon: Calendar },
+                { name: "Prijzen & Services", href: "/admin/repairs", icon: Wrench },
+                { name: "Toestellen Beheren", href: "/admin/devices", icon: Smartphone },
+            ]
+        }] : []),
+        // Klanten section - tickets conditional
+        {
+            title: "Klanten",
+            items: [
+                { name: "Gebruikers", href: "/admin/users", icon: Users },
+                ...(features.ticketsEnabled ? [{ name: "Support Tickets", href: "/admin/tickets", icon: Ticket }] : []),
+                { name: "Marketing", href: "/admin/marketing", icon: Mail },
+            ].filter(Boolean) as NavItem[]
+        },
+        // Promoties section - only if e-commerce enabled (coupons are e-commerce related)
+        ...(features.ecommerceEnabled ? [{
+            title: "Promoties",
+            items: [
+                { name: "Kortingscodes", href: "/admin/discounts", icon: Percent },
+                { name: "Banners", href: "/admin/banners", icon: Megaphone },
+            ]
+        }] : []),
+        // Logistiek section - only if inventory or e-commerce enabled
+        ...((features.inventoryEnabled || features.ecommerceEnabled) ? [{
+            title: "Logistiek",
+            items: [
+                ...(features.inventoryEnabled ? [{ name: "Voorraadbeheer", href: "/admin/inventory", icon: Boxes }] : []),
+                ...(features.ecommerceEnabled ? [{ name: "Verzending", href: "/admin/shipping", icon: Truck }] : []),
+            ].filter(Boolean) as NavItem[]
+        }] : []),
+        // Systeem section - invoicing conditional
+        {
+            title: "Systeem",
+            items: [
+                ...(features.invoicingEnabled ? [{ name: "Facturen", href: "/admin/invoice", icon: FileText }] : []),
+                { name: "Instellingen", href: "/admin/settings", icon: Settings },
+                { name: "Export Data", href: "/admin/export", icon: Download },
+                { name: "Activiteitenlog", href: "/admin/audit-logs", icon: Activity },
+            ].filter(Boolean) as NavItem[]
+        },
+    ].filter(section => section.items.length > 0) as NavSection[]; // Remove empty sections
+}
 
 
 export function AdminSidebar({
@@ -118,6 +136,10 @@ export function AdminSidebar({
 }) {
     const pathname = usePathname();
     const router = useRouter();
+
+    // Feature flags for conditional navigation
+    const features = useFeatures();
+    const navigationSections = getNavigationSections(features);
 
     const handleLogout = () => {
         removeToken();
@@ -347,8 +369,8 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
                 const token = localStorage.getItem("adminAccessToken");
                 if (!token) return;
 
-                const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
-                const response = await fetch(`${API_URL}/api/orders/admin/all`, {
+                // Use relative path for tenant resolution
+                const response = await fetch(`/api/orders/admin/all`, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
 

@@ -332,7 +332,7 @@ export default function AccountPage() {
                                                                 // Download invoice
                                                                 const token = localStorage.getItem('accessToken');
                                                                 if (token) {
-                                                                    fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/api/invoice/my/${order.id}`, {
+                                                                    fetch(`/api/invoice/my/${order.id}`, {
                                                                         headers: { 'Authorization': `Bearer ${token}` }
                                                                     })
                                                                         .then(res => res.blob())

@@ -11,6 +11,7 @@ import { WishlistButton } from "@/components/wishlist-button";
 import { ProductReviews } from "@/components/product-reviews";
 import { StockNotificationForm } from "@/components/stock-notification-form";
 import { RelatedProducts } from "@/components/related-products";
+import { getImageUrl } from "@/lib/image-utils";
 import {
     ChevronLeft,
     ChevronRight,
@@ -161,7 +162,7 @@ export default function ProductDetailPage() {
                         {/* Main Image */}
                         <div className="relative aspect-square bg-zinc-50 rounded-lg overflow-hidden border border-zinc-200">
                             <img
-                                src={primaryImage}
+                                src={getImageUrl(primaryImage)}
                                 alt={cleanTitle}
                                 className="w-full h-full object-contain p-8"
                                 onError={(e) => {
@@ -204,7 +205,7 @@ export default function ProductDetailPage() {
                                             }`}
                                     >
                                         <img
-                                            src={img.url}
+                                            src={getImageUrl(img.url)}
                                             alt={`View ${i + 1}`}
                                             className="w-full h-full object-contain bg-zinc-50 p-1"
                                         />

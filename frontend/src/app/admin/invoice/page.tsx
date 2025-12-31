@@ -33,7 +33,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+// All API calls use relative paths to go through Next.js proxy for tenant resolution
 
 // ============================================
 // TYPES
@@ -238,7 +238,7 @@ function CreateInvoiceTab() {
             const timer = setTimeout(async () => {
                 try {
                     const token = localStorage.getItem("adminAccessToken");
-                    const res = await fetch(`${API_URL}/api/invoice/search/customers?q=${encodeURIComponent(customerSearch)}`, {
+                    const res = await fetch(`/api/invoice/search/customers?q=${encodeURIComponent(customerSearch)}`, {
                         headers: { Authorization: `Bearer ${token}` },
                     });
                     if (res.ok) setCustomerResults(await res.json());
@@ -258,7 +258,7 @@ function CreateInvoiceTab() {
             const timer = setTimeout(async () => {
                 try {
                     const token = localStorage.getItem("adminAccessToken");
-                    const res = await fetch(`${API_URL}/api/invoice/search/products?q=${encodeURIComponent(productSearch)}`, {
+                    const res = await fetch(`/api/invoice/search/products?q=${encodeURIComponent(productSearch)}`, {
                         headers: { Authorization: `Bearer ${token}` },
                     });
                     if (res.ok) setProductResults(await res.json());
@@ -278,7 +278,7 @@ function CreateInvoiceTab() {
             const timer = setTimeout(async () => {
                 try {
                     const token = localStorage.getItem("adminAccessToken");
-                    const res = await fetch(`${API_URL}/api/invoice/search/repairs?q=${encodeURIComponent(repairSearch)}`, {
+                    const res = await fetch(`/api/invoice/search/repairs?q=${encodeURIComponent(repairSearch)}`, {
                         headers: { Authorization: `Bearer ${token}` },
                     });
                     if (res.ok) setRepairResults(await res.json());
@@ -364,7 +364,7 @@ function CreateInvoiceTab() {
         setSaving(true);
         try {
             const token = localStorage.getItem("adminAccessToken");
-            const res = await fetch(`${API_URL}/api/invoice`, {
+            const res = await fetch(`/api/invoice`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -397,7 +397,7 @@ function CreateInvoiceTab() {
 
                 // Auto-download PDF
                 try {
-                    const pdfRes = await fetch(`${API_URL}/api/invoice/${invoice.id}/pdf`, {
+                    const pdfRes = await fetch(`/api/invoice/${invoice.id}/pdf`, {
                         headers: { Authorization: `Bearer ${token}` },
                     });
                     if (pdfRes.ok) {
@@ -771,7 +771,7 @@ function InvoiceListTab() {
             if (search) params.append("search", search);
             if (statusFilter) params.append("status", statusFilter);
 
-            const res = await fetch(`${API_URL}/api/invoice?${params}`, {
+            const res = await fetch(`/api/invoice?${params}`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             if (res.ok) {
@@ -787,7 +787,7 @@ function InvoiceListTab() {
 
     const downloadPdf = async (id: string) => {
         const token = localStorage.getItem("adminAccessToken");
-        const res = await fetch(`${API_URL}/api/invoice/${id}/pdf`, {
+        const res = await fetch(`/api/invoice/${id}/pdf`, {
             headers: { Authorization: `Bearer ${token}` },
         });
         if (res.ok) {
@@ -922,7 +922,7 @@ function SettingsTab() {
     const fetchSettings = async () => {
         try {
             const token = localStorage.getItem("adminAccessToken");
-            const res = await fetch(`${API_URL}/api/invoice/settings`, {
+            const res = await fetch(`/api/invoice/settings`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             if (res.ok) setSettings(await res.json());
@@ -937,7 +937,7 @@ function SettingsTab() {
         setSaving(true);
         try {
             const token = localStorage.getItem("adminAccessToken");
-            const res = await fetch(`${API_URL}/api/invoice/settings`, {
+            const res = await fetch(`/api/invoice/settings`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
                 body: JSON.stringify(settings),
@@ -1109,7 +1109,7 @@ function RepairPickerModal({ onSelect, onClose }: RepairPickerModalProps) {
     const fetchDeviceTypes = async () => {
         setLoading(true);
         try {
-            const res = await fetch(`${API_URL}/api/repairs/device-types`);
+            const res = await fetch(`/api/repairs/device-types`);
             if (res.ok) setDeviceTypes(await res.json());
         } catch (e) {
             console.error(e);
@@ -1125,7 +1125,7 @@ function RepairPickerModal({ onSelect, onClose }: RepairPickerModalProps) {
     const fetchBrands = async (deviceTypeSlug: string) => {
         setLoading(true);
         try {
-            const res = await fetch(`${API_URL}/api/repairs/brands?deviceType=${deviceTypeSlug}`);
+            const res = await fetch(`/api/repairs/brands?deviceType=${deviceTypeSlug}`);
             if (res.ok) setBrands(await res.json());
         } catch (e) {
             console.error(e);
@@ -1137,7 +1137,7 @@ function RepairPickerModal({ onSelect, onClose }: RepairPickerModalProps) {
     const fetchDevices = async (brandSlug: string) => {
         setLoading(true);
         try {
-            const res = await fetch(`${API_URL}/api/repairs/devices?brand=${brandSlug}`);
+            const res = await fetch(`/api/repairs/devices?brand=${brandSlug}`);
             if (res.ok) setDevices(await res.json());
         } catch (e) {
             console.error(e);
@@ -1149,7 +1149,7 @@ function RepairPickerModal({ onSelect, onClose }: RepairPickerModalProps) {
     const fetchRepairs = async (deviceSlug: string) => {
         setLoading(true);
         try {
-            const res = await fetch(`${API_URL}/api/repairs/services/${deviceSlug}`);
+            const res = await fetch(`/api/repairs/services/${deviceSlug}`);
             if (res.ok) setRepairs(await res.json());
         } catch (e) {
             console.error(e);

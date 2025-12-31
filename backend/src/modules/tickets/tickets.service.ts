@@ -18,11 +18,12 @@ export class TicketsService {
         private feedbackService: FeedbackService,
     ) { }
 
-    private async generateCaseId(): Promise<string> {
+    private async generateCaseId(tenantId: string): Promise<string> {
         const year = new Date().getFullYear();
-        // Get the count of tickets for this year
+        // Get the count of tickets for this year (scoped to tenant)
         const count = await this.prisma.ticket.count({
             where: {
+                tenantId,
                 caseId: {
                     startsWith: `NEO-${year}`,
                 },
@@ -35,12 +36,13 @@ export class TicketsService {
     }
 
 
-    async create(dto: CreateTicketDto) {
-        const caseId = await this.generateCaseId();
+    async create(tenantId: string, dto: CreateTicketDto) {
+        const caseId = await this.generateCaseId(tenantId);
 
         // Create ticket with customer's initial message
         const ticket = await this.prisma.ticket.create({
             data: {
+                tenantId,
                 caseId,
                 sessionId: dto.sessionId,
                 customerName: dto.customerName,
@@ -69,8 +71,8 @@ export class TicketsService {
             },
         });
 
-        // Emit WebSocket event for new ticket
-        this.ticketsGateway.emitNewTicket(ticket);
+        // Emit WebSocket event for new ticket (with tenantId context)
+        this.ticketsGateway.emitNewTicket(tenantId, ticket);
 
         // Send confirmation email if email provided
         if (dto.customerEmail) {
@@ -99,10 +101,10 @@ export class TicketsService {
         return greetings[category] || greetings.GENERAL;
     }
 
-    async findBySession(sessionId: string) {
-        // Return all tickets for this session, most recent first
+    async findBySession(tenantId: string, sessionId: string) {
+        // Return all tickets for this session and tenant, most recent first
         return this.prisma.ticket.findMany({
-            where: { sessionId },
+            where: { tenantId, sessionId },
             include: {
                 messages: {
                     orderBy: { createdAt: 'asc' },
@@ -112,9 +114,9 @@ export class TicketsService {
         });
     }
 
-    async findOne(id: string) {
-        const ticket = await this.prisma.ticket.findUnique({
-            where: { id },
+    async findOne(tenantId: string, id: string) {
+        const ticket = await this.prisma.ticket.findFirst({
+            where: { tenantId, id },
             include: {
                 messages: {
                     orderBy: { createdAt: 'asc' },
@@ -129,9 +131,9 @@ export class TicketsService {
         return ticket;
     }
 
-    async findByCaseId(caseId: string) {
-        const ticket = await this.prisma.ticket.findUnique({
-            where: { caseId },
+    async findByCaseId(tenantId: string, caseId: string) {
+        const ticket = await this.prisma.ticket.findFirst({
+            where: { tenantId, caseId },
             include: {
                 messages: {
                     orderBy: { createdAt: 'asc' },
@@ -146,8 +148,8 @@ export class TicketsService {
         return ticket;
     }
 
-    async addMessage(id: string, dto: AddMessageDto) {
-        const ticket = await this.findOne(id);
+    async addMessage(tenantId: string, id: string, dto: AddMessageDto) {
+        const ticket = await this.findOne(tenantId, id);
 
         // Debug: Log what we receive
         this.logger.log(`addMessage - Received attachments: ${JSON.stringify(dto.attachments)}`);
@@ -207,19 +209,19 @@ export class TicketsService {
         };
 
         // Emit WebSocket event for new message
-        this.ticketsGateway.emitNewMessage(id, ticket.sessionId, messageForWS);
+        this.ticketsGateway.emitNewMessage(tenantId, id, ticket.sessionId, messageForWS);
 
         // If reopened, also emit status update
         if (shouldReopen) {
-            this.ticketsGateway.emitTicketUpdate(id, ticket.sessionId, { status: 'OPEN' as TicketStatus });
+            this.ticketsGateway.emitTicketUpdate(tenantId, id, ticket.sessionId, { status: 'OPEN' as TicketStatus });
             this.logger.log(`Ticket ${ticket.caseId} reopened by customer message`);
         }
 
         return message;
     }
 
-    async findAll(params?: { status?: TicketStatus }) {
-        const where: any = {};
+    async findAll(tenantId: string, params?: { status?: TicketStatus }) {
+        const where: any = { tenantId };
         if (params?.status) {
             where.status = params.status;
         }
@@ -235,8 +237,8 @@ export class TicketsService {
         });
     }
 
-    async update(id: string, dto: UpdateTicketDto) {
-        const ticket = await this.findOne(id);
+    async update(tenantId: string, id: string, dto: UpdateTicketDto) {
+        const ticket = await this.findOne(tenantId, id);
 
         const updated = await this.prisma.ticket.update({
             where: { id },
@@ -249,13 +251,13 @@ export class TicketsService {
         });
 
         // Emit WebSocket event for status update
-        this.ticketsGateway.emitTicketUpdate(id, ticket.sessionId, dto);
+        this.ticketsGateway.emitTicketUpdate(tenantId, id, ticket.sessionId, dto);
 
         // Send feedback request email if status changed to RESOLVED and customer has email
         if (dto.status === TicketStatus.RESOLVED && ticket.status !== TicketStatus.RESOLVED && ticket.customerEmail) {
             try {
                 // Create feedback request with rating email
-                await this.feedbackService.createAndSendFeedbackRequest({
+                await this.feedbackService.createAndSendFeedbackRequest(tenantId, {
                     sourceType: 'ticket',
                     ticketId: ticket.id,
                     customerEmail: ticket.customerEmail,
@@ -283,8 +285,8 @@ export class TicketsService {
     }
 
 
-    async delete(id: string) {
-        const ticket = await this.findOne(id);
+    async delete(tenantId: string, id: string) {
+        const ticket = await this.findOne(tenantId, id);
 
         // Only allow deleting closed or resolved tickets
         if (ticket.status !== 'CLOSED' && ticket.status !== 'RESOLVED') {

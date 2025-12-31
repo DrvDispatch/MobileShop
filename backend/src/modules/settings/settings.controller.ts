@@ -25,6 +25,7 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { AuditLogService } from '../audit-logs/audit-log.service';
+import { TenantId } from '../tenant/tenant.decorator';
 import type { Request } from 'express';
 
 @ApiTags('Settings')
@@ -67,23 +68,23 @@ export class SettingsController {
     @Get('public')
     @ApiOperation({ summary: 'Get public settings for frontend' })
     @ApiResponse({ status: 200, type: PublicSettingsDto })
-    async getPublicSettings(): Promise<PublicSettingsDto> {
-        return this.settingsService.getPublicSettings();
+    async getPublicSettings(@TenantId() tenantId: string): Promise<PublicSettingsDto> {
+        return this.settingsService.getPublicSettings(tenantId);
     }
 
     @Get('shipping-zones')
     @ApiOperation({ summary: 'Get active shipping zones' })
     @ApiResponse({ status: 200, type: [ShippingZoneDto] })
-    async getShippingZones() {
-        return this.settingsService.getAllShippingZones();
+    async getShippingZones(@TenantId() tenantId: string) {
+        return this.settingsService.getAllShippingZones(tenantId);
     }
 
     @Get('shipping-zones/for-country')
     @ApiOperation({ summary: 'Get shipping zone for a specific country' })
     @ApiQuery({ name: 'country', description: 'ISO country code (e.g., BE)' })
     @ApiResponse({ status: 200, type: ShippingZoneDto })
-    async getShippingZoneForCountry(@Query('country') country: string) {
-        return this.settingsService.getShippingZoneForCountry(country);
+    async getShippingZoneForCountry(@TenantId() tenantId: string, @Query('country') country: string) {
+        return this.settingsService.getShippingZoneForCountry(tenantId, country);
     }
 
     // ============================================
@@ -96,8 +97,8 @@ export class SettingsController {
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Get all settings (Admin only)' })
     @ApiResponse({ status: 200, type: [SettingDto] })
-    async getAllSettings() {
-        return this.settingsService.getAllSettings();
+    async getAllSettings(@TenantId() tenantId: string) {
+        return this.settingsService.getAllSettings(tenantId);
     }
 
     @Get(':key')
@@ -106,8 +107,8 @@ export class SettingsController {
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Get a specific setting by key (Admin only)' })
     @ApiResponse({ status: 200, type: SettingDto })
-    async getSetting(@Param('key') key: string) {
-        return this.settingsService.getSetting(key);
+    async getSetting(@TenantId() tenantId: string, @Param('key') key: string) {
+        return this.settingsService.getSetting(tenantId, key);
     }
 
     @Put(':key')
@@ -117,12 +118,19 @@ export class SettingsController {
     @ApiOperation({ summary: 'Update or create a setting (Admin only)' })
     @ApiResponse({ status: 200, type: SettingDto })
     async upsertSetting(
+        @TenantId() tenantId: string,
         @Param('key') key: string,
         @Body() dto: UpdateSettingDto,
         @Req() req: Request,
     ) {
-        const oldValue = await this.settingsService.getSetting(key);
-        const result = await this.settingsService.upsertSetting(key, dto);
+        let oldValue;
+        try {
+            oldValue = await this.settingsService.getSetting(tenantId, key);
+        } catch (e) {
+            // Setting doesn't exist yet, which is fine for upsert
+        }
+
+        const result = await this.settingsService.upsertSetting(tenantId, key, dto);
 
         await this.logAction(
             req,
@@ -143,8 +151,8 @@ export class SettingsController {
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Create a new setting (Admin only)' })
     @ApiResponse({ status: 201, type: SettingDto })
-    async createSetting(@Body() dto: CreateSettingDto, @Req() req: Request) {
-        const result = await this.settingsService.createSetting(dto);
+    async createSetting(@TenantId() tenantId: string, @Body() dto: CreateSettingDto, @Req() req: Request) {
+        const result = await this.settingsService.createSetting(tenantId, dto);
 
         await this.logAction(
             req,
@@ -164,9 +172,9 @@ export class SettingsController {
     @Roles('ADMIN')
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Delete a setting (Admin only)' })
-    async deleteSetting(@Param('key') key: string, @Req() req: Request) {
-        const oldValue = await this.settingsService.getSetting(key);
-        const result = await this.settingsService.deleteSetting(key);
+    async deleteSetting(@TenantId() tenantId: string, @Param('key') key: string, @Req() req: Request) {
+        const oldValue = await this.settingsService.getSetting(tenantId, key);
+        const result = await this.settingsService.deleteSetting(tenantId, key);
 
         await this.logAction(
             req,
@@ -190,8 +198,8 @@ export class SettingsController {
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Get all shipping zones including inactive (Admin only)' })
     @ApiResponse({ status: 200, type: [ShippingZoneDto] })
-    async getAllShippingZonesAdmin() {
-        return this.settingsService.getAllShippingZones(true);
+    async getAllShippingZonesAdmin(@TenantId() tenantId: string) {
+        return this.settingsService.getAllShippingZones(tenantId, true);
     }
 
     @Post('shipping-zones')
@@ -200,8 +208,8 @@ export class SettingsController {
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Create a shipping zone (Admin only)' })
     @ApiResponse({ status: 201, type: ShippingZoneDto })
-    async createShippingZone(@Body() dto: CreateShippingZoneDto, @Req() req: Request) {
-        const result = await this.settingsService.createShippingZone(dto);
+    async createShippingZone(@TenantId() tenantId: string, @Body() dto: CreateShippingZoneDto, @Req() req: Request) {
+        const result = await this.settingsService.createShippingZone(tenantId, dto);
 
         await this.logAction(
             req,
@@ -223,11 +231,12 @@ export class SettingsController {
     @ApiOperation({ summary: 'Update a shipping zone (Admin only)' })
     @ApiResponse({ status: 200, type: ShippingZoneDto })
     async updateShippingZone(
+        @TenantId() tenantId: string,
         @Param('id') id: string,
         @Body() dto: UpdateShippingZoneDto,
         @Req() req: Request,
     ) {
-        const result = await this.settingsService.updateShippingZone(id, dto);
+        const result = await this.settingsService.updateShippingZone(tenantId, id, dto);
 
         await this.logAction(
             req,
@@ -247,8 +256,8 @@ export class SettingsController {
     @Roles('ADMIN')
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Delete a shipping zone (Admin only)' })
-    async deleteShippingZone(@Param('id') id: string, @Req() req: Request) {
-        const result = await this.settingsService.deleteShippingZone(id);
+    async deleteShippingZone(@TenantId() tenantId: string, @Param('id') id: string, @Req() req: Request) {
+        const result = await this.settingsService.deleteShippingZone(tenantId, id);
 
         await this.logAction(
             req,

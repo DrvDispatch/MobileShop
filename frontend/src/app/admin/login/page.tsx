@@ -3,10 +3,13 @@
 import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Lock, User, AlertCircle, Loader2, Shield } from "lucide-react";
+import { useTenantOptional } from "@/lib/TenantProvider";
 
 function LoginContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
+    const tenant = useTenantOptional();
+    const shopName = tenant?.branding.shopName || 'Admin';
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
@@ -25,11 +28,12 @@ function LoginContent() {
         setIsLoading(true);
 
         try {
-            // Call backend admin-login endpoint
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/admin-login`, {
+            // Call backend login endpoint via proxy (preserves Host header for tenant resolution)
+            // Use standard /login endpoint (handles ADMIN role) instead of /admin-login (super admin only)
+            const res = await fetch("/api/auth/login", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ username, password }),
+                body: JSON.stringify({ email: username, password }), // Backend expects 'email', not 'username'
             });
 
             const data = await res.json();
@@ -72,7 +76,7 @@ function LoginContent() {
                         <Shield className="w-10 h-10 text-white" />
                     </div>
                     <h1 className="text-3xl font-bold text-white">Admin Portal</h1>
-                    <p className="text-zinc-400 mt-2">Smartphone Service Beheerdersconsole</p>
+                    <p className="text-zinc-400 mt-2">{shopName} Beheerdersconsole</p>
                 </div>
 
                 {/* Login Card */}
@@ -154,7 +158,7 @@ function LoginContent() {
 
                 {/* Footer */}
                 <p className="text-center text-zinc-600 text-sm mt-8">
-                    © 2024 Smartphone Service. Alle rechten voorbehouden.
+                    © {new Date().getFullYear()} {shopName}. Alle rechten voorbehouden.
                 </p>
             </div>
         </div>

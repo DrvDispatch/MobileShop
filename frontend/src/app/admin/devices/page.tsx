@@ -79,7 +79,7 @@ export default function AdminDevicesPage() {
     const fetchDevices = async () => {
         try {
             const response = await fetch(
-                `${process.env.NEXT_PUBLIC_API_URL}/api/devices/admin/all`,
+                `/api/devices/admin/all`,
                 { headers: getAuthHeaders(), credentials: 'include' }
             );
             if (!response.ok) throw new Error("Failed to fetch devices");
@@ -97,7 +97,7 @@ export default function AdminDevicesPage() {
         setError(null);
         try {
             const response = await fetch(
-                `${process.env.NEXT_PUBLIC_API_URL}/api/devices/seed`,
+                `/api/devices/seed`,
                 { method: "POST", headers: getAuthHeaders(), credentials: 'include' }
             );
             if (!response.ok) throw new Error("Failed to seed devices");
@@ -122,7 +122,7 @@ export default function AdminDevicesPage() {
             const jsonData = JSON.parse(text);
 
             const response = await fetch(
-                `${process.env.NEXT_PUBLIC_API_URL}/api/devices/import`,
+                `/api/devices/import`,
                 {
                     method: "POST",
                     headers: getAuthHeaders(),
@@ -180,7 +180,7 @@ export default function AdminDevicesPage() {
             if (editingDevice) {
                 // Update
                 const response = await fetch(
-                    `${process.env.NEXT_PUBLIC_API_URL}/api/devices/${editingDevice.id}`,
+                    `/api/devices/${editingDevice.id}`,
                     {
                         method: "PATCH",
                         headers: getAuthHeaders(),
@@ -197,7 +197,7 @@ export default function AdminDevicesPage() {
             } else {
                 // Create
                 const response = await fetch(
-                    `${process.env.NEXT_PUBLIC_API_URL}/api/devices`,
+                    `/api/devices`,
                     {
                         method: "POST",
                         headers: getAuthHeaders(),
@@ -229,7 +229,7 @@ export default function AdminDevicesPage() {
 
         try {
             const response = await fetch(
-                `${process.env.NEXT_PUBLIC_API_URL}/api/devices/${id}`,
+                `/api/devices/${id}`,
                 { method: "DELETE", headers: getAuthHeaders(), credentials: 'include' }
             );
             if (!response.ok) throw new Error("Failed to delete device");
@@ -243,7 +243,7 @@ export default function AdminDevicesPage() {
     const toggleActive = async (device: Device) => {
         try {
             const response = await fetch(
-                `${process.env.NEXT_PUBLIC_API_URL}/api/devices/${device.id}`,
+                `/api/devices/${device.id}`,
                 {
                     method: "PATCH",
                     headers: getAuthHeaders(),

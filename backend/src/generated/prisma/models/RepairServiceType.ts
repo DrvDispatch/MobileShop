@@ -36,6 +36,7 @@ export type RepairServiceTypeSumAggregateOutputType = {
 
 export type RepairServiceTypeMinAggregateOutputType = {
   id: string | null
+  tenantId: string | null
   name: string | null
   slug: string | null
   icon: string | null
@@ -48,6 +49,7 @@ export type RepairServiceTypeMinAggregateOutputType = {
 
 export type RepairServiceTypeMaxAggregateOutputType = {
   id: string | null
+  tenantId: string | null
   name: string | null
   slug: string | null
   icon: string | null
@@ -60,6 +62,7 @@ export type RepairServiceTypeMaxAggregateOutputType = {
 
 export type RepairServiceTypeCountAggregateOutputType = {
   id: number
+  tenantId: number
   name: number
   slug: number
   icon: number
@@ -82,6 +85,7 @@ export type RepairServiceTypeSumAggregateInputType = {
 
 export type RepairServiceTypeMinAggregateInputType = {
   id?: true
+  tenantId?: true
   name?: true
   slug?: true
   icon?: true
@@ -94,6 +98,7 @@ export type RepairServiceTypeMinAggregateInputType = {
 
 export type RepairServiceTypeMaxAggregateInputType = {
   id?: true
+  tenantId?: true
   name?: true
   slug?: true
   icon?: true
@@ -106,6 +111,7 @@ export type RepairServiceTypeMaxAggregateInputType = {
 
 export type RepairServiceTypeCountAggregateInputType = {
   id?: true
+  tenantId?: true
   name?: true
   slug?: true
   icon?: true
@@ -205,6 +211,7 @@ export type RepairServiceTypeGroupByArgs<ExtArgs extends runtime.Types.Extension
 
 export type RepairServiceTypeGroupByOutputType = {
   id: string
+  tenantId: string | null
   name: string
   slug: string
   icon: string | null
@@ -240,6 +247,7 @@ export type RepairServiceTypeWhereInput = {
   OR?: Prisma.RepairServiceTypeWhereInput[]
   NOT?: Prisma.RepairServiceTypeWhereInput | Prisma.RepairServiceTypeWhereInput[]
   id?: Prisma.StringFilter<"RepairServiceType"> | string
+  tenantId?: Prisma.StringNullableFilter<"RepairServiceType"> | string | null
   name?: Prisma.StringFilter<"RepairServiceType"> | string
   slug?: Prisma.StringFilter<"RepairServiceType"> | string
   icon?: Prisma.StringNullableFilter<"RepairServiceType"> | string | null
@@ -248,11 +256,13 @@ export type RepairServiceTypeWhereInput = {
   isActive?: Prisma.BoolFilter<"RepairServiceType"> | boolean
   createdAt?: Prisma.DateTimeFilter<"RepairServiceType"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"RepairServiceType"> | Date | string
+  tenant?: Prisma.XOR<Prisma.TenantNullableScalarRelationFilter, Prisma.TenantWhereInput> | null
   deviceServices?: Prisma.RepairDeviceServiceListRelationFilter
 }
 
 export type RepairServiceTypeOrderByWithRelationInput = {
   id?: Prisma.SortOrder
+  tenantId?: Prisma.SortOrderInput | Prisma.SortOrder
   name?: Prisma.SortOrder
   slug?: Prisma.SortOrder
   icon?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -261,27 +271,32 @@ export type RepairServiceTypeOrderByWithRelationInput = {
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  tenant?: Prisma.TenantOrderByWithRelationInput
   deviceServices?: Prisma.RepairDeviceServiceOrderByRelationAggregateInput
 }
 
 export type RepairServiceTypeWhereUniqueInput = Prisma.AtLeast<{
   id?: string
-  name?: string
-  slug?: string
+  tenantId_slug?: Prisma.RepairServiceTypeTenantIdSlugCompoundUniqueInput
   AND?: Prisma.RepairServiceTypeWhereInput | Prisma.RepairServiceTypeWhereInput[]
   OR?: Prisma.RepairServiceTypeWhereInput[]
   NOT?: Prisma.RepairServiceTypeWhereInput | Prisma.RepairServiceTypeWhereInput[]
+  tenantId?: Prisma.StringNullableFilter<"RepairServiceType"> | string | null
+  name?: Prisma.StringFilter<"RepairServiceType"> | string
+  slug?: Prisma.StringFilter<"RepairServiceType"> | string
   icon?: Prisma.StringNullableFilter<"RepairServiceType"> | string | null
   description?: Prisma.StringNullableFilter<"RepairServiceType"> | string | null
   sortOrder?: Prisma.IntFilter<"RepairServiceType"> | number
   isActive?: Prisma.BoolFilter<"RepairServiceType"> | boolean
   createdAt?: Prisma.DateTimeFilter<"RepairServiceType"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"RepairServiceType"> | Date | string
+  tenant?: Prisma.XOR<Prisma.TenantNullableScalarRelationFilter, Prisma.TenantWhereInput> | null
   deviceServices?: Prisma.RepairDeviceServiceListRelationFilter
-}, "id" | "name" | "slug">
+}, "id" | "tenantId_slug">
 
 export type RepairServiceTypeOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
+  tenantId?: Prisma.SortOrderInput | Prisma.SortOrder
   name?: Prisma.SortOrder
   slug?: Prisma.SortOrder
   icon?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -302,6 +317,7 @@ export type RepairServiceTypeScalarWhereWithAggregatesInput = {
   OR?: Prisma.RepairServiceTypeScalarWhereWithAggregatesInput[]
   NOT?: Prisma.RepairServiceTypeScalarWhereWithAggregatesInput | Prisma.RepairServiceTypeScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"RepairServiceType"> | string
+  tenantId?: Prisma.StringNullableWithAggregatesFilter<"RepairServiceType"> | string | null
   name?: Prisma.StringWithAggregatesFilter<"RepairServiceType"> | string
   slug?: Prisma.StringWithAggregatesFilter<"RepairServiceType"> | string
   icon?: Prisma.StringNullableWithAggregatesFilter<"RepairServiceType"> | string | null
@@ -322,11 +338,13 @@ export type RepairServiceTypeCreateInput = {
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  tenant?: Prisma.TenantCreateNestedOneWithoutRepairServiceTypesInput
   deviceServices?: Prisma.RepairDeviceServiceCreateNestedManyWithoutServiceInput
 }
 
 export type RepairServiceTypeUncheckedCreateInput = {
   id?: string
+  tenantId?: string | null
   name: string
   slug: string
   icon?: string | null
@@ -348,11 +366,13 @@ export type RepairServiceTypeUpdateInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  tenant?: Prisma.TenantUpdateOneWithoutRepairServiceTypesNestedInput
   deviceServices?: Prisma.RepairDeviceServiceUpdateManyWithoutServiceNestedInput
 }
 
 export type RepairServiceTypeUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  tenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   icon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -366,6 +386,7 @@ export type RepairServiceTypeUncheckedUpdateInput = {
 
 export type RepairServiceTypeCreateManyInput = {
   id?: string
+  tenantId?: string | null
   name: string
   slug: string
   icon?: string | null
@@ -390,6 +411,7 @@ export type RepairServiceTypeUpdateManyMutationInput = {
 
 export type RepairServiceTypeUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  tenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   icon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -400,8 +422,24 @@ export type RepairServiceTypeUncheckedUpdateManyInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
+export type RepairServiceTypeListRelationFilter = {
+  every?: Prisma.RepairServiceTypeWhereInput
+  some?: Prisma.RepairServiceTypeWhereInput
+  none?: Prisma.RepairServiceTypeWhereInput
+}
+
+export type RepairServiceTypeOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
+}
+
+export type RepairServiceTypeTenantIdSlugCompoundUniqueInput = {
+  tenantId: string
+  slug: string
+}
+
 export type RepairServiceTypeCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  tenantId?: Prisma.SortOrder
   name?: Prisma.SortOrder
   slug?: Prisma.SortOrder
   icon?: Prisma.SortOrder
@@ -418,6 +456,7 @@ export type RepairServiceTypeAvgOrderByAggregateInput = {
 
 export type RepairServiceTypeMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  tenantId?: Prisma.SortOrder
   name?: Prisma.SortOrder
   slug?: Prisma.SortOrder
   icon?: Prisma.SortOrder
@@ -430,6 +469,7 @@ export type RepairServiceTypeMaxOrderByAggregateInput = {
 
 export type RepairServiceTypeMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  tenantId?: Prisma.SortOrder
   name?: Prisma.SortOrder
   slug?: Prisma.SortOrder
   icon?: Prisma.SortOrder
@@ -449,6 +489,48 @@ export type RepairServiceTypeScalarRelationFilter = {
   isNot?: Prisma.RepairServiceTypeWhereInput
 }
 
+export type RepairServiceTypeCreateNestedManyWithoutTenantInput = {
+  create?: Prisma.XOR<Prisma.RepairServiceTypeCreateWithoutTenantInput, Prisma.RepairServiceTypeUncheckedCreateWithoutTenantInput> | Prisma.RepairServiceTypeCreateWithoutTenantInput[] | Prisma.RepairServiceTypeUncheckedCreateWithoutTenantInput[]
+  connectOrCreate?: Prisma.RepairServiceTypeCreateOrConnectWithoutTenantInput | Prisma.RepairServiceTypeCreateOrConnectWithoutTenantInput[]
+  createMany?: Prisma.RepairServiceTypeCreateManyTenantInputEnvelope
+  connect?: Prisma.RepairServiceTypeWhereUniqueInput | Prisma.RepairServiceTypeWhereUniqueInput[]
+}
+
+export type RepairServiceTypeUncheckedCreateNestedManyWithoutTenantInput = {
+  create?: Prisma.XOR<Prisma.RepairServiceTypeCreateWithoutTenantInput, Prisma.RepairServiceTypeUncheckedCreateWithoutTenantInput> | Prisma.RepairServiceTypeCreateWithoutTenantInput[] | Prisma.RepairServiceTypeUncheckedCreateWithoutTenantInput[]
+  connectOrCreate?: Prisma.RepairServiceTypeCreateOrConnectWithoutTenantInput | Prisma.RepairServiceTypeCreateOrConnectWithoutTenantInput[]
+  createMany?: Prisma.RepairServiceTypeCreateManyTenantInputEnvelope
+  connect?: Prisma.RepairServiceTypeWhereUniqueInput | Prisma.RepairServiceTypeWhereUniqueInput[]
+}
+
+export type RepairServiceTypeUpdateManyWithoutTenantNestedInput = {
+  create?: Prisma.XOR<Prisma.RepairServiceTypeCreateWithoutTenantInput, Prisma.RepairServiceTypeUncheckedCreateWithoutTenantInput> | Prisma.RepairServiceTypeCreateWithoutTenantInput[] | Prisma.RepairServiceTypeUncheckedCreateWithoutTenantInput[]
+  connectOrCreate?: Prisma.RepairServiceTypeCreateOrConnectWithoutTenantInput | Prisma.RepairServiceTypeCreateOrConnectWithoutTenantInput[]
+  upsert?: Prisma.RepairServiceTypeUpsertWithWhereUniqueWithoutTenantInput | Prisma.RepairServiceTypeUpsertWithWhereUniqueWithoutTenantInput[]
+  createMany?: Prisma.RepairServiceTypeCreateManyTenantInputEnvelope
+  set?: Prisma.RepairServiceTypeWhereUniqueInput | Prisma.RepairServiceTypeWhereUniqueInput[]
+  disconnect?: Prisma.RepairServiceTypeWhereUniqueInput | Prisma.RepairServiceTypeWhereUniqueInput[]
+  delete?: Prisma.RepairServiceTypeWhereUniqueInput | Prisma.RepairServiceTypeWhereUniqueInput[]
+  connect?: Prisma.RepairServiceTypeWhereUniqueInput | Prisma.RepairServiceTypeWhereUniqueInput[]
+  update?: Prisma.RepairServiceTypeUpdateWithWhereUniqueWithoutTenantInput | Prisma.RepairServiceTypeUpdateWithWhereUniqueWithoutTenantInput[]
+  updateMany?: Prisma.RepairServiceTypeUpdateManyWithWhereWithoutTenantInput | Prisma.RepairServiceTypeUpdateManyWithWhereWithoutTenantInput[]
+  deleteMany?: Prisma.RepairServiceTypeScalarWhereInput | Prisma.RepairServiceTypeScalarWhereInput[]
+}
+
+export type RepairServiceTypeUncheckedUpdateManyWithoutTenantNestedInput = {
+  create?: Prisma.XOR<Prisma.RepairServiceTypeCreateWithoutTenantInput, Prisma.RepairServiceTypeUncheckedCreateWithoutTenantInput> | Prisma.RepairServiceTypeCreateWithoutTenantInput[] | Prisma.RepairServiceTypeUncheckedCreateWithoutTenantInput[]
+  connectOrCreate?: Prisma.RepairServiceTypeCreateOrConnectWithoutTenantInput | Prisma.RepairServiceTypeCreateOrConnectWithoutTenantInput[]
+  upsert?: Prisma.RepairServiceTypeUpsertWithWhereUniqueWithoutTenantInput | Prisma.RepairServiceTypeUpsertWithWhereUniqueWithoutTenantInput[]
+  createMany?: Prisma.RepairServiceTypeCreateManyTenantInputEnvelope
+  set?: Prisma.RepairServiceTypeWhereUniqueInput | Prisma.RepairServiceTypeWhereUniqueInput[]
+  disconnect?: Prisma.RepairServiceTypeWhereUniqueInput | Prisma.RepairServiceTypeWhereUniqueInput[]
+  delete?: Prisma.RepairServiceTypeWhereUniqueInput | Prisma.RepairServiceTypeWhereUniqueInput[]
+  connect?: Prisma.RepairServiceTypeWhereUniqueInput | Prisma.RepairServiceTypeWhereUniqueInput[]
+  update?: Prisma.RepairServiceTypeUpdateWithWhereUniqueWithoutTenantInput | Prisma.RepairServiceTypeUpdateWithWhereUniqueWithoutTenantInput[]
+  updateMany?: Prisma.RepairServiceTypeUpdateManyWithWhereWithoutTenantInput | Prisma.RepairServiceTypeUpdateManyWithWhereWithoutTenantInput[]
+  deleteMany?: Prisma.RepairServiceTypeScalarWhereInput | Prisma.RepairServiceTypeScalarWhereInput[]
+}
+
 export type RepairServiceTypeCreateNestedOneWithoutDeviceServicesInput = {
   create?: Prisma.XOR<Prisma.RepairServiceTypeCreateWithoutDeviceServicesInput, Prisma.RepairServiceTypeUncheckedCreateWithoutDeviceServicesInput>
   connectOrCreate?: Prisma.RepairServiceTypeCreateOrConnectWithoutDeviceServicesInput
@@ -463,6 +545,74 @@ export type RepairServiceTypeUpdateOneRequiredWithoutDeviceServicesNestedInput =
   update?: Prisma.XOR<Prisma.XOR<Prisma.RepairServiceTypeUpdateToOneWithWhereWithoutDeviceServicesInput, Prisma.RepairServiceTypeUpdateWithoutDeviceServicesInput>, Prisma.RepairServiceTypeUncheckedUpdateWithoutDeviceServicesInput>
 }
 
+export type RepairServiceTypeCreateWithoutTenantInput = {
+  id?: string
+  name: string
+  slug: string
+  icon?: string | null
+  description?: string | null
+  sortOrder?: number
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deviceServices?: Prisma.RepairDeviceServiceCreateNestedManyWithoutServiceInput
+}
+
+export type RepairServiceTypeUncheckedCreateWithoutTenantInput = {
+  id?: string
+  name: string
+  slug: string
+  icon?: string | null
+  description?: string | null
+  sortOrder?: number
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deviceServices?: Prisma.RepairDeviceServiceUncheckedCreateNestedManyWithoutServiceInput
+}
+
+export type RepairServiceTypeCreateOrConnectWithoutTenantInput = {
+  where: Prisma.RepairServiceTypeWhereUniqueInput
+  create: Prisma.XOR<Prisma.RepairServiceTypeCreateWithoutTenantInput, Prisma.RepairServiceTypeUncheckedCreateWithoutTenantInput>
+}
+
+export type RepairServiceTypeCreateManyTenantInputEnvelope = {
+  data: Prisma.RepairServiceTypeCreateManyTenantInput | Prisma.RepairServiceTypeCreateManyTenantInput[]
+  skipDuplicates?: boolean
+}
+
+export type RepairServiceTypeUpsertWithWhereUniqueWithoutTenantInput = {
+  where: Prisma.RepairServiceTypeWhereUniqueInput
+  update: Prisma.XOR<Prisma.RepairServiceTypeUpdateWithoutTenantInput, Prisma.RepairServiceTypeUncheckedUpdateWithoutTenantInput>
+  create: Prisma.XOR<Prisma.RepairServiceTypeCreateWithoutTenantInput, Prisma.RepairServiceTypeUncheckedCreateWithoutTenantInput>
+}
+
+export type RepairServiceTypeUpdateWithWhereUniqueWithoutTenantInput = {
+  where: Prisma.RepairServiceTypeWhereUniqueInput
+  data: Prisma.XOR<Prisma.RepairServiceTypeUpdateWithoutTenantInput, Prisma.RepairServiceTypeUncheckedUpdateWithoutTenantInput>
+}
+
+export type RepairServiceTypeUpdateManyWithWhereWithoutTenantInput = {
+  where: Prisma.RepairServiceTypeScalarWhereInput
+  data: Prisma.XOR<Prisma.RepairServiceTypeUpdateManyMutationInput, Prisma.RepairServiceTypeUncheckedUpdateManyWithoutTenantInput>
+}
+
+export type RepairServiceTypeScalarWhereInput = {
+  AND?: Prisma.RepairServiceTypeScalarWhereInput | Prisma.RepairServiceTypeScalarWhereInput[]
+  OR?: Prisma.RepairServiceTypeScalarWhereInput[]
+  NOT?: Prisma.RepairServiceTypeScalarWhereInput | Prisma.RepairServiceTypeScalarWhereInput[]
+  id?: Prisma.StringFilter<"RepairServiceType"> | string
+  tenantId?: Prisma.StringNullableFilter<"RepairServiceType"> | string | null
+  name?: Prisma.StringFilter<"RepairServiceType"> | string
+  slug?: Prisma.StringFilter<"RepairServiceType"> | string
+  icon?: Prisma.StringNullableFilter<"RepairServiceType"> | string | null
+  description?: Prisma.StringNullableFilter<"RepairServiceType"> | string | null
+  sortOrder?: Prisma.IntFilter<"RepairServiceType"> | number
+  isActive?: Prisma.BoolFilter<"RepairServiceType"> | boolean
+  createdAt?: Prisma.DateTimeFilter<"RepairServiceType"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"RepairServiceType"> | Date | string
+}
+
 export type RepairServiceTypeCreateWithoutDeviceServicesInput = {
   id?: string
   name: string
@@ -473,10 +623,12 @@ export type RepairServiceTypeCreateWithoutDeviceServicesInput = {
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  tenant?: Prisma.TenantCreateNestedOneWithoutRepairServiceTypesInput
 }
 
 export type RepairServiceTypeUncheckedCreateWithoutDeviceServicesInput = {
   id?: string
+  tenantId?: string | null
   name: string
   slug: string
   icon?: string | null
@@ -513,9 +665,61 @@ export type RepairServiceTypeUpdateWithoutDeviceServicesInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  tenant?: Prisma.TenantUpdateOneWithoutRepairServiceTypesNestedInput
 }
 
 export type RepairServiceTypeUncheckedUpdateWithoutDeviceServicesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  tenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  icon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type RepairServiceTypeCreateManyTenantInput = {
+  id?: string
+  name: string
+  slug: string
+  icon?: string | null
+  description?: string | null
+  sortOrder?: number
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type RepairServiceTypeUpdateWithoutTenantInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  icon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deviceServices?: Prisma.RepairDeviceServiceUpdateManyWithoutServiceNestedInput
+}
+
+export type RepairServiceTypeUncheckedUpdateWithoutTenantInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  icon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deviceServices?: Prisma.RepairDeviceServiceUncheckedUpdateManyWithoutServiceNestedInput
+}
+
+export type RepairServiceTypeUncheckedUpdateManyWithoutTenantInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
@@ -560,6 +764,7 @@ export type RepairServiceTypeCountOutputTypeCountDeviceServicesArgs<ExtArgs exte
 
 export type RepairServiceTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  tenantId?: boolean
   name?: boolean
   slug?: boolean
   icon?: boolean
@@ -568,12 +773,14 @@ export type RepairServiceTypeSelect<ExtArgs extends runtime.Types.Extensions.Int
   isActive?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  tenant?: boolean | Prisma.RepairServiceType$tenantArgs<ExtArgs>
   deviceServices?: boolean | Prisma.RepairServiceType$deviceServicesArgs<ExtArgs>
   _count?: boolean | Prisma.RepairServiceTypeCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["repairServiceType"]>
 
 export type RepairServiceTypeSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  tenantId?: boolean
   name?: boolean
   slug?: boolean
   icon?: boolean
@@ -582,10 +789,12 @@ export type RepairServiceTypeSelectCreateManyAndReturn<ExtArgs extends runtime.T
   isActive?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  tenant?: boolean | Prisma.RepairServiceType$tenantArgs<ExtArgs>
 }, ExtArgs["result"]["repairServiceType"]>
 
 export type RepairServiceTypeSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  tenantId?: boolean
   name?: boolean
   slug?: boolean
   icon?: boolean
@@ -594,10 +803,12 @@ export type RepairServiceTypeSelectUpdateManyAndReturn<ExtArgs extends runtime.T
   isActive?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  tenant?: boolean | Prisma.RepairServiceType$tenantArgs<ExtArgs>
 }, ExtArgs["result"]["repairServiceType"]>
 
 export type RepairServiceTypeSelectScalar = {
   id?: boolean
+  tenantId?: boolean
   name?: boolean
   slug?: boolean
   icon?: boolean
@@ -608,21 +819,28 @@ export type RepairServiceTypeSelectScalar = {
   updatedAt?: boolean
 }
 
-export type RepairServiceTypeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "slug" | "icon" | "description" | "sortOrder" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["repairServiceType"]>
+export type RepairServiceTypeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "tenantId" | "name" | "slug" | "icon" | "description" | "sortOrder" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["repairServiceType"]>
 export type RepairServiceTypeInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  tenant?: boolean | Prisma.RepairServiceType$tenantArgs<ExtArgs>
   deviceServices?: boolean | Prisma.RepairServiceType$deviceServicesArgs<ExtArgs>
   _count?: boolean | Prisma.RepairServiceTypeCountOutputTypeDefaultArgs<ExtArgs>
 }
-export type RepairServiceTypeIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
-export type RepairServiceTypeIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
+export type RepairServiceTypeIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  tenant?: boolean | Prisma.RepairServiceType$tenantArgs<ExtArgs>
+}
+export type RepairServiceTypeIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  tenant?: boolean | Prisma.RepairServiceType$tenantArgs<ExtArgs>
+}
 
 export type $RepairServiceTypePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "RepairServiceType"
   objects: {
+    tenant: Prisma.$TenantPayload<ExtArgs> | null
     deviceServices: Prisma.$RepairDeviceServicePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
+    tenantId: string | null
     name: string
     slug: string
     icon: string | null
@@ -1025,6 +1243,7 @@ readonly fields: RepairServiceTypeFieldRefs;
  */
 export interface Prisma__RepairServiceTypeClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  tenant<T extends Prisma.RepairServiceType$tenantArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.RepairServiceType$tenantArgs<ExtArgs>>): Prisma.Prisma__TenantClient<runtime.Types.Result.GetResult<Prisma.$TenantPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   deviceServices<T extends Prisma.RepairServiceType$deviceServicesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.RepairServiceType$deviceServicesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RepairDeviceServicePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -1056,6 +1275,7 @@ export interface Prisma__RepairServiceTypeClient<T, Null = never, ExtArgs extend
  */
 export interface RepairServiceTypeFieldRefs {
   readonly id: Prisma.FieldRef<"RepairServiceType", 'String'>
+  readonly tenantId: Prisma.FieldRef<"RepairServiceType", 'String'>
   readonly name: Prisma.FieldRef<"RepairServiceType", 'String'>
   readonly slug: Prisma.FieldRef<"RepairServiceType", 'String'>
   readonly icon: Prisma.FieldRef<"RepairServiceType", 'String'>
@@ -1313,6 +1533,10 @@ export type RepairServiceTypeCreateManyAndReturnArgs<ExtArgs extends runtime.Typ
    */
   data: Prisma.RepairServiceTypeCreateManyInput | Prisma.RepairServiceTypeCreateManyInput[]
   skipDuplicates?: boolean
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.RepairServiceTypeIncludeCreateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1383,6 +1607,10 @@ export type RepairServiceTypeUpdateManyAndReturnArgs<ExtArgs extends runtime.Typ
    * Limit how many RepairServiceTypes to update.
    */
   limit?: number
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.RepairServiceTypeIncludeUpdateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1449,6 +1677,25 @@ export type RepairServiceTypeDeleteManyArgs<ExtArgs extends runtime.Types.Extens
    * Limit how many RepairServiceTypes to delete.
    */
   limit?: number
+}
+
+/**
+ * RepairServiceType.tenant
+ */
+export type RepairServiceType$tenantArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Tenant
+   */
+  select?: Prisma.TenantSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Tenant
+   */
+  omit?: Prisma.TenantOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TenantInclude<ExtArgs> | null
+  where?: Prisma.TenantWhereInput
 }
 
 /**

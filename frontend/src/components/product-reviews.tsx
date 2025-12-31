@@ -13,7 +13,7 @@ import {
     CheckCircle,
 } from "lucide-react";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+const API_URL = '';
 
 interface Review {
     id: string;
@@ -51,10 +51,10 @@ const StarRating = ({ rating, interactive, onChange }: {
             >
                 <Star
                     className={`w-5 h-5 ${star <= rating
-                            ? "fill-yellow-400 text-yellow-400"
-                            : interactive
-                                ? "text-zinc-300 hover:text-yellow-300"
-                                : "text-zinc-200"
+                        ? "fill-yellow-400 text-yellow-400"
+                        : interactive
+                            ? "text-zinc-300 hover:text-yellow-300"
+                            : "text-zinc-200"
                         }`}
                 />
             </button>

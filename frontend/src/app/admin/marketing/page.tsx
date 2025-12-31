@@ -20,9 +20,7 @@ import {
     ChevronRight,
 } from "lucide-react";
 
-// Backend has global prefix 'api' so we need to ensure /api is in the URL
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
-const API_URL = API_BASE.endsWith('/api') ? API_BASE : `${API_BASE}/api`;
+// All API calls use relative paths to go through Next.js proxy for tenant resolution
 
 interface Segment {
     segment: string;
@@ -199,7 +197,7 @@ export default function AdminMarketingPage() {
     const fetchSegments = async () => {
         try {
             const token = localStorage.getItem("adminAccessToken");
-            const res = await fetch(`${API_URL}/marketing/segments`, {
+            const res = await fetch(`/api/marketing/segments`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             if (!res.ok) {
@@ -224,7 +222,7 @@ export default function AdminMarketingPage() {
         setShowUserPreview(true);
         try {
             const token = localStorage.getItem("adminAccessToken");
-            const res = await fetch(`${API_URL}/marketing/users?segment=${segment}&limit=100`, {
+            const res = await fetch(`/api/marketing/users?segment=${segment}&limit=100`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             if (!res.ok) {
@@ -244,7 +242,7 @@ export default function AdminMarketingPage() {
 
     const fetchProducts = async () => {
         try {
-            const res = await fetch(`${API_URL}/products?limit=50`);
+            const res = await fetch(`/api/products?limit=50`);
             const data = await res.json();
             // Handle different response formats
             let productList: Product[] = [];
@@ -277,7 +275,7 @@ export default function AdminMarketingPage() {
 
         try {
             const token = localStorage.getItem("adminAccessToken");
-            const res = await fetch(`${API_URL}/marketing/send`, {
+            const res = await fetch(`/api/marketing/send`, {
                 method: "POST",
                 headers: {
                     Authorization: `Bearer ${token}`,

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getImageUrl } from "@/lib/image-utils";
 
 interface ProductCardProps {
     id: string;
@@ -26,7 +27,7 @@ export function ProductCard({ id, name, price, originalPrice, image, category, i
                 )}
                 {image ? (
                     <img
-                        src={image}
+                        src={getImageUrl(image)}
                         alt={name}
                         className="max-w-full max-h-full object-contain transition-transform duration-200 group-hover:scale-105"
                     />

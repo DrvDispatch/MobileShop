@@ -246,14 +246,24 @@ export class MarketingService {
      */
     async unsubscribe(email: string, reason?: string): Promise<{ success: boolean }> {
         try {
-            await this.prisma.emailUnsubscribe.upsert({
-                where: { email: email.toLowerCase() },
-                update: { reason },
-                create: {
-                    email: email.toLowerCase(),
-                    reason,
-                },
+            // Find existing unsubscribe record (tenantId is null for global/legacy)
+            const existing = await this.prisma.emailUnsubscribe.findFirst({
+                where: { email: email.toLowerCase(), tenantId: null }
             });
+
+            if (existing) {
+                await this.prisma.emailUnsubscribe.update({
+                    where: { id: existing.id },
+                    data: { reason },
+                });
+            } else {
+                await this.prisma.emailUnsubscribe.create({
+                    data: {
+                        email: email.toLowerCase(),
+                        reason,
+                    },
+                });
+            }
             this.logger.log(`Email ${email} unsubscribed`);
             return { success: true };
         } catch (error) {
@@ -266,8 +276,9 @@ export class MarketingService {
      * Check if email is unsubscribed
      */
     async isUnsubscribed(email: string): Promise<boolean> {
-        const record = await this.prisma.emailUnsubscribe.findUnique({
-            where: { email: email.toLowerCase() },
+        // Using findFirst since email uniqueness is now per-tenant
+        const record = await this.prisma.emailUnsubscribe.findFirst({
+            where: { email: email.toLowerCase(), tenantId: null },
         });
         return !!record;
     }
@@ -281,20 +292,20 @@ export class MarketingService {
             const normalizedEmail = email.toLowerCase().trim();
 
             // Check if unsubscribed - if so, remove from unsubscribe list
-            const isUnsubscribed = await this.prisma.emailUnsubscribe.findUnique({
-                where: { email: normalizedEmail },
+            const unsubscribeRecord = await this.prisma.emailUnsubscribe.findFirst({
+                where: { email: normalizedEmail, tenantId: null },
             });
 
-            if (isUnsubscribed) {
+            if (unsubscribeRecord) {
                 await this.prisma.emailUnsubscribe.delete({
-                    where: { email: normalizedEmail },
+                    where: { id: unsubscribeRecord.id },
                 });
                 this.logger.log(`Email ${email} re-subscribed (removed from unsubscribe list)`);
             }
 
-            // Check if user already exists
-            const existingUser = await this.prisma.user.findUnique({
-                where: { email: normalizedEmail },
+            // Check if user already exists (using findFirst since email uniqueness is per-tenant)
+            const existingUser = await this.prisma.user.findFirst({
+                where: { email: normalizedEmail, tenantId: null },
             });
 
             if (existingUser) {

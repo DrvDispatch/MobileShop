@@ -36,6 +36,7 @@ export type PromotionalBannerSumAggregateOutputType = {
 
 export type PromotionalBannerMinAggregateOutputType = {
   id: string | null
+  tenantId: string | null
   title: string | null
   message: string | null
   linkUrl: string | null
@@ -53,6 +54,7 @@ export type PromotionalBannerMinAggregateOutputType = {
 
 export type PromotionalBannerMaxAggregateOutputType = {
   id: string | null
+  tenantId: string | null
   title: string | null
   message: string | null
   linkUrl: string | null
@@ -70,6 +72,7 @@ export type PromotionalBannerMaxAggregateOutputType = {
 
 export type PromotionalBannerCountAggregateOutputType = {
   id: number
+  tenantId: number
   title: number
   message: number
   linkUrl: number
@@ -97,6 +100,7 @@ export type PromotionalBannerSumAggregateInputType = {
 
 export type PromotionalBannerMinAggregateInputType = {
   id?: true
+  tenantId?: true
   title?: true
   message?: true
   linkUrl?: true
@@ -114,6 +118,7 @@ export type PromotionalBannerMinAggregateInputType = {
 
 export type PromotionalBannerMaxAggregateInputType = {
   id?: true
+  tenantId?: true
   title?: true
   message?: true
   linkUrl?: true
@@ -131,6 +136,7 @@ export type PromotionalBannerMaxAggregateInputType = {
 
 export type PromotionalBannerCountAggregateInputType = {
   id?: true
+  tenantId?: true
   title?: true
   message?: true
   linkUrl?: true
@@ -235,6 +241,7 @@ export type PromotionalBannerGroupByArgs<ExtArgs extends runtime.Types.Extension
 
 export type PromotionalBannerGroupByOutputType = {
   id: string
+  tenantId: string | null
   title: string
   message: string
   linkUrl: string | null
@@ -275,6 +282,7 @@ export type PromotionalBannerWhereInput = {
   OR?: Prisma.PromotionalBannerWhereInput[]
   NOT?: Prisma.PromotionalBannerWhereInput | Prisma.PromotionalBannerWhereInput[]
   id?: Prisma.StringFilter<"PromotionalBanner"> | string
+  tenantId?: Prisma.StringNullableFilter<"PromotionalBanner"> | string | null
   title?: Prisma.StringFilter<"PromotionalBanner"> | string
   message?: Prisma.StringFilter<"PromotionalBanner"> | string
   linkUrl?: Prisma.StringNullableFilter<"PromotionalBanner"> | string | null
@@ -288,10 +296,12 @@ export type PromotionalBannerWhereInput = {
   isActive?: Prisma.BoolFilter<"PromotionalBanner"> | boolean
   createdAt?: Prisma.DateTimeFilter<"PromotionalBanner"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"PromotionalBanner"> | Date | string
+  tenant?: Prisma.XOR<Prisma.TenantNullableScalarRelationFilter, Prisma.TenantWhereInput> | null
 }
 
 export type PromotionalBannerOrderByWithRelationInput = {
   id?: Prisma.SortOrder
+  tenantId?: Prisma.SortOrderInput | Prisma.SortOrder
   title?: Prisma.SortOrder
   message?: Prisma.SortOrder
   linkUrl?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -305,6 +315,7 @@ export type PromotionalBannerOrderByWithRelationInput = {
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  tenant?: Prisma.TenantOrderByWithRelationInput
 }
 
 export type PromotionalBannerWhereUniqueInput = Prisma.AtLeast<{
@@ -312,6 +323,7 @@ export type PromotionalBannerWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.PromotionalBannerWhereInput | Prisma.PromotionalBannerWhereInput[]
   OR?: Prisma.PromotionalBannerWhereInput[]
   NOT?: Prisma.PromotionalBannerWhereInput | Prisma.PromotionalBannerWhereInput[]
+  tenantId?: Prisma.StringNullableFilter<"PromotionalBanner"> | string | null
   title?: Prisma.StringFilter<"PromotionalBanner"> | string
   message?: Prisma.StringFilter<"PromotionalBanner"> | string
   linkUrl?: Prisma.StringNullableFilter<"PromotionalBanner"> | string | null
@@ -325,10 +337,12 @@ export type PromotionalBannerWhereUniqueInput = Prisma.AtLeast<{
   isActive?: Prisma.BoolFilter<"PromotionalBanner"> | boolean
   createdAt?: Prisma.DateTimeFilter<"PromotionalBanner"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"PromotionalBanner"> | Date | string
+  tenant?: Prisma.XOR<Prisma.TenantNullableScalarRelationFilter, Prisma.TenantWhereInput> | null
 }, "id">
 
 export type PromotionalBannerOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
+  tenantId?: Prisma.SortOrderInput | Prisma.SortOrder
   title?: Prisma.SortOrder
   message?: Prisma.SortOrder
   linkUrl?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -354,6 +368,7 @@ export type PromotionalBannerScalarWhereWithAggregatesInput = {
   OR?: Prisma.PromotionalBannerScalarWhereWithAggregatesInput[]
   NOT?: Prisma.PromotionalBannerScalarWhereWithAggregatesInput | Prisma.PromotionalBannerScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"PromotionalBanner"> | string
+  tenantId?: Prisma.StringNullableWithAggregatesFilter<"PromotionalBanner"> | string | null
   title?: Prisma.StringWithAggregatesFilter<"PromotionalBanner"> | string
   message?: Prisma.StringWithAggregatesFilter<"PromotionalBanner"> | string
   linkUrl?: Prisma.StringNullableWithAggregatesFilter<"PromotionalBanner"> | string | null
@@ -384,10 +399,12 @@ export type PromotionalBannerCreateInput = {
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  tenant?: Prisma.TenantCreateNestedOneWithoutBannersInput
 }
 
 export type PromotionalBannerUncheckedCreateInput = {
   id?: string
+  tenantId?: string | null
   title: string
   message: string
   linkUrl?: string | null
@@ -418,10 +435,12 @@ export type PromotionalBannerUpdateInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  tenant?: Prisma.TenantUpdateOneWithoutBannersNestedInput
 }
 
 export type PromotionalBannerUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  tenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.StringFieldUpdateOperationsInput | string
   message?: Prisma.StringFieldUpdateOperationsInput | string
   linkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -439,6 +458,7 @@ export type PromotionalBannerUncheckedUpdateInput = {
 
 export type PromotionalBannerCreateManyInput = {
   id?: string
+  tenantId?: string | null
   title: string
   message: string
   linkUrl?: string | null
@@ -473,6 +493,7 @@ export type PromotionalBannerUpdateManyMutationInput = {
 
 export type PromotionalBannerUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  tenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.StringFieldUpdateOperationsInput | string
   message?: Prisma.StringFieldUpdateOperationsInput | string
   linkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -488,8 +509,19 @@ export type PromotionalBannerUncheckedUpdateManyInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
+export type PromotionalBannerListRelationFilter = {
+  every?: Prisma.PromotionalBannerWhereInput
+  some?: Prisma.PromotionalBannerWhereInput
+  none?: Prisma.PromotionalBannerWhereInput
+}
+
+export type PromotionalBannerOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
+}
+
 export type PromotionalBannerCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  tenantId?: Prisma.SortOrder
   title?: Prisma.SortOrder
   message?: Prisma.SortOrder
   linkUrl?: Prisma.SortOrder
@@ -511,6 +543,7 @@ export type PromotionalBannerAvgOrderByAggregateInput = {
 
 export type PromotionalBannerMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  tenantId?: Prisma.SortOrder
   title?: Prisma.SortOrder
   message?: Prisma.SortOrder
   linkUrl?: Prisma.SortOrder
@@ -528,6 +561,7 @@ export type PromotionalBannerMaxOrderByAggregateInput = {
 
 export type PromotionalBannerMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  tenantId?: Prisma.SortOrder
   title?: Prisma.SortOrder
   message?: Prisma.SortOrder
   linkUrl?: Prisma.SortOrder
@@ -547,14 +581,206 @@ export type PromotionalBannerSumOrderByAggregateInput = {
   priority?: Prisma.SortOrder
 }
 
+export type PromotionalBannerCreateNestedManyWithoutTenantInput = {
+  create?: Prisma.XOR<Prisma.PromotionalBannerCreateWithoutTenantInput, Prisma.PromotionalBannerUncheckedCreateWithoutTenantInput> | Prisma.PromotionalBannerCreateWithoutTenantInput[] | Prisma.PromotionalBannerUncheckedCreateWithoutTenantInput[]
+  connectOrCreate?: Prisma.PromotionalBannerCreateOrConnectWithoutTenantInput | Prisma.PromotionalBannerCreateOrConnectWithoutTenantInput[]
+  createMany?: Prisma.PromotionalBannerCreateManyTenantInputEnvelope
+  connect?: Prisma.PromotionalBannerWhereUniqueInput | Prisma.PromotionalBannerWhereUniqueInput[]
+}
+
+export type PromotionalBannerUncheckedCreateNestedManyWithoutTenantInput = {
+  create?: Prisma.XOR<Prisma.PromotionalBannerCreateWithoutTenantInput, Prisma.PromotionalBannerUncheckedCreateWithoutTenantInput> | Prisma.PromotionalBannerCreateWithoutTenantInput[] | Prisma.PromotionalBannerUncheckedCreateWithoutTenantInput[]
+  connectOrCreate?: Prisma.PromotionalBannerCreateOrConnectWithoutTenantInput | Prisma.PromotionalBannerCreateOrConnectWithoutTenantInput[]
+  createMany?: Prisma.PromotionalBannerCreateManyTenantInputEnvelope
+  connect?: Prisma.PromotionalBannerWhereUniqueInput | Prisma.PromotionalBannerWhereUniqueInput[]
+}
+
+export type PromotionalBannerUpdateManyWithoutTenantNestedInput = {
+  create?: Prisma.XOR<Prisma.PromotionalBannerCreateWithoutTenantInput, Prisma.PromotionalBannerUncheckedCreateWithoutTenantInput> | Prisma.PromotionalBannerCreateWithoutTenantInput[] | Prisma.PromotionalBannerUncheckedCreateWithoutTenantInput[]
+  connectOrCreate?: Prisma.PromotionalBannerCreateOrConnectWithoutTenantInput | Prisma.PromotionalBannerCreateOrConnectWithoutTenantInput[]
+  upsert?: Prisma.PromotionalBannerUpsertWithWhereUniqueWithoutTenantInput | Prisma.PromotionalBannerUpsertWithWhereUniqueWithoutTenantInput[]
+  createMany?: Prisma.PromotionalBannerCreateManyTenantInputEnvelope
+  set?: Prisma.PromotionalBannerWhereUniqueInput | Prisma.PromotionalBannerWhereUniqueInput[]
+  disconnect?: Prisma.PromotionalBannerWhereUniqueInput | Prisma.PromotionalBannerWhereUniqueInput[]
+  delete?: Prisma.PromotionalBannerWhereUniqueInput | Prisma.PromotionalBannerWhereUniqueInput[]
+  connect?: Prisma.PromotionalBannerWhereUniqueInput | Prisma.PromotionalBannerWhereUniqueInput[]
+  update?: Prisma.PromotionalBannerUpdateWithWhereUniqueWithoutTenantInput | Prisma.PromotionalBannerUpdateWithWhereUniqueWithoutTenantInput[]
+  updateMany?: Prisma.PromotionalBannerUpdateManyWithWhereWithoutTenantInput | Prisma.PromotionalBannerUpdateManyWithWhereWithoutTenantInput[]
+  deleteMany?: Prisma.PromotionalBannerScalarWhereInput | Prisma.PromotionalBannerScalarWhereInput[]
+}
+
+export type PromotionalBannerUncheckedUpdateManyWithoutTenantNestedInput = {
+  create?: Prisma.XOR<Prisma.PromotionalBannerCreateWithoutTenantInput, Prisma.PromotionalBannerUncheckedCreateWithoutTenantInput> | Prisma.PromotionalBannerCreateWithoutTenantInput[] | Prisma.PromotionalBannerUncheckedCreateWithoutTenantInput[]
+  connectOrCreate?: Prisma.PromotionalBannerCreateOrConnectWithoutTenantInput | Prisma.PromotionalBannerCreateOrConnectWithoutTenantInput[]
+  upsert?: Prisma.PromotionalBannerUpsertWithWhereUniqueWithoutTenantInput | Prisma.PromotionalBannerUpsertWithWhereUniqueWithoutTenantInput[]
+  createMany?: Prisma.PromotionalBannerCreateManyTenantInputEnvelope
+  set?: Prisma.PromotionalBannerWhereUniqueInput | Prisma.PromotionalBannerWhereUniqueInput[]
+  disconnect?: Prisma.PromotionalBannerWhereUniqueInput | Prisma.PromotionalBannerWhereUniqueInput[]
+  delete?: Prisma.PromotionalBannerWhereUniqueInput | Prisma.PromotionalBannerWhereUniqueInput[]
+  connect?: Prisma.PromotionalBannerWhereUniqueInput | Prisma.PromotionalBannerWhereUniqueInput[]
+  update?: Prisma.PromotionalBannerUpdateWithWhereUniqueWithoutTenantInput | Prisma.PromotionalBannerUpdateWithWhereUniqueWithoutTenantInput[]
+  updateMany?: Prisma.PromotionalBannerUpdateManyWithWhereWithoutTenantInput | Prisma.PromotionalBannerUpdateManyWithWhereWithoutTenantInput[]
+  deleteMany?: Prisma.PromotionalBannerScalarWhereInput | Prisma.PromotionalBannerScalarWhereInput[]
+}
+
 export type EnumBannerPositionFieldUpdateOperationsInput = {
   set?: $Enums.BannerPosition
+}
+
+export type PromotionalBannerCreateWithoutTenantInput = {
+  id?: string
+  title: string
+  message: string
+  linkUrl?: string | null
+  linkText?: string | null
+  bgColor?: string
+  textColor?: string
+  position?: $Enums.BannerPosition
+  priority?: number
+  startsAt?: Date | string | null
+  expiresAt?: Date | string | null
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type PromotionalBannerUncheckedCreateWithoutTenantInput = {
+  id?: string
+  title: string
+  message: string
+  linkUrl?: string | null
+  linkText?: string | null
+  bgColor?: string
+  textColor?: string
+  position?: $Enums.BannerPosition
+  priority?: number
+  startsAt?: Date | string | null
+  expiresAt?: Date | string | null
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type PromotionalBannerCreateOrConnectWithoutTenantInput = {
+  where: Prisma.PromotionalBannerWhereUniqueInput
+  create: Prisma.XOR<Prisma.PromotionalBannerCreateWithoutTenantInput, Prisma.PromotionalBannerUncheckedCreateWithoutTenantInput>
+}
+
+export type PromotionalBannerCreateManyTenantInputEnvelope = {
+  data: Prisma.PromotionalBannerCreateManyTenantInput | Prisma.PromotionalBannerCreateManyTenantInput[]
+  skipDuplicates?: boolean
+}
+
+export type PromotionalBannerUpsertWithWhereUniqueWithoutTenantInput = {
+  where: Prisma.PromotionalBannerWhereUniqueInput
+  update: Prisma.XOR<Prisma.PromotionalBannerUpdateWithoutTenantInput, Prisma.PromotionalBannerUncheckedUpdateWithoutTenantInput>
+  create: Prisma.XOR<Prisma.PromotionalBannerCreateWithoutTenantInput, Prisma.PromotionalBannerUncheckedCreateWithoutTenantInput>
+}
+
+export type PromotionalBannerUpdateWithWhereUniqueWithoutTenantInput = {
+  where: Prisma.PromotionalBannerWhereUniqueInput
+  data: Prisma.XOR<Prisma.PromotionalBannerUpdateWithoutTenantInput, Prisma.PromotionalBannerUncheckedUpdateWithoutTenantInput>
+}
+
+export type PromotionalBannerUpdateManyWithWhereWithoutTenantInput = {
+  where: Prisma.PromotionalBannerScalarWhereInput
+  data: Prisma.XOR<Prisma.PromotionalBannerUpdateManyMutationInput, Prisma.PromotionalBannerUncheckedUpdateManyWithoutTenantInput>
+}
+
+export type PromotionalBannerScalarWhereInput = {
+  AND?: Prisma.PromotionalBannerScalarWhereInput | Prisma.PromotionalBannerScalarWhereInput[]
+  OR?: Prisma.PromotionalBannerScalarWhereInput[]
+  NOT?: Prisma.PromotionalBannerScalarWhereInput | Prisma.PromotionalBannerScalarWhereInput[]
+  id?: Prisma.StringFilter<"PromotionalBanner"> | string
+  tenantId?: Prisma.StringNullableFilter<"PromotionalBanner"> | string | null
+  title?: Prisma.StringFilter<"PromotionalBanner"> | string
+  message?: Prisma.StringFilter<"PromotionalBanner"> | string
+  linkUrl?: Prisma.StringNullableFilter<"PromotionalBanner"> | string | null
+  linkText?: Prisma.StringNullableFilter<"PromotionalBanner"> | string | null
+  bgColor?: Prisma.StringFilter<"PromotionalBanner"> | string
+  textColor?: Prisma.StringFilter<"PromotionalBanner"> | string
+  position?: Prisma.EnumBannerPositionFilter<"PromotionalBanner"> | $Enums.BannerPosition
+  priority?: Prisma.IntFilter<"PromotionalBanner"> | number
+  startsAt?: Prisma.DateTimeNullableFilter<"PromotionalBanner"> | Date | string | null
+  expiresAt?: Prisma.DateTimeNullableFilter<"PromotionalBanner"> | Date | string | null
+  isActive?: Prisma.BoolFilter<"PromotionalBanner"> | boolean
+  createdAt?: Prisma.DateTimeFilter<"PromotionalBanner"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"PromotionalBanner"> | Date | string
+}
+
+export type PromotionalBannerCreateManyTenantInput = {
+  id?: string
+  title: string
+  message: string
+  linkUrl?: string | null
+  linkText?: string | null
+  bgColor?: string
+  textColor?: string
+  position?: $Enums.BannerPosition
+  priority?: number
+  startsAt?: Date | string | null
+  expiresAt?: Date | string | null
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type PromotionalBannerUpdateWithoutTenantInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  message?: Prisma.StringFieldUpdateOperationsInput | string
+  linkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  linkText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bgColor?: Prisma.StringFieldUpdateOperationsInput | string
+  textColor?: Prisma.StringFieldUpdateOperationsInput | string
+  position?: Prisma.EnumBannerPositionFieldUpdateOperationsInput | $Enums.BannerPosition
+  priority?: Prisma.IntFieldUpdateOperationsInput | number
+  startsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type PromotionalBannerUncheckedUpdateWithoutTenantInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  message?: Prisma.StringFieldUpdateOperationsInput | string
+  linkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  linkText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bgColor?: Prisma.StringFieldUpdateOperationsInput | string
+  textColor?: Prisma.StringFieldUpdateOperationsInput | string
+  position?: Prisma.EnumBannerPositionFieldUpdateOperationsInput | $Enums.BannerPosition
+  priority?: Prisma.IntFieldUpdateOperationsInput | number
+  startsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type PromotionalBannerUncheckedUpdateManyWithoutTenantInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  message?: Prisma.StringFieldUpdateOperationsInput | string
+  linkUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  linkText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bgColor?: Prisma.StringFieldUpdateOperationsInput | string
+  textColor?: Prisma.StringFieldUpdateOperationsInput | string
+  position?: Prisma.EnumBannerPositionFieldUpdateOperationsInput | $Enums.BannerPosition
+  priority?: Prisma.IntFieldUpdateOperationsInput | number
+  startsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 
 
 export type PromotionalBannerSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  tenantId?: boolean
   title?: boolean
   message?: boolean
   linkUrl?: boolean
@@ -568,10 +794,12 @@ export type PromotionalBannerSelect<ExtArgs extends runtime.Types.Extensions.Int
   isActive?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  tenant?: boolean | Prisma.PromotionalBanner$tenantArgs<ExtArgs>
 }, ExtArgs["result"]["promotionalBanner"]>
 
 export type PromotionalBannerSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  tenantId?: boolean
   title?: boolean
   message?: boolean
   linkUrl?: boolean
@@ -585,10 +813,12 @@ export type PromotionalBannerSelectCreateManyAndReturn<ExtArgs extends runtime.T
   isActive?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  tenant?: boolean | Prisma.PromotionalBanner$tenantArgs<ExtArgs>
 }, ExtArgs["result"]["promotionalBanner"]>
 
 export type PromotionalBannerSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  tenantId?: boolean
   title?: boolean
   message?: boolean
   linkUrl?: boolean
@@ -602,10 +832,12 @@ export type PromotionalBannerSelectUpdateManyAndReturn<ExtArgs extends runtime.T
   isActive?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  tenant?: boolean | Prisma.PromotionalBanner$tenantArgs<ExtArgs>
 }, ExtArgs["result"]["promotionalBanner"]>
 
 export type PromotionalBannerSelectScalar = {
   id?: boolean
+  tenantId?: boolean
   title?: boolean
   message?: boolean
   linkUrl?: boolean
@@ -621,13 +853,25 @@ export type PromotionalBannerSelectScalar = {
   updatedAt?: boolean
 }
 
-export type PromotionalBannerOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "message" | "linkUrl" | "linkText" | "bgColor" | "textColor" | "position" | "priority" | "startsAt" | "expiresAt" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["promotionalBanner"]>
+export type PromotionalBannerOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "tenantId" | "title" | "message" | "linkUrl" | "linkText" | "bgColor" | "textColor" | "position" | "priority" | "startsAt" | "expiresAt" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["promotionalBanner"]>
+export type PromotionalBannerInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  tenant?: boolean | Prisma.PromotionalBanner$tenantArgs<ExtArgs>
+}
+export type PromotionalBannerIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  tenant?: boolean | Prisma.PromotionalBanner$tenantArgs<ExtArgs>
+}
+export type PromotionalBannerIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  tenant?: boolean | Prisma.PromotionalBanner$tenantArgs<ExtArgs>
+}
 
 export type $PromotionalBannerPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "PromotionalBanner"
-  objects: {}
+  objects: {
+    tenant: Prisma.$TenantPayload<ExtArgs> | null
+  }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
+    tenantId: string | null
     title: string
     message: string
     linkUrl: string | null
@@ -1035,6 +1279,7 @@ readonly fields: PromotionalBannerFieldRefs;
  */
 export interface Prisma__PromotionalBannerClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  tenant<T extends Prisma.PromotionalBanner$tenantArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.PromotionalBanner$tenantArgs<ExtArgs>>): Prisma.Prisma__TenantClient<runtime.Types.Result.GetResult<Prisma.$TenantPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1065,6 +1310,7 @@ export interface Prisma__PromotionalBannerClient<T, Null = never, ExtArgs extend
  */
 export interface PromotionalBannerFieldRefs {
   readonly id: Prisma.FieldRef<"PromotionalBanner", 'String'>
+  readonly tenantId: Prisma.FieldRef<"PromotionalBanner", 'String'>
   readonly title: Prisma.FieldRef<"PromotionalBanner", 'String'>
   readonly message: Prisma.FieldRef<"PromotionalBanner", 'String'>
   readonly linkUrl: Prisma.FieldRef<"PromotionalBanner", 'String'>
@@ -1095,6 +1341,10 @@ export type PromotionalBannerFindUniqueArgs<ExtArgs extends runtime.Types.Extens
    */
   omit?: Prisma.PromotionalBannerOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PromotionalBannerInclude<ExtArgs> | null
+  /**
    * Filter, which PromotionalBanner to fetch.
    */
   where: Prisma.PromotionalBannerWhereUniqueInput
@@ -1113,6 +1363,10 @@ export type PromotionalBannerFindUniqueOrThrowArgs<ExtArgs extends runtime.Types
    */
   omit?: Prisma.PromotionalBannerOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PromotionalBannerInclude<ExtArgs> | null
+  /**
    * Filter, which PromotionalBanner to fetch.
    */
   where: Prisma.PromotionalBannerWhereUniqueInput
@@ -1130,6 +1384,10 @@ export type PromotionalBannerFindFirstArgs<ExtArgs extends runtime.Types.Extensi
    * Omit specific fields from the PromotionalBanner
    */
   omit?: Prisma.PromotionalBannerOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PromotionalBannerInclude<ExtArgs> | null
   /**
    * Filter, which PromotionalBanner to fetch.
    */
@@ -1179,6 +1437,10 @@ export type PromotionalBannerFindFirstOrThrowArgs<ExtArgs extends runtime.Types.
    */
   omit?: Prisma.PromotionalBannerOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PromotionalBannerInclude<ExtArgs> | null
+  /**
    * Filter, which PromotionalBanner to fetch.
    */
   where?: Prisma.PromotionalBannerWhereInput
@@ -1227,6 +1489,10 @@ export type PromotionalBannerFindManyArgs<ExtArgs extends runtime.Types.Extensio
    */
   omit?: Prisma.PromotionalBannerOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PromotionalBannerInclude<ExtArgs> | null
+  /**
    * Filter, which PromotionalBanners to fetch.
    */
   where?: Prisma.PromotionalBannerWhereInput
@@ -1270,6 +1536,10 @@ export type PromotionalBannerCreateArgs<ExtArgs extends runtime.Types.Extensions
    */
   omit?: Prisma.PromotionalBannerOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PromotionalBannerInclude<ExtArgs> | null
+  /**
    * The data needed to create a PromotionalBanner.
    */
   data: Prisma.XOR<Prisma.PromotionalBannerCreateInput, Prisma.PromotionalBannerUncheckedCreateInput>
@@ -1303,6 +1573,10 @@ export type PromotionalBannerCreateManyAndReturnArgs<ExtArgs extends runtime.Typ
    */
   data: Prisma.PromotionalBannerCreateManyInput | Prisma.PromotionalBannerCreateManyInput[]
   skipDuplicates?: boolean
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PromotionalBannerIncludeCreateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1317,6 +1591,10 @@ export type PromotionalBannerUpdateArgs<ExtArgs extends runtime.Types.Extensions
    * Omit specific fields from the PromotionalBanner
    */
   omit?: Prisma.PromotionalBannerOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PromotionalBannerInclude<ExtArgs> | null
   /**
    * The data needed to update a PromotionalBanner.
    */
@@ -1369,6 +1647,10 @@ export type PromotionalBannerUpdateManyAndReturnArgs<ExtArgs extends runtime.Typ
    * Limit how many PromotionalBanners to update.
    */
   limit?: number
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PromotionalBannerIncludeUpdateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1383,6 +1665,10 @@ export type PromotionalBannerUpsertArgs<ExtArgs extends runtime.Types.Extensions
    * Omit specific fields from the PromotionalBanner
    */
   omit?: Prisma.PromotionalBannerOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PromotionalBannerInclude<ExtArgs> | null
   /**
    * The filter to search for the PromotionalBanner to update in case it exists.
    */
@@ -1410,6 +1696,10 @@ export type PromotionalBannerDeleteArgs<ExtArgs extends runtime.Types.Extensions
    */
   omit?: Prisma.PromotionalBannerOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PromotionalBannerInclude<ExtArgs> | null
+  /**
    * Filter which PromotionalBanner to delete.
    */
   where: Prisma.PromotionalBannerWhereUniqueInput
@@ -1430,6 +1720,25 @@ export type PromotionalBannerDeleteManyArgs<ExtArgs extends runtime.Types.Extens
 }
 
 /**
+ * PromotionalBanner.tenant
+ */
+export type PromotionalBanner$tenantArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Tenant
+   */
+  select?: Prisma.TenantSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Tenant
+   */
+  omit?: Prisma.TenantOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TenantInclude<ExtArgs> | null
+  where?: Prisma.TenantWhereInput
+}
+
+/**
  * PromotionalBanner without action
  */
 export type PromotionalBannerDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1441,4 +1750,8 @@ export type PromotionalBannerDefaultArgs<ExtArgs extends runtime.Types.Extension
    * Omit specific fields from the PromotionalBanner
    */
   omit?: Prisma.PromotionalBannerOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PromotionalBannerInclude<ExtArgs> | null
 }

@@ -19,7 +19,7 @@ import {
     X,
 } from "lucide-react";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+// All API calls use relative paths to go through Next.js proxy for tenant resolution
 
 interface DiscountCode {
     id: string;
@@ -74,7 +74,7 @@ export default function AdminDiscountsPage() {
     const fetchDiscounts = async () => {
         setIsLoading(true);
         try {
-            const res = await fetch(`${API_URL}/api/discounts`, {
+            const res = await fetch(`/api/discounts`, {
                 headers: getAdminHeaders(),
             });
             if (res.ok) {
@@ -158,8 +158,8 @@ export default function AdminDiscountsPage() {
             };
 
             const url = editingId
-                ? `${API_URL}/api/discounts/${editingId}`
-                : `${API_URL}/api/discounts`;
+                ? `/api/discounts/${editingId}`
+                : `/api/discounts`;
             const method = editingId ? "PATCH" : "POST";
 
             const res = await fetch(url, {
@@ -188,7 +188,7 @@ export default function AdminDiscountsPage() {
         if (!confirm("Weet je zeker dat je deze kortingscode wilt verwijderen?")) return;
 
         try {
-            const res = await fetch(`${API_URL}/api/discounts/${id}`, {
+            const res = await fetch(`/api/discounts/${id}`, {
                 method: "DELETE",
                 headers: getAdminHeaders(),
             });
@@ -203,7 +203,7 @@ export default function AdminDiscountsPage() {
 
     const handleToggleActive = async (discount: DiscountCode) => {
         try {
-            const res = await fetch(`${API_URL}/api/discounts/${discount.id}`, {
+            const res = await fetch(`/api/discounts/${discount.id}`, {
                 method: "PATCH",
                 headers: getAdminHeaders(),
                 body: JSON.stringify({ isActive: !discount.isActive }),

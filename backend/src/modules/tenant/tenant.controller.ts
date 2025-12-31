@@ -2,6 +2,7 @@ import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards, Req } from 
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import type { Request } from 'express';
 import { TenantService } from './tenant.service';
+import { TenantFeaturesService } from '../owner/tenant-features.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
@@ -10,7 +11,10 @@ import { CurrentTenant, TenantId } from './tenant.decorator';
 @ApiTags('Tenant')
 @Controller('tenant')
 export class TenantController {
-    constructor(private readonly tenantService: TenantService) { }
+    constructor(
+        private readonly tenantService: TenantService,
+        private readonly featuresService: TenantFeaturesService,
+    ) { }
 
     /**
      * Get current tenant configuration (public - from Host header)
@@ -31,6 +35,27 @@ export class TenantController {
     @ApiOperation({ summary: 'Get current tenant context' })
     async getTenantContext(@CurrentTenant() tenant: Express.Request['tenant']) {
         return tenant;
+    }
+
+    /**
+     * Get current tenant's feature flags (public - from Host header)
+     * Used by frontend to determine which features to show
+     */
+    @Get('features')
+    @ApiOperation({ summary: 'Get current tenant feature flags' })
+    async getCurrentFeatures(@Req() req: Request) {
+        if (!req.tenantId) {
+            // Return defaults if no tenant context
+            return {
+                ecommerceEnabled: true,
+                repairsEnabled: true,
+                ticketsEnabled: true,
+                invoicingEnabled: true,
+                inventoryEnabled: true,
+                analyticsEnabled: true,
+            };
+        }
+        return this.featuresService.getFeatures(req.tenantId);
     }
 
     // ============================================

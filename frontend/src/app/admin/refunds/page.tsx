@@ -59,7 +59,7 @@ const reasonLabels: Record<string, string> = {
     OTHER: "Anders",
 };
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+// All API calls use relative paths to go through Next.js proxy for tenant resolution
 
 export default function AdminRefundsPage() {
     const router = useRouter();
@@ -83,10 +83,10 @@ export default function AdminRefundsPage() {
             if (statusFilter) params.append("status", statusFilter);
 
             const [refundsRes, statsRes] = await Promise.all([
-                fetch(`${API_URL}/api/refunds?${params.toString()}`, {
+                fetch(`/api/refunds?${params.toString()}`, {
                     headers: { Authorization: `Bearer ${token}` },
                 }),
-                fetch(`${API_URL}/api/refunds/stats`, {
+                fetch(`/api/refunds/stats`, {
                     headers: { Authorization: `Bearer ${token}` },
                 }),
             ]);
@@ -116,7 +116,7 @@ export default function AdminRefundsPage() {
         setProcessing(refundId);
         try {
             const token = localStorage.getItem("adminAccessToken");
-            const response = await fetch(`${API_URL}/api/refunds/${refundId}/process`, {
+            const response = await fetch(`/api/refunds/${refundId}/process`, {
                 method: "POST",
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -141,7 +141,7 @@ export default function AdminRefundsPage() {
 
         try {
             const token = localStorage.getItem("adminAccessToken");
-            const response = await fetch(`${API_URL}/api/refunds/${refundId}/cancel`, {
+            const response = await fetch(`/api/refunds/${refundId}/cancel`, {
                 method: "POST",
                 headers: {
                     Authorization: `Bearer ${token}`,

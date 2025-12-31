@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
+import { getImageUrl } from "@/lib/image-utils";
 import { Button } from "@/components/ui/button";
 import {
     Package,
@@ -26,7 +27,8 @@ import {
     Star,
 } from "lucide-react";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+// No longer used - all API calls go through Next.js proxy at /api/...
+// const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 
 interface DashboardStats {
     totalProducts: number;
@@ -123,15 +125,15 @@ export default function AdminDashboard() {
             const token = localStorage.getItem("adminAccessToken");
             const headers = { Authorization: `Bearer ${token}` };
 
-            // Fetch all data in parallel
+            // Fetch all data in parallel - using relative paths for Next.js proxy
             const [productsRes, ordersRes, usersRes, appointmentsRes, revenueRes, trendsRes, bestsellersRes] = await Promise.all([
                 api.getProducts({ limit: 1 }),
-                fetch(`${API_URL}/api/orders/admin/all`, { headers }).then(r => r.json()),
-                fetch(`${API_URL}/api/users?limit=1`, { headers }).then(r => r.json()).catch(() => ({ meta: { total: 0 } })),
-                fetch(`${API_URL}/api/appointments`, { headers }).then(r => r.json()).catch(() => []),
-                fetch(`${API_URL}/api/analytics/revenue?days=${activeChartPeriod}`, { headers }).then(r => r.json()).catch(() => ({ data: [] })),
-                fetch(`${API_URL}/api/analytics/trends`, { headers }).then(r => r.json()).catch(() => null),
-                fetch(`${API_URL}/api/analytics/bestsellers?limit=5`, { headers }).then(r => r.json()).catch(() => []),
+                fetch(`/api/orders/admin/all`, { headers }).then(r => r.json()).catch(() => []),
+                fetch(`/api/users?limit=1`, { headers }).then(r => r.json()).catch(() => ({ meta: { total: 0 } })),
+                fetch(`/api/appointments`, { headers }).then(r => r.json()).catch(() => []),
+                fetch(`/api/analytics/revenue?days=${activeChartPeriod}`, { headers }).then(r => r.json()).catch(() => ({ data: [] })),
+                fetch(`/api/analytics/trends`, { headers }).then(r => r.json()).catch(() => null),
+                fetch(`/api/analytics/bestsellers?limit=5`, { headers }).then(r => r.json()).catch(() => []),
             ]);
 
             // Calculate stats from orders
@@ -223,7 +225,7 @@ export default function AdminDashboard() {
     const handleExport = async (type: 'revenue' | 'orders' | 'products') => {
         const token = localStorage.getItem("adminAccessToken");
         try {
-            const response = await fetch(`${API_URL}/api/analytics/export?type=${type}&days=30`, {
+            const response = await fetch(`/api/analytics/export?type=${type}&days=30`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             const blob = await response.blob();
@@ -292,11 +294,11 @@ export default function AdminDashboard() {
                 <div className="bg-white rounded-xl border border-zinc-200 p-5 hover:shadow-md transition-shadow">
                     <div className="flex items-center justify-between mb-3">
                         <TrendingUp className="w-6 h-6 text-blue-500" />
-                        {trends && (
-                            <span className={`text-xs px-2 py-1 rounded-full font-medium flex items-center gap-1 ${trends.monthly.change >= 0 ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
+                        {trends && trends.monthly && (
+                            <span className={`text-xs px-2 py-1 rounded-full font-medium flex items-center gap-1 ${(trends.monthly.change ?? 0) >= 0 ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
                                 }`}>
-                                {trends.monthly.change >= 0 ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
-                                {Math.abs(trends.monthly.change)}%
+                                {(trends.monthly.change ?? 0) >= 0 ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
+                                {Math.abs(trends.monthly.change ?? 0)}%
                             </span>
                         )}
                     </div>
@@ -536,7 +538,7 @@ export default function AdminDashboard() {
                                     </span>
                                     <div className="w-10 h-10 bg-zinc-100 rounded flex-shrink-0">
                                         {product.image && (
-                                            <img src={product.image} alt="" className="w-full h-full object-cover rounded" />
+                                            <img src={getImageUrl(product.image)} alt="" className="w-full h-full object-cover rounded" />
                                         )}
                                     </div>
                                     <div className="flex-1 min-w-0">
@@ -636,7 +638,7 @@ export default function AdminDashboard() {
                             >
                                 <div className="w-10 h-10 bg-white rounded border border-amber-200 flex items-center justify-center flex-shrink-0 overflow-hidden">
                                     {product.image ? (
-                                        <img src={product.image} alt="" className="w-full h-full object-cover" />
+                                        <img src={getImageUrl(product.image)} alt="" className="w-full h-full object-cover" />
                                     ) : (
                                         <Package className="w-5 h-5 text-amber-400" />
                                     )}
@@ -646,10 +648,10 @@ export default function AdminDashboard() {
                                 </div>
                                 <div className="text-right flex-shrink-0">
                                     <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-sm font-bold ${product.stockQty === 0
-                                            ? "bg-red-100 text-red-700"
-                                            : product.stockQty <= 2
-                                                ? "bg-orange-100 text-orange-700"
-                                                : "bg-yellow-100 text-yellow-700"
+                                        ? "bg-red-100 text-red-700"
+                                        : product.stockQty <= 2
+                                            ? "bg-orange-100 text-orange-700"
+                                            : "bg-yellow-100 text-yellow-700"
                                         }`}>
                                         {product.stockQty === 0 ? (
                                             <>

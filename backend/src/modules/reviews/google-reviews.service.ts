@@ -94,28 +94,40 @@ export class GoogleReviewsService {
                 imported++;
             }
 
-            // Update sync timestamp in settings
-            await this.prisma.setting.upsert({
-                where: { key: 'google_reviews_last_sync' },
-                create: {
-                    key: 'google_reviews_last_sync',
-                    value: new Date().toISOString(),
-                },
-                update: {
-                    value: new Date().toISOString(),
-                },
+            // Update sync timestamp in settings using findFirst pattern
+            const lastSyncSetting = await this.prisma.setting.findFirst({
+                where: { key: 'google_reviews_last_sync', tenantId: null }
             });
+            if (lastSyncSetting) {
+                await this.prisma.setting.update({
+                    where: { id: lastSyncSetting.id },
+                    data: { value: new Date().toISOString() },
+                });
+            } else {
+                await this.prisma.setting.create({
+                    data: {
+                        key: 'google_reviews_last_sync',
+                        value: new Date().toISOString(),
+                    },
+                });
+            }
 
-            await this.prisma.setting.upsert({
-                where: { key: 'google_place_id' },
-                create: {
-                    key: 'google_place_id',
-                    value: placeId,
-                },
-                update: {
-                    value: placeId,
-                },
+            const placeIdSetting = await this.prisma.setting.findFirst({
+                where: { key: 'google_place_id', tenantId: null }
             });
+            if (placeIdSetting) {
+                await this.prisma.setting.update({
+                    where: { id: placeIdSetting.id },
+                    data: { value: placeId },
+                });
+            } else {
+                await this.prisma.setting.create({
+                    data: {
+                        key: 'google_place_id',
+                        value: placeId,
+                    },
+                });
+            }
 
             this.logger.log(`Sync complete: ${imported} imported, ${skipped} skipped`);
 
@@ -154,8 +166,8 @@ export class GoogleReviewsService {
      */
     async getSyncStatus() {
         const [lastSync, placeId, reviewCount] = await Promise.all([
-            this.prisma.setting.findUnique({ where: { key: 'google_reviews_last_sync' } }),
-            this.prisma.setting.findUnique({ where: { key: 'google_place_id' } }),
+            this.prisma.setting.findFirst({ where: { key: 'google_reviews_last_sync', tenantId: null } }),
+            this.prisma.setting.findFirst({ where: { key: 'google_place_id', tenantId: null } }),
             this.prisma.googleReview.count(),
         ]);
 

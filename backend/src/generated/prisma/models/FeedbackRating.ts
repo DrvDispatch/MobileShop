@@ -36,6 +36,7 @@ export type FeedbackRatingSumAggregateOutputType = {
 
 export type FeedbackRatingMinAggregateOutputType = {
   id: string | null
+  tenantId: string | null
   token: string | null
   ticketId: string | null
   repairTicketId: string | null
@@ -52,6 +53,7 @@ export type FeedbackRatingMinAggregateOutputType = {
 
 export type FeedbackRatingMaxAggregateOutputType = {
   id: string | null
+  tenantId: string | null
   token: string | null
   ticketId: string | null
   repairTicketId: string | null
@@ -68,6 +70,7 @@ export type FeedbackRatingMaxAggregateOutputType = {
 
 export type FeedbackRatingCountAggregateOutputType = {
   id: number
+  tenantId: number
   token: number
   ticketId: number
   repairTicketId: number
@@ -94,6 +97,7 @@ export type FeedbackRatingSumAggregateInputType = {
 
 export type FeedbackRatingMinAggregateInputType = {
   id?: true
+  tenantId?: true
   token?: true
   ticketId?: true
   repairTicketId?: true
@@ -110,6 +114,7 @@ export type FeedbackRatingMinAggregateInputType = {
 
 export type FeedbackRatingMaxAggregateInputType = {
   id?: true
+  tenantId?: true
   token?: true
   ticketId?: true
   repairTicketId?: true
@@ -126,6 +131,7 @@ export type FeedbackRatingMaxAggregateInputType = {
 
 export type FeedbackRatingCountAggregateInputType = {
   id?: true
+  tenantId?: true
   token?: true
   ticketId?: true
   repairTicketId?: true
@@ -229,6 +235,7 @@ export type FeedbackRatingGroupByArgs<ExtArgs extends runtime.Types.Extensions.I
 
 export type FeedbackRatingGroupByOutputType = {
   id: string
+  tenantId: string | null
   token: string
   ticketId: string | null
   repairTicketId: string | null
@@ -268,6 +275,7 @@ export type FeedbackRatingWhereInput = {
   OR?: Prisma.FeedbackRatingWhereInput[]
   NOT?: Prisma.FeedbackRatingWhereInput | Prisma.FeedbackRatingWhereInput[]
   id?: Prisma.StringFilter<"FeedbackRating"> | string
+  tenantId?: Prisma.StringNullableFilter<"FeedbackRating"> | string | null
   token?: Prisma.StringFilter<"FeedbackRating"> | string
   ticketId?: Prisma.StringNullableFilter<"FeedbackRating"> | string | null
   repairTicketId?: Prisma.StringNullableFilter<"FeedbackRating"> | string | null
@@ -280,10 +288,12 @@ export type FeedbackRatingWhereInput = {
   emailSent?: Prisma.BoolFilter<"FeedbackRating"> | boolean
   createdAt?: Prisma.DateTimeFilter<"FeedbackRating"> | Date | string
   ratedAt?: Prisma.DateTimeNullableFilter<"FeedbackRating"> | Date | string | null
+  tenant?: Prisma.XOR<Prisma.TenantNullableScalarRelationFilter, Prisma.TenantWhereInput> | null
 }
 
 export type FeedbackRatingOrderByWithRelationInput = {
   id?: Prisma.SortOrder
+  tenantId?: Prisma.SortOrderInput | Prisma.SortOrder
   token?: Prisma.SortOrder
   ticketId?: Prisma.SortOrderInput | Prisma.SortOrder
   repairTicketId?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -296,6 +306,7 @@ export type FeedbackRatingOrderByWithRelationInput = {
   emailSent?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   ratedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  tenant?: Prisma.TenantOrderByWithRelationInput
 }
 
 export type FeedbackRatingWhereUniqueInput = Prisma.AtLeast<{
@@ -306,6 +317,7 @@ export type FeedbackRatingWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.FeedbackRatingWhereInput | Prisma.FeedbackRatingWhereInput[]
   OR?: Prisma.FeedbackRatingWhereInput[]
   NOT?: Prisma.FeedbackRatingWhereInput | Prisma.FeedbackRatingWhereInput[]
+  tenantId?: Prisma.StringNullableFilter<"FeedbackRating"> | string | null
   sourceType?: Prisma.StringFilter<"FeedbackRating"> | string
   rating?: Prisma.IntNullableFilter<"FeedbackRating"> | number | null
   comment?: Prisma.StringNullableFilter<"FeedbackRating"> | string | null
@@ -315,10 +327,12 @@ export type FeedbackRatingWhereUniqueInput = Prisma.AtLeast<{
   emailSent?: Prisma.BoolFilter<"FeedbackRating"> | boolean
   createdAt?: Prisma.DateTimeFilter<"FeedbackRating"> | Date | string
   ratedAt?: Prisma.DateTimeNullableFilter<"FeedbackRating"> | Date | string | null
+  tenant?: Prisma.XOR<Prisma.TenantNullableScalarRelationFilter, Prisma.TenantWhereInput> | null
 }, "id" | "token" | "ticketId" | "repairTicketId">
 
 export type FeedbackRatingOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
+  tenantId?: Prisma.SortOrderInput | Prisma.SortOrder
   token?: Prisma.SortOrder
   ticketId?: Prisma.SortOrderInput | Prisma.SortOrder
   repairTicketId?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -343,6 +357,7 @@ export type FeedbackRatingScalarWhereWithAggregatesInput = {
   OR?: Prisma.FeedbackRatingScalarWhereWithAggregatesInput[]
   NOT?: Prisma.FeedbackRatingScalarWhereWithAggregatesInput | Prisma.FeedbackRatingScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"FeedbackRating"> | string
+  tenantId?: Prisma.StringNullableWithAggregatesFilter<"FeedbackRating"> | string | null
   token?: Prisma.StringWithAggregatesFilter<"FeedbackRating"> | string
   ticketId?: Prisma.StringNullableWithAggregatesFilter<"FeedbackRating"> | string | null
   repairTicketId?: Prisma.StringNullableWithAggregatesFilter<"FeedbackRating"> | string | null
@@ -371,10 +386,12 @@ export type FeedbackRatingCreateInput = {
   emailSent?: boolean
   createdAt?: Date | string
   ratedAt?: Date | string | null
+  tenant?: Prisma.TenantCreateNestedOneWithoutFeedbackRatingsInput
 }
 
 export type FeedbackRatingUncheckedCreateInput = {
   id?: string
+  tenantId?: string | null
   token: string
   ticketId?: string | null
   repairTicketId?: string | null
@@ -403,10 +420,12 @@ export type FeedbackRatingUpdateInput = {
   emailSent?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   ratedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  tenant?: Prisma.TenantUpdateOneWithoutFeedbackRatingsNestedInput
 }
 
 export type FeedbackRatingUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  tenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   token?: Prisma.StringFieldUpdateOperationsInput | string
   ticketId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   repairTicketId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -423,6 +442,7 @@ export type FeedbackRatingUncheckedUpdateInput = {
 
 export type FeedbackRatingCreateManyInput = {
   id?: string
+  tenantId?: string | null
   token: string
   ticketId?: string | null
   repairTicketId?: string | null
@@ -455,6 +475,7 @@ export type FeedbackRatingUpdateManyMutationInput = {
 
 export type FeedbackRatingUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  tenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   token?: Prisma.StringFieldUpdateOperationsInput | string
   ticketId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   repairTicketId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -469,8 +490,19 @@ export type FeedbackRatingUncheckedUpdateManyInput = {
   ratedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
+export type FeedbackRatingListRelationFilter = {
+  every?: Prisma.FeedbackRatingWhereInput
+  some?: Prisma.FeedbackRatingWhereInput
+  none?: Prisma.FeedbackRatingWhereInput
+}
+
+export type FeedbackRatingOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
+}
+
 export type FeedbackRatingCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  tenantId?: Prisma.SortOrder
   token?: Prisma.SortOrder
   ticketId?: Prisma.SortOrder
   repairTicketId?: Prisma.SortOrder
@@ -491,6 +523,7 @@ export type FeedbackRatingAvgOrderByAggregateInput = {
 
 export type FeedbackRatingMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  tenantId?: Prisma.SortOrder
   token?: Prisma.SortOrder
   ticketId?: Prisma.SortOrder
   repairTicketId?: Prisma.SortOrder
@@ -507,6 +540,7 @@ export type FeedbackRatingMaxOrderByAggregateInput = {
 
 export type FeedbackRatingMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  tenantId?: Prisma.SortOrder
   token?: Prisma.SortOrder
   ticketId?: Prisma.SortOrder
   repairTicketId?: Prisma.SortOrder
@@ -525,10 +559,195 @@ export type FeedbackRatingSumOrderByAggregateInput = {
   rating?: Prisma.SortOrder
 }
 
+export type FeedbackRatingCreateNestedManyWithoutTenantInput = {
+  create?: Prisma.XOR<Prisma.FeedbackRatingCreateWithoutTenantInput, Prisma.FeedbackRatingUncheckedCreateWithoutTenantInput> | Prisma.FeedbackRatingCreateWithoutTenantInput[] | Prisma.FeedbackRatingUncheckedCreateWithoutTenantInput[]
+  connectOrCreate?: Prisma.FeedbackRatingCreateOrConnectWithoutTenantInput | Prisma.FeedbackRatingCreateOrConnectWithoutTenantInput[]
+  createMany?: Prisma.FeedbackRatingCreateManyTenantInputEnvelope
+  connect?: Prisma.FeedbackRatingWhereUniqueInput | Prisma.FeedbackRatingWhereUniqueInput[]
+}
+
+export type FeedbackRatingUncheckedCreateNestedManyWithoutTenantInput = {
+  create?: Prisma.XOR<Prisma.FeedbackRatingCreateWithoutTenantInput, Prisma.FeedbackRatingUncheckedCreateWithoutTenantInput> | Prisma.FeedbackRatingCreateWithoutTenantInput[] | Prisma.FeedbackRatingUncheckedCreateWithoutTenantInput[]
+  connectOrCreate?: Prisma.FeedbackRatingCreateOrConnectWithoutTenantInput | Prisma.FeedbackRatingCreateOrConnectWithoutTenantInput[]
+  createMany?: Prisma.FeedbackRatingCreateManyTenantInputEnvelope
+  connect?: Prisma.FeedbackRatingWhereUniqueInput | Prisma.FeedbackRatingWhereUniqueInput[]
+}
+
+export type FeedbackRatingUpdateManyWithoutTenantNestedInput = {
+  create?: Prisma.XOR<Prisma.FeedbackRatingCreateWithoutTenantInput, Prisma.FeedbackRatingUncheckedCreateWithoutTenantInput> | Prisma.FeedbackRatingCreateWithoutTenantInput[] | Prisma.FeedbackRatingUncheckedCreateWithoutTenantInput[]
+  connectOrCreate?: Prisma.FeedbackRatingCreateOrConnectWithoutTenantInput | Prisma.FeedbackRatingCreateOrConnectWithoutTenantInput[]
+  upsert?: Prisma.FeedbackRatingUpsertWithWhereUniqueWithoutTenantInput | Prisma.FeedbackRatingUpsertWithWhereUniqueWithoutTenantInput[]
+  createMany?: Prisma.FeedbackRatingCreateManyTenantInputEnvelope
+  set?: Prisma.FeedbackRatingWhereUniqueInput | Prisma.FeedbackRatingWhereUniqueInput[]
+  disconnect?: Prisma.FeedbackRatingWhereUniqueInput | Prisma.FeedbackRatingWhereUniqueInput[]
+  delete?: Prisma.FeedbackRatingWhereUniqueInput | Prisma.FeedbackRatingWhereUniqueInput[]
+  connect?: Prisma.FeedbackRatingWhereUniqueInput | Prisma.FeedbackRatingWhereUniqueInput[]
+  update?: Prisma.FeedbackRatingUpdateWithWhereUniqueWithoutTenantInput | Prisma.FeedbackRatingUpdateWithWhereUniqueWithoutTenantInput[]
+  updateMany?: Prisma.FeedbackRatingUpdateManyWithWhereWithoutTenantInput | Prisma.FeedbackRatingUpdateManyWithWhereWithoutTenantInput[]
+  deleteMany?: Prisma.FeedbackRatingScalarWhereInput | Prisma.FeedbackRatingScalarWhereInput[]
+}
+
+export type FeedbackRatingUncheckedUpdateManyWithoutTenantNestedInput = {
+  create?: Prisma.XOR<Prisma.FeedbackRatingCreateWithoutTenantInput, Prisma.FeedbackRatingUncheckedCreateWithoutTenantInput> | Prisma.FeedbackRatingCreateWithoutTenantInput[] | Prisma.FeedbackRatingUncheckedCreateWithoutTenantInput[]
+  connectOrCreate?: Prisma.FeedbackRatingCreateOrConnectWithoutTenantInput | Prisma.FeedbackRatingCreateOrConnectWithoutTenantInput[]
+  upsert?: Prisma.FeedbackRatingUpsertWithWhereUniqueWithoutTenantInput | Prisma.FeedbackRatingUpsertWithWhereUniqueWithoutTenantInput[]
+  createMany?: Prisma.FeedbackRatingCreateManyTenantInputEnvelope
+  set?: Prisma.FeedbackRatingWhereUniqueInput | Prisma.FeedbackRatingWhereUniqueInput[]
+  disconnect?: Prisma.FeedbackRatingWhereUniqueInput | Prisma.FeedbackRatingWhereUniqueInput[]
+  delete?: Prisma.FeedbackRatingWhereUniqueInput | Prisma.FeedbackRatingWhereUniqueInput[]
+  connect?: Prisma.FeedbackRatingWhereUniqueInput | Prisma.FeedbackRatingWhereUniqueInput[]
+  update?: Prisma.FeedbackRatingUpdateWithWhereUniqueWithoutTenantInput | Prisma.FeedbackRatingUpdateWithWhereUniqueWithoutTenantInput[]
+  updateMany?: Prisma.FeedbackRatingUpdateManyWithWhereWithoutTenantInput | Prisma.FeedbackRatingUpdateManyWithWhereWithoutTenantInput[]
+  deleteMany?: Prisma.FeedbackRatingScalarWhereInput | Prisma.FeedbackRatingScalarWhereInput[]
+}
+
+export type FeedbackRatingCreateWithoutTenantInput = {
+  id?: string
+  token: string
+  ticketId?: string | null
+  repairTicketId?: string | null
+  sourceType: string
+  rating?: number | null
+  comment?: string | null
+  googleReviewClicked?: boolean
+  customerEmail: string
+  customerName: string
+  emailSent?: boolean
+  createdAt?: Date | string
+  ratedAt?: Date | string | null
+}
+
+export type FeedbackRatingUncheckedCreateWithoutTenantInput = {
+  id?: string
+  token: string
+  ticketId?: string | null
+  repairTicketId?: string | null
+  sourceType: string
+  rating?: number | null
+  comment?: string | null
+  googleReviewClicked?: boolean
+  customerEmail: string
+  customerName: string
+  emailSent?: boolean
+  createdAt?: Date | string
+  ratedAt?: Date | string | null
+}
+
+export type FeedbackRatingCreateOrConnectWithoutTenantInput = {
+  where: Prisma.FeedbackRatingWhereUniqueInput
+  create: Prisma.XOR<Prisma.FeedbackRatingCreateWithoutTenantInput, Prisma.FeedbackRatingUncheckedCreateWithoutTenantInput>
+}
+
+export type FeedbackRatingCreateManyTenantInputEnvelope = {
+  data: Prisma.FeedbackRatingCreateManyTenantInput | Prisma.FeedbackRatingCreateManyTenantInput[]
+  skipDuplicates?: boolean
+}
+
+export type FeedbackRatingUpsertWithWhereUniqueWithoutTenantInput = {
+  where: Prisma.FeedbackRatingWhereUniqueInput
+  update: Prisma.XOR<Prisma.FeedbackRatingUpdateWithoutTenantInput, Prisma.FeedbackRatingUncheckedUpdateWithoutTenantInput>
+  create: Prisma.XOR<Prisma.FeedbackRatingCreateWithoutTenantInput, Prisma.FeedbackRatingUncheckedCreateWithoutTenantInput>
+}
+
+export type FeedbackRatingUpdateWithWhereUniqueWithoutTenantInput = {
+  where: Prisma.FeedbackRatingWhereUniqueInput
+  data: Prisma.XOR<Prisma.FeedbackRatingUpdateWithoutTenantInput, Prisma.FeedbackRatingUncheckedUpdateWithoutTenantInput>
+}
+
+export type FeedbackRatingUpdateManyWithWhereWithoutTenantInput = {
+  where: Prisma.FeedbackRatingScalarWhereInput
+  data: Prisma.XOR<Prisma.FeedbackRatingUpdateManyMutationInput, Prisma.FeedbackRatingUncheckedUpdateManyWithoutTenantInput>
+}
+
+export type FeedbackRatingScalarWhereInput = {
+  AND?: Prisma.FeedbackRatingScalarWhereInput | Prisma.FeedbackRatingScalarWhereInput[]
+  OR?: Prisma.FeedbackRatingScalarWhereInput[]
+  NOT?: Prisma.FeedbackRatingScalarWhereInput | Prisma.FeedbackRatingScalarWhereInput[]
+  id?: Prisma.StringFilter<"FeedbackRating"> | string
+  tenantId?: Prisma.StringNullableFilter<"FeedbackRating"> | string | null
+  token?: Prisma.StringFilter<"FeedbackRating"> | string
+  ticketId?: Prisma.StringNullableFilter<"FeedbackRating"> | string | null
+  repairTicketId?: Prisma.StringNullableFilter<"FeedbackRating"> | string | null
+  sourceType?: Prisma.StringFilter<"FeedbackRating"> | string
+  rating?: Prisma.IntNullableFilter<"FeedbackRating"> | number | null
+  comment?: Prisma.StringNullableFilter<"FeedbackRating"> | string | null
+  googleReviewClicked?: Prisma.BoolFilter<"FeedbackRating"> | boolean
+  customerEmail?: Prisma.StringFilter<"FeedbackRating"> | string
+  customerName?: Prisma.StringFilter<"FeedbackRating"> | string
+  emailSent?: Prisma.BoolFilter<"FeedbackRating"> | boolean
+  createdAt?: Prisma.DateTimeFilter<"FeedbackRating"> | Date | string
+  ratedAt?: Prisma.DateTimeNullableFilter<"FeedbackRating"> | Date | string | null
+}
+
+export type FeedbackRatingCreateManyTenantInput = {
+  id?: string
+  token: string
+  ticketId?: string | null
+  repairTicketId?: string | null
+  sourceType: string
+  rating?: number | null
+  comment?: string | null
+  googleReviewClicked?: boolean
+  customerEmail: string
+  customerName: string
+  emailSent?: boolean
+  createdAt?: Date | string
+  ratedAt?: Date | string | null
+}
+
+export type FeedbackRatingUpdateWithoutTenantInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  token?: Prisma.StringFieldUpdateOperationsInput | string
+  ticketId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  repairTicketId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sourceType?: Prisma.StringFieldUpdateOperationsInput | string
+  rating?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleReviewClicked?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  customerEmail?: Prisma.StringFieldUpdateOperationsInput | string
+  customerName?: Prisma.StringFieldUpdateOperationsInput | string
+  emailSent?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  ratedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+}
+
+export type FeedbackRatingUncheckedUpdateWithoutTenantInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  token?: Prisma.StringFieldUpdateOperationsInput | string
+  ticketId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  repairTicketId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sourceType?: Prisma.StringFieldUpdateOperationsInput | string
+  rating?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleReviewClicked?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  customerEmail?: Prisma.StringFieldUpdateOperationsInput | string
+  customerName?: Prisma.StringFieldUpdateOperationsInput | string
+  emailSent?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  ratedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+}
+
+export type FeedbackRatingUncheckedUpdateManyWithoutTenantInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  token?: Prisma.StringFieldUpdateOperationsInput | string
+  ticketId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  repairTicketId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sourceType?: Prisma.StringFieldUpdateOperationsInput | string
+  rating?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleReviewClicked?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  customerEmail?: Prisma.StringFieldUpdateOperationsInput | string
+  customerName?: Prisma.StringFieldUpdateOperationsInput | string
+  emailSent?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  ratedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+}
+
 
 
 export type FeedbackRatingSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  tenantId?: boolean
   token?: boolean
   ticketId?: boolean
   repairTicketId?: boolean
@@ -541,10 +760,12 @@ export type FeedbackRatingSelect<ExtArgs extends runtime.Types.Extensions.Intern
   emailSent?: boolean
   createdAt?: boolean
   ratedAt?: boolean
+  tenant?: boolean | Prisma.FeedbackRating$tenantArgs<ExtArgs>
 }, ExtArgs["result"]["feedbackRating"]>
 
 export type FeedbackRatingSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  tenantId?: boolean
   token?: boolean
   ticketId?: boolean
   repairTicketId?: boolean
@@ -557,10 +778,12 @@ export type FeedbackRatingSelectCreateManyAndReturn<ExtArgs extends runtime.Type
   emailSent?: boolean
   createdAt?: boolean
   ratedAt?: boolean
+  tenant?: boolean | Prisma.FeedbackRating$tenantArgs<ExtArgs>
 }, ExtArgs["result"]["feedbackRating"]>
 
 export type FeedbackRatingSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  tenantId?: boolean
   token?: boolean
   ticketId?: boolean
   repairTicketId?: boolean
@@ -573,10 +796,12 @@ export type FeedbackRatingSelectUpdateManyAndReturn<ExtArgs extends runtime.Type
   emailSent?: boolean
   createdAt?: boolean
   ratedAt?: boolean
+  tenant?: boolean | Prisma.FeedbackRating$tenantArgs<ExtArgs>
 }, ExtArgs["result"]["feedbackRating"]>
 
 export type FeedbackRatingSelectScalar = {
   id?: boolean
+  tenantId?: boolean
   token?: boolean
   ticketId?: boolean
   repairTicketId?: boolean
@@ -591,13 +816,25 @@ export type FeedbackRatingSelectScalar = {
   ratedAt?: boolean
 }
 
-export type FeedbackRatingOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "token" | "ticketId" | "repairTicketId" | "sourceType" | "rating" | "comment" | "googleReviewClicked" | "customerEmail" | "customerName" | "emailSent" | "createdAt" | "ratedAt", ExtArgs["result"]["feedbackRating"]>
+export type FeedbackRatingOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "tenantId" | "token" | "ticketId" | "repairTicketId" | "sourceType" | "rating" | "comment" | "googleReviewClicked" | "customerEmail" | "customerName" | "emailSent" | "createdAt" | "ratedAt", ExtArgs["result"]["feedbackRating"]>
+export type FeedbackRatingInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  tenant?: boolean | Prisma.FeedbackRating$tenantArgs<ExtArgs>
+}
+export type FeedbackRatingIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  tenant?: boolean | Prisma.FeedbackRating$tenantArgs<ExtArgs>
+}
+export type FeedbackRatingIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  tenant?: boolean | Prisma.FeedbackRating$tenantArgs<ExtArgs>
+}
 
 export type $FeedbackRatingPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "FeedbackRating"
-  objects: {}
+  objects: {
+    tenant: Prisma.$TenantPayload<ExtArgs> | null
+  }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
+    tenantId: string | null
     token: string
     ticketId: string | null
     repairTicketId: string | null
@@ -1004,6 +1241,7 @@ readonly fields: FeedbackRatingFieldRefs;
  */
 export interface Prisma__FeedbackRatingClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  tenant<T extends Prisma.FeedbackRating$tenantArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.FeedbackRating$tenantArgs<ExtArgs>>): Prisma.Prisma__TenantClient<runtime.Types.Result.GetResult<Prisma.$TenantPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1034,6 +1272,7 @@ export interface Prisma__FeedbackRatingClient<T, Null = never, ExtArgs extends r
  */
 export interface FeedbackRatingFieldRefs {
   readonly id: Prisma.FieldRef<"FeedbackRating", 'String'>
+  readonly tenantId: Prisma.FieldRef<"FeedbackRating", 'String'>
   readonly token: Prisma.FieldRef<"FeedbackRating", 'String'>
   readonly ticketId: Prisma.FieldRef<"FeedbackRating", 'String'>
   readonly repairTicketId: Prisma.FieldRef<"FeedbackRating", 'String'>
@@ -1063,6 +1302,10 @@ export type FeedbackRatingFindUniqueArgs<ExtArgs extends runtime.Types.Extension
    */
   omit?: Prisma.FeedbackRatingOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.FeedbackRatingInclude<ExtArgs> | null
+  /**
    * Filter, which FeedbackRating to fetch.
    */
   where: Prisma.FeedbackRatingWhereUniqueInput
@@ -1081,6 +1324,10 @@ export type FeedbackRatingFindUniqueOrThrowArgs<ExtArgs extends runtime.Types.Ex
    */
   omit?: Prisma.FeedbackRatingOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.FeedbackRatingInclude<ExtArgs> | null
+  /**
    * Filter, which FeedbackRating to fetch.
    */
   where: Prisma.FeedbackRatingWhereUniqueInput
@@ -1098,6 +1345,10 @@ export type FeedbackRatingFindFirstArgs<ExtArgs extends runtime.Types.Extensions
    * Omit specific fields from the FeedbackRating
    */
   omit?: Prisma.FeedbackRatingOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.FeedbackRatingInclude<ExtArgs> | null
   /**
    * Filter, which FeedbackRating to fetch.
    */
@@ -1147,6 +1398,10 @@ export type FeedbackRatingFindFirstOrThrowArgs<ExtArgs extends runtime.Types.Ext
    */
   omit?: Prisma.FeedbackRatingOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.FeedbackRatingInclude<ExtArgs> | null
+  /**
    * Filter, which FeedbackRating to fetch.
    */
   where?: Prisma.FeedbackRatingWhereInput
@@ -1195,6 +1450,10 @@ export type FeedbackRatingFindManyArgs<ExtArgs extends runtime.Types.Extensions.
    */
   omit?: Prisma.FeedbackRatingOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.FeedbackRatingInclude<ExtArgs> | null
+  /**
    * Filter, which FeedbackRatings to fetch.
    */
   where?: Prisma.FeedbackRatingWhereInput
@@ -1238,6 +1497,10 @@ export type FeedbackRatingCreateArgs<ExtArgs extends runtime.Types.Extensions.In
    */
   omit?: Prisma.FeedbackRatingOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.FeedbackRatingInclude<ExtArgs> | null
+  /**
    * The data needed to create a FeedbackRating.
    */
   data: Prisma.XOR<Prisma.FeedbackRatingCreateInput, Prisma.FeedbackRatingUncheckedCreateInput>
@@ -1271,6 +1534,10 @@ export type FeedbackRatingCreateManyAndReturnArgs<ExtArgs extends runtime.Types.
    */
   data: Prisma.FeedbackRatingCreateManyInput | Prisma.FeedbackRatingCreateManyInput[]
   skipDuplicates?: boolean
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.FeedbackRatingIncludeCreateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1285,6 +1552,10 @@ export type FeedbackRatingUpdateArgs<ExtArgs extends runtime.Types.Extensions.In
    * Omit specific fields from the FeedbackRating
    */
   omit?: Prisma.FeedbackRatingOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.FeedbackRatingInclude<ExtArgs> | null
   /**
    * The data needed to update a FeedbackRating.
    */
@@ -1337,6 +1608,10 @@ export type FeedbackRatingUpdateManyAndReturnArgs<ExtArgs extends runtime.Types.
    * Limit how many FeedbackRatings to update.
    */
   limit?: number
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.FeedbackRatingIncludeUpdateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1351,6 +1626,10 @@ export type FeedbackRatingUpsertArgs<ExtArgs extends runtime.Types.Extensions.In
    * Omit specific fields from the FeedbackRating
    */
   omit?: Prisma.FeedbackRatingOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.FeedbackRatingInclude<ExtArgs> | null
   /**
    * The filter to search for the FeedbackRating to update in case it exists.
    */
@@ -1378,6 +1657,10 @@ export type FeedbackRatingDeleteArgs<ExtArgs extends runtime.Types.Extensions.In
    */
   omit?: Prisma.FeedbackRatingOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.FeedbackRatingInclude<ExtArgs> | null
+  /**
    * Filter which FeedbackRating to delete.
    */
   where: Prisma.FeedbackRatingWhereUniqueInput
@@ -1398,6 +1681,25 @@ export type FeedbackRatingDeleteManyArgs<ExtArgs extends runtime.Types.Extension
 }
 
 /**
+ * FeedbackRating.tenant
+ */
+export type FeedbackRating$tenantArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Tenant
+   */
+  select?: Prisma.TenantSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Tenant
+   */
+  omit?: Prisma.TenantOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TenantInclude<ExtArgs> | null
+  where?: Prisma.TenantWhereInput
+}
+
+/**
  * FeedbackRating without action
  */
 export type FeedbackRatingDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1409,4 +1711,8 @@ export type FeedbackRatingDefaultArgs<ExtArgs extends runtime.Types.Extensions.I
    * Omit specific fields from the FeedbackRating
    */
   omit?: Prisma.FeedbackRatingOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.FeedbackRatingInclude<ExtArgs> | null
 }

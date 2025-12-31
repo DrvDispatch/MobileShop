@@ -51,7 +51,15 @@ export const AnyNull = runtime.AnyNull
 
 
 export const ModelName = {
+  Tenant: 'Tenant',
+  TenantDomain: 'TenantDomain',
+  TenantConfig: 'TenantConfig',
+  TenantFeature: 'TenantFeature',
+  TenantHomepage: 'TenantHomepage',
+  TenantPage: 'TenantPage',
   User: 'User',
+  OwnerAuditLog: 'OwnerAuditLog',
+  OAuthHandoffCode: 'OAuthHandoffCode',
   Category: 'Category',
   Product: 'Product',
   ProductImage: 'ProductImage',
@@ -103,8 +111,163 @@ export const TransactionIsolationLevel = {
 export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
 
 
+export const TenantScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  slug: 'slug',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  suspendedAt: 'suspendedAt',
+  archivedAt: 'archivedAt',
+  onboardingStatus: 'onboardingStatus'
+} as const
+
+export type TenantScalarFieldEnum = (typeof TenantScalarFieldEnum)[keyof typeof TenantScalarFieldEnum]
+
+
+export const TenantDomainScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  domain: 'domain',
+  isPrimary: 'isPrimary',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  cloudflareZoneId: 'cloudflareZoneId',
+  cloudflareStatus: 'cloudflareStatus',
+  nameservers: 'nameservers',
+  sslStatus: 'sslStatus',
+  lastCheckedAt: 'lastCheckedAt',
+  errorMessage: 'errorMessage',
+  verificationStatus: 'verificationStatus',
+  verificationToken: 'verificationToken',
+  verifiedAt: 'verifiedAt'
+} as const
+
+export type TenantDomainScalarFieldEnum = (typeof TenantDomainScalarFieldEnum)[keyof typeof TenantDomainScalarFieldEnum]
+
+
+export const TenantConfigScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  shopName: 'shopName',
+  logoUrl: 'logoUrl',
+  faviconUrl: 'faviconUrl',
+  primaryColor: 'primaryColor',
+  secondaryColor: 'secondaryColor',
+  accentColor: 'accentColor',
+  borderRadius: 'borderRadius',
+  darkMode: 'darkMode',
+  email: 'email',
+  phone: 'phone',
+  whatsappNumber: 'whatsappNumber',
+  address: 'address',
+  locale: 'locale',
+  currency: 'currency',
+  currencySymbol: 'currencySymbol',
+  timezone: 'timezone',
+  openingHours: 'openingHours',
+  timeSlots: 'timeSlots',
+  closedDays: 'closedDays',
+  companyName: 'companyName',
+  vatNumber: 'vatNumber',
+  bankAccount: 'bankAccount',
+  bankName: 'bankName',
+  invoicePrefix: 'invoicePrefix',
+  invoiceFooter: 'invoiceFooter',
+  googleAnalyticsId: 'googleAnalyticsId',
+  cookiebotId: 'cookiebotId',
+  seoTitle: 'seoTitle',
+  seoDescription: 'seoDescription',
+  features: 'features',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type TenantConfigScalarFieldEnum = (typeof TenantConfigScalarFieldEnum)[keyof typeof TenantConfigScalarFieldEnum]
+
+
+export const TenantFeatureScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  ecommerceEnabled: 'ecommerceEnabled',
+  refurbishedGrading: 'refurbishedGrading',
+  wishlistEnabled: 'wishlistEnabled',
+  stockNotifications: 'stockNotifications',
+  couponsEnabled: 'couponsEnabled',
+  repairsEnabled: 'repairsEnabled',
+  quoteOnRequest: 'quoteOnRequest',
+  mailInRepairs: 'mailInRepairs',
+  walkInQueue: 'walkInQueue',
+  ticketsEnabled: 'ticketsEnabled',
+  liveChatWidget: 'liveChatWidget',
+  invoicingEnabled: 'invoicingEnabled',
+  vatCalculation: 'vatCalculation',
+  pdfGeneration: 'pdfGeneration',
+  inventoryEnabled: 'inventoryEnabled',
+  advancedInventory: 'advancedInventory',
+  employeeManagement: 'employeeManagement',
+  maxAdminUsers: 'maxAdminUsers',
+  analyticsEnabled: 'analyticsEnabled',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type TenantFeatureScalarFieldEnum = (typeof TenantFeatureScalarFieldEnum)[keyof typeof TenantFeatureScalarFieldEnum]
+
+
+export const TenantHomepageScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  heroTitle: 'heroTitle',
+  heroSubtitle: 'heroSubtitle',
+  heroDescription: 'heroDescription',
+  heroImageUrl: 'heroImageUrl',
+  heroCta1Text: 'heroCta1Text',
+  heroCta1Link: 'heroCta1Link',
+  heroCta2Text: 'heroCta2Text',
+  heroCta2Link: 'heroCta2Link',
+  trustBadge1: 'trustBadge1',
+  trustBadge2: 'trustBadge2',
+  trustBadge3: 'trustBadge3',
+  conversionTitle: 'conversionTitle',
+  conversionFeature1: 'conversionFeature1',
+  conversionFeature2: 'conversionFeature2',
+  conversionFeature3: 'conversionFeature3',
+  showConversionStrip: 'showConversionStrip',
+  showServices: 'showServices',
+  status: 'status',
+  draftContent: 'draftContent',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type TenantHomepageScalarFieldEnum = (typeof TenantHomepageScalarFieldEnum)[keyof typeof TenantHomepageScalarFieldEnum]
+
+
+export const TenantPageScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  slug: 'slug',
+  title: 'title',
+  content: 'content',
+  seoTitle: 'seoTitle',
+  seoDescription: 'seoDescription',
+  showInNav: 'showInNav',
+  navOrder: 'navOrder',
+  isSystemPage: 'isSystemPage',
+  status: 'status',
+  publishedAt: 'publishedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type TenantPageScalarFieldEnum = (typeof TenantPageScalarFieldEnum)[keyof typeof TenantPageScalarFieldEnum]
+
+
 export const UserScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   email: 'email',
   passwordHash: 'passwordHash',
   name: 'name',
@@ -128,8 +291,38 @@ export const UserScalarFieldEnum = {
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
 
 
+export const OwnerAuditLogScalarFieldEnum = {
+  id: 'id',
+  ownerId: 'ownerId',
+  action: 'action',
+  targetType: 'targetType',
+  targetId: 'targetId',
+  metadata: 'metadata',
+  ipAddress: 'ipAddress',
+  userAgent: 'userAgent',
+  createdAt: 'createdAt'
+} as const
+
+export type OwnerAuditLogScalarFieldEnum = (typeof OwnerAuditLogScalarFieldEnum)[keyof typeof OwnerAuditLogScalarFieldEnum]
+
+
+export const OAuthHandoffCodeScalarFieldEnum = {
+  id: 'id',
+  code: 'code',
+  userId: 'userId',
+  tenantId: 'tenantId',
+  returnPath: 'returnPath',
+  expiresAt: 'expiresAt',
+  usedAt: 'usedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type OAuthHandoffCodeScalarFieldEnum = (typeof OAuthHandoffCodeScalarFieldEnum)[keyof typeof OAuthHandoffCodeScalarFieldEnum]
+
+
 export const CategoryScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   name: 'name',
   slug: 'slug',
   description: 'description',
@@ -146,6 +339,7 @@ export type CategoryScalarFieldEnum = (typeof CategoryScalarFieldEnum)[keyof typ
 
 export const ProductScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   name: 'name',
   slug: 'slug',
   description: 'description',
@@ -192,6 +386,7 @@ export type ProductImageScalarFieldEnum = (typeof ProductImageScalarFieldEnum)[k
 
 export const OrderScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   orderNumber: 'orderNumber',
   userId: 'userId',
   status: 'status',
@@ -280,6 +475,7 @@ export type RepairServiceScalarFieldEnum = (typeof RepairServiceScalarFieldEnum)
 
 export const RepairTicketScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   ticketNumber: 'ticketNumber',
   userId: 'userId',
   serviceId: 'serviceId',
@@ -329,6 +525,7 @@ export type InventoryMovementScalarFieldEnum = (typeof InventoryMovementScalarFi
 
 export const SettingScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   key: 'key',
   value: 'value',
   createdAt: 'createdAt',
@@ -340,6 +537,7 @@ export type SettingScalarFieldEnum = (typeof SettingScalarFieldEnum)[keyof typeo
 
 export const ShippingZoneScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   name: 'name',
   countries: 'countries',
   rate: 'rate',
@@ -358,6 +556,7 @@ export type ShippingZoneScalarFieldEnum = (typeof ShippingZoneScalarFieldEnum)[k
 
 export const AppointmentScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   customerName: 'customerName',
   customerEmail: 'customerEmail',
   customerPhone: 'customerPhone',
@@ -381,6 +580,7 @@ export type AppointmentScalarFieldEnum = (typeof AppointmentScalarFieldEnum)[key
 
 export const TicketScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   caseId: 'caseId',
   sessionId: 'sessionId',
   customerName: 'customerName',
@@ -437,6 +637,7 @@ export type RepairDeviceTypeScalarFieldEnum = (typeof RepairDeviceTypeScalarFiel
 
 export const RepairBrandScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   name: 'name',
   slug: 'slug',
   logo: 'logo',
@@ -452,6 +653,7 @@ export type RepairBrandScalarFieldEnum = (typeof RepairBrandScalarFieldEnum)[key
 
 export const RepairDeviceScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   name: 'name',
   slug: 'slug',
   image: 'image',
@@ -467,6 +669,7 @@ export type RepairDeviceScalarFieldEnum = (typeof RepairDeviceScalarFieldEnum)[k
 
 export const RepairServiceTypeScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   name: 'name',
   slug: 'slug',
   icon: 'icon',
@@ -482,6 +685,7 @@ export type RepairServiceTypeScalarFieldEnum = (typeof RepairServiceTypeScalarFi
 
 export const RepairDeviceServiceScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   deviceId: 'deviceId',
   serviceId: 'serviceId',
   price: 'price',
@@ -498,6 +702,7 @@ export type RepairDeviceServiceScalarFieldEnum = (typeof RepairDeviceServiceScal
 
 export const FeedbackRatingScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   token: 'token',
   ticketId: 'ticketId',
   repairTicketId: 'repairTicketId',
@@ -517,6 +722,7 @@ export type FeedbackRatingScalarFieldEnum = (typeof FeedbackRatingScalarFieldEnu
 
 export const EmailUnsubscribeScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   email: 'email',
   reason: 'reason',
   createdAt: 'createdAt'
@@ -527,6 +733,7 @@ export type EmailUnsubscribeScalarFieldEnum = (typeof EmailUnsubscribeScalarFiel
 
 export const DiscountCodeScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   code: 'code',
   description: 'description',
   type: 'type',
@@ -551,6 +758,7 @@ export type DiscountCodeScalarFieldEnum = (typeof DiscountCodeScalarFieldEnum)[k
 
 export const PromotionalBannerScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   title: 'title',
   message: 'message',
   linkUrl: 'linkUrl',
@@ -586,6 +794,7 @@ export type OrderStatusHistoryScalarFieldEnum = (typeof OrderStatusHistoryScalar
 
 export const AuditLogScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   userId: 'userId',
   userName: 'userName',
   userRole: 'userRole',
@@ -680,6 +889,7 @@ export type StockNotificationScalarFieldEnum = (typeof StockNotificationScalarFi
 
 export const InvoiceScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   invoiceNumber: 'invoiceNumber',
   type: 'type',
   status: 'status',

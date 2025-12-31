@@ -27,8 +27,8 @@ export * from "./enums.js"
  * @example
  * ```
  * const prisma = new PrismaClient()
- * // Fetch zero or more Users
- * const users = await prisma.user.findMany()
+ * // Fetch zero or more Tenants
+ * const tenants = await prisma.tenant.findMany()
  * ```
  * 
  * Read more in our [docs](https://pris.ly/d/client).
@@ -38,10 +38,50 @@ export type PrismaClient<LogOpts extends Prisma.LogLevel = never, OmitOpts exten
 export { Prisma }
 
 /**
+ * Model Tenant
+ * 
+ */
+export type Tenant = Prisma.TenantModel
+/**
+ * Model TenantDomain
+ * 
+ */
+export type TenantDomain = Prisma.TenantDomainModel
+/**
+ * Model TenantConfig
+ * 
+ */
+export type TenantConfig = Prisma.TenantConfigModel
+/**
+ * Model TenantFeature
+ * 
+ */
+export type TenantFeature = Prisma.TenantFeatureModel
+/**
+ * Model TenantHomepage
+ * 
+ */
+export type TenantHomepage = Prisma.TenantHomepageModel
+/**
+ * Model TenantPage
+ * 
+ */
+export type TenantPage = Prisma.TenantPageModel
+/**
  * Model User
  * 
  */
 export type User = Prisma.UserModel
+/**
+ * Model OwnerAuditLog
+ * 
+ */
+export type OwnerAuditLog = Prisma.OwnerAuditLogModel
+/**
+ * Model OAuthHandoffCode
+ * 
+ */
+export type OAuthHandoffCode = Prisma.OAuthHandoffCodeModel
 /**
  * Model Category
  * 

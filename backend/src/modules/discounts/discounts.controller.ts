@@ -5,6 +5,7 @@ import { CreateDiscountDto, UpdateDiscountDto, ValidateDiscountDto } from './dto
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
+import { TenantId } from '../tenant/tenant.decorator';
 
 @ApiTags('Discounts')
 @Controller('discounts')
@@ -17,8 +18,8 @@ export class DiscountsController {
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Create a new discount code' })
     @ApiResponse({ status: 201, description: 'Discount code created' })
-    create(@Body() dto: CreateDiscountDto) {
-        return this.discountsService.create(dto);
+    create(@TenantId() tenantId: string, @Body() dto: CreateDiscountDto) {
+        return this.discountsService.create(tenantId, dto);
     }
 
     @Get()
@@ -27,8 +28,8 @@ export class DiscountsController {
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Get all discount codes' })
     @ApiResponse({ status: 200, description: 'List of discount codes' })
-    findAll() {
-        return this.discountsService.findAll();
+    findAll(@TenantId() tenantId: string) {
+        return this.discountsService.findAll(tenantId);
     }
 
     @Get(':id')
@@ -37,8 +38,8 @@ export class DiscountsController {
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Get a single discount code' })
     @ApiResponse({ status: 200, description: 'Discount code details' })
-    findOne(@Param('id') id: string) {
-        return this.discountsService.findOne(id);
+    findOne(@TenantId() tenantId: string, @Param('id') id: string) {
+        return this.discountsService.findOne(tenantId, id);
     }
 
     @Patch(':id')
@@ -47,8 +48,8 @@ export class DiscountsController {
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Update a discount code' })
     @ApiResponse({ status: 200, description: 'Discount code updated' })
-    update(@Param('id') id: string, @Body() dto: UpdateDiscountDto) {
-        return this.discountsService.update(id, dto);
+    update(@TenantId() tenantId: string, @Param('id') id: string, @Body() dto: UpdateDiscountDto) {
+        return this.discountsService.update(tenantId, id, dto);
     }
 
     @Delete(':id')
@@ -57,14 +58,15 @@ export class DiscountsController {
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Delete a discount code' })
     @ApiResponse({ status: 200, description: 'Discount code deleted' })
-    remove(@Param('id') id: string) {
-        return this.discountsService.remove(id);
+    remove(@TenantId() tenantId: string, @Param('id') id: string) {
+        return this.discountsService.remove(tenantId, id);
     }
 
     @Post('validate')
     @ApiOperation({ summary: 'Validate a discount code' })
     @ApiResponse({ status: 200, description: 'Validation result' })
-    validate(@Body() dto: ValidateDiscountDto) {
-        return this.discountsService.validate(dto);
+    validate(@TenantId() tenantId: string, @Body() dto: ValidateDiscountDto) {
+        return this.discountsService.validate(tenantId, dto);
     }
 }
+

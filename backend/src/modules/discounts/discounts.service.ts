@@ -6,18 +6,21 @@ import { CreateDiscountDto, UpdateDiscountDto, ValidateDiscountDto, DiscountVali
 export class DiscountsService {
     constructor(private prisma: PrismaService) { }
 
-    async create(dto: CreateDiscountDto) {
+    async create(tenantId: string, dto: CreateDiscountDto) {
         // Normalize code to uppercase
         const code = dto.code.toUpperCase().trim();
 
-        // Check for duplicate
-        const existing = await this.prisma.discountCode.findUnique({ where: { code } });
+        // Check for duplicate within tenant
+        const existing = await this.prisma.discountCode.findFirst({
+            where: { code, tenantId }
+        });
         if (existing) {
             throw new BadRequestException(`Discount code "${code}" already exists`);
         }
 
         return this.prisma.discountCode.create({
             data: {
+                tenantId,
                 code,
                 description: dto.description,
                 type: dto.type,
@@ -36,8 +39,9 @@ export class DiscountsService {
         });
     }
 
-    async findAll() {
+    async findAll(tenantId: string) {
         return this.prisma.discountCode.findMany({
+            where: { tenantId },
             orderBy: { createdAt: 'desc' },
             include: {
                 _count: {
@@ -47,9 +51,9 @@ export class DiscountsService {
         });
     }
 
-    async findOne(id: string) {
-        const discount = await this.prisma.discountCode.findUnique({
-            where: { id },
+    async findOne(tenantId: string, id: string) {
+        const discount = await this.prisma.discountCode.findFirst({
+            where: { tenantId, id },
             include: {
                 orders: {
                     take: 10,
@@ -75,13 +79,13 @@ export class DiscountsService {
         return discount;
     }
 
-    async update(id: string, dto: UpdateDiscountDto) {
-        await this.findOne(id); // Ensure exists
+    async update(tenantId: string, id: string, dto: UpdateDiscountDto) {
+        await this.findOne(tenantId, id); // Ensure exists within tenant
 
         if (dto.code) {
             dto.code = dto.code.toUpperCase().trim();
             const existing = await this.prisma.discountCode.findFirst({
-                where: { code: dto.code, id: { not: id } },
+                where: { tenantId, code: dto.code, id: { not: id } },
             });
             if (existing) {
                 throw new BadRequestException(`Discount code "${dto.code}" already exists`);
@@ -98,16 +102,17 @@ export class DiscountsService {
         });
     }
 
-    async remove(id: string) {
-        await this.findOne(id); // Ensure exists
+    async remove(tenantId: string, id: string) {
+        await this.findOne(tenantId, id); // Ensure exists within tenant
         return this.prisma.discountCode.delete({ where: { id } });
     }
 
-    async validate(dto: ValidateDiscountDto): Promise<DiscountValidationResult> {
+    async validate(tenantId: string, dto: ValidateDiscountDto): Promise<DiscountValidationResult> {
         const code = dto.code.toUpperCase().trim();
 
-        const discount = await this.prisma.discountCode.findUnique({
-            where: { code },
+        // Find discount code for this tenant
+        const discount = await this.prisma.discountCode.findFirst({
+            where: { code, tenantId },
         });
 
         if (!discount) {
@@ -138,10 +143,11 @@ export class DiscountsService {
             };
         }
 
-        // Check per-user limit
+        // Check per-user limit (also scoped to tenant via order tenantId)
         if (discount.perUserLimit && dto.customerEmail) {
             const userUsageCount = await this.prisma.order.count({
                 where: {
+                    tenantId,
                     discountCodeId: discount.id,
                     customerEmail: dto.customerEmail,
                 },
@@ -186,9 +192,11 @@ export class DiscountsService {
     }
 
     async incrementUsage(discountId: string) {
+        // Called after order creation - no tenant check needed as discountId is already validated
         return this.prisma.discountCode.update({
             where: { id: discountId },
             data: { usageCount: { increment: 1 } },
         });
     }
 }
+

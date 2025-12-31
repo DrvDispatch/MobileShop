@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { api, Product } from "@/lib/api";
+import { getImageUrl } from "@/lib/image-utils";
 
 interface RelatedProductsProps {
     productId: string;
@@ -69,7 +70,7 @@ export function RelatedProducts({ productId, currentBrand }: RelatedProductsProp
                         <div className="relative aspect-square bg-zinc-50 rounded-lg overflow-hidden border border-zinc-200 mb-3 group-hover:border-zinc-400 transition-colors">
                             {product.images[0]?.url ? (
                                 <img
-                                    src={product.images[0].url}
+                                    src={getImageUrl(product.images[0].url)}
                                     alt={product.name}
                                     className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-200"
                                     onError={(e) => {

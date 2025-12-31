@@ -143,15 +143,24 @@ export class EmailService {
         }
     }
 
-    async sendVerificationEmail(email: string, token: string, name: string): Promise<boolean> {
-        const verifyUrl = `${this.frontendUrl}/verify-email?token=${token}`;
+    async sendVerificationEmail(
+        email: string,
+        token: string,
+        name: string,
+        tenantDomainUrl?: string,
+        shopName?: string
+    ): Promise<boolean> {
+        // Use tenant domain if provided, otherwise fallback to default
+        const baseUrl = tenantDomainUrl || this.frontendUrl;
+        const brandName = shopName || 'SmartphoneService';
+        const verifyUrl = `${baseUrl}/verify-email?token=${token}`;
 
         const content = `
             <p style="color: #333; font-size: 15px; line-height: 1.6; margin: 0 0 20px;">
                 Beste ${name},
             </p>
             <p style="color: #333; font-size: 15px; line-height: 1.6; margin: 0 0 24px;">
-                Bedankt voor uw registratie bij SmartphoneService. Klik op de onderstaande knop om uw email adres te verifiëren.
+                Bedankt voor uw registratie bij ${brandName}. Klik op de onderstaande knop om uw email adres te verifiëren.
             </p>
             <div style="text-align: center; margin: 32px 0;">
                 ${this.getButton('Email Verifiëren', verifyUrl)}
@@ -165,7 +174,7 @@ export class EmailService {
             const { data, error } = await this.resend.emails.send({
                 from: this.fromEmail,
                 to: email,
-                subject: 'Verifieer uw email - SmartphoneService',
+                subject: `Verifieer uw email - ${brandName}`,
                 html: this.getEmailTemplate({
                     title: 'Email Verificatie',
                     content,
@@ -186,8 +195,17 @@ export class EmailService {
         }
     }
 
-    async sendPasswordResetEmail(email: string, token: string, name: string): Promise<boolean> {
-        const resetUrl = `${this.frontendUrl}/reset-password?token=${token}`;
+    async sendPasswordResetEmail(
+        email: string,
+        token: string,
+        name: string,
+        tenantDomainUrl?: string,
+        shopName?: string
+    ): Promise<boolean> {
+        // Use tenant domain if provided, otherwise fallback to default
+        const baseUrl = tenantDomainUrl || this.frontendUrl;
+        const brandName = shopName || 'SmartphoneService';
+        const resetUrl = `${baseUrl}/reset-password?token=${token}`;
 
         const content = `
             <p style="color: #333; font-size: 15px; line-height: 1.6; margin: 0 0 20px;">
@@ -208,7 +226,7 @@ export class EmailService {
             const { data, error } = await this.resend.emails.send({
                 from: this.fromEmail,
                 to: email,
-                subject: 'Wachtwoord Resetten - SmartphoneService',
+                subject: `Wachtwoord Resetten - ${brandName}`,
                 html: this.getEmailTemplate({
                     title: 'Wachtwoord Resetten',
                     content,

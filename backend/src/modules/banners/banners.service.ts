@@ -7,9 +7,10 @@ import { BannerPosition } from '../../generated/prisma/client.js';
 export class BannersService {
     constructor(private prisma: PrismaService) { }
 
-    async create(dto: CreateBannerDto) {
+    async create(tenantId: string, dto: CreateBannerDto) {
         return this.prisma.promotionalBanner.create({
             data: {
+                tenantId,
                 title: dto.title,
                 message: dto.message,
                 linkUrl: dto.linkUrl,
@@ -25,15 +26,16 @@ export class BannersService {
         });
     }
 
-    async findAll() {
+    async findAll(tenantId: string) {
         return this.prisma.promotionalBanner.findMany({
+            where: { tenantId },
             orderBy: [{ priority: 'desc' }, { createdAt: 'desc' }],
         });
     }
 
-    async findOne(id: string) {
-        const banner = await this.prisma.promotionalBanner.findUnique({
-            where: { id },
+    async findOne(tenantId: string, id: string) {
+        const banner = await this.prisma.promotionalBanner.findFirst({
+            where: { tenantId, id },
         });
 
         if (!banner) {
@@ -43,8 +45,8 @@ export class BannersService {
         return banner;
     }
 
-    async update(id: string, dto: UpdateBannerDto) {
-        await this.findOne(id); // Ensure exists
+    async update(tenantId: string, id: string, dto: UpdateBannerDto) {
+        await this.findOne(tenantId, id); // Ensure exists within tenant
 
         return this.prisma.promotionalBanner.update({
             where: { id },
@@ -56,16 +58,17 @@ export class BannersService {
         });
     }
 
-    async remove(id: string) {
-        await this.findOne(id); // Ensure exists
+    async remove(tenantId: string, id: string) {
+        await this.findOne(tenantId, id); // Ensure exists within tenant
         return this.prisma.promotionalBanner.delete({ where: { id } });
     }
 
-    async getActiveBanners(position?: BannerPosition): Promise<ActiveBannerDto[]> {
+    async getActiveBanners(tenantId: string, position?: BannerPosition): Promise<ActiveBannerDto[]> {
         const now = new Date();
 
         const banners = await this.prisma.promotionalBanner.findMany({
             where: {
+                tenantId,
                 isActive: true,
                 ...(position ? { position } : {}),
                 OR: [
@@ -95,3 +98,4 @@ export class BannersService {
         }));
     }
 }
+

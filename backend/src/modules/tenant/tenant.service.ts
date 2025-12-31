@@ -70,6 +70,51 @@ export class TenantService {
     }
 
     /**
+     * Get the primary domain for a tenant (for email links)
+     * Falls back to any domain if no primary found
+     */
+    async getPrimaryDomain(tenantId: string): Promise<string> {
+        const domain = await this.prisma.tenantDomain.findFirst({
+            where: {
+                tenantId,
+                isPrimary: true,
+            },
+            select: { domain: true },
+        });
+
+        if (!domain) {
+            // Fallback: get any domain for this tenant
+            const anyDomain = await this.prisma.tenantDomain.findFirst({
+                where: { tenantId },
+                select: { domain: true },
+            });
+
+            if (anyDomain) {
+                return anyDomain.domain;
+            }
+
+            // Ultimate fallback
+            this.logger.warn(`No domain found for tenant ${tenantId}, using fallback`);
+            return 'localhost:3000';
+        }
+
+        return domain.domain;
+    }
+
+    /**
+     * Get the full URL for a tenant domain (with protocol)
+     */
+    async getFullDomainUrl(tenantId: string): Promise<string> {
+        const domain = await this.getPrimaryDomain(tenantId);
+
+        // localhost domains use http, production domains use https
+        const isLocalhost = domain.includes('localhost') || domain.startsWith('127.');
+        const protocol = isLocalhost ? 'http' : 'https';
+
+        return `${protocol}://${domain}`;
+    }
+
+    /**
      * Create a new tenant
      */
     async create(data: {
@@ -274,7 +319,8 @@ export class TenantService {
     }
 
     /**
-     * Get public tenant config (for frontend)
+     * Get public tenant config (for frontend TenantProvider)
+     * Returns a structured config object for runtime tenant customization
      */
     async getPublicConfig(tenantId: string) {
         const config = await this.prisma.tenantConfig.findUnique({
@@ -284,6 +330,9 @@ export class TenantService {
                 logoUrl: true,
                 primaryColor: true,
                 secondaryColor: true,
+                accentColor: true,
+                borderRadius: true,
+                darkMode: true,
                 email: true,
                 phone: true,
                 whatsappNumber: true,
@@ -301,6 +350,46 @@ export class TenantService {
             }
         });
 
-        return config;
+        if (!config) {
+            return null;
+        }
+
+        // Return structured config for frontend consumption
+        return {
+            tenantId,
+            branding: {
+                shopName: config.shopName,
+                logoUrl: config.logoUrl,
+                primaryColor: config.primaryColor,
+                secondaryColor: config.secondaryColor,
+                accentColor: config.accentColor,
+                borderRadius: config.borderRadius,
+                darkMode: config.darkMode,
+            },
+            contact: {
+                email: config.email,
+                phone: config.phone,
+                whatsappNumber: config.whatsappNumber,
+                address: config.address,
+            },
+            locale: {
+                locale: config.locale,
+                currency: config.currency,
+                currencySymbol: config.currencySymbol,
+            },
+            business: {
+                openingHours: config.openingHours,
+                timeSlots: config.timeSlots,
+                closedDays: config.closedDays,
+            },
+            integrations: {
+                googleAnalyticsId: config.googleAnalyticsId,
+                cookiebotId: config.cookiebotId,
+            },
+            seo: {
+                title: config.seoTitle,
+                description: config.seoDescription,
+            },
+        };
     }
 }

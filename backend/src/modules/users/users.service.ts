@@ -167,8 +167,8 @@ export class UsersService {
         // Use username as email for admin accounts
         const email = `${dto.username.toLowerCase()}@admin.smartphoneservice.be`;
 
-        // Check if username/email exists
-        const existing = await this.prisma.user.findUnique({ where: { email } });
+        // Check if username/email exists (using findFirst since email uniqueness is per-tenant)
+        const existing = await this.prisma.user.findFirst({ where: { email, tenantId: null } });
         if (existing) {
             throw new ConflictException('Username already exists');
         }

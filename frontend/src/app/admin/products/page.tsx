@@ -4,6 +4,7 @@ import { useEffect, useState, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { api, Product } from "@/lib/api";
+import { getImageUrl } from "@/lib/image-utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -76,7 +77,7 @@ function ProductCard({ product, onEdit, onDelete, onView }: {
             <div className="aspect-square bg-zinc-100 relative">
                 {product.images?.[0] ? (
                     <img
-                        src={product.images[0].url}
+                        src={getImageUrl(product.images[0].url)}
                         alt={product.name}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                     />

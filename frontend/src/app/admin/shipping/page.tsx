@@ -14,7 +14,7 @@ import {
     RefreshCw,
 } from "lucide-react";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+// All API calls use relative paths to go through Next.js proxy for tenant resolution
 
 interface ShippingZone {
     id: string;
@@ -80,7 +80,7 @@ export default function AdminShippingPage() {
     const fetchZones = async () => {
         setIsLoading(true);
         try {
-            const res = await fetch(`${API_URL}/api/shipping/zones`);
+            const res = await fetch(`/api/shipping/zones`);
             if (res.ok) {
                 setZones(await res.json());
             }
@@ -142,8 +142,8 @@ export default function AdminShippingPage() {
             };
 
             const url = editingZone
-                ? `${API_URL}/api/shipping/zones/${editingZone.id}`
-                : `${API_URL}/api/shipping/zones`;
+                ? `/api/shipping/zones/${editingZone.id}`
+                : `/api/shipping/zones`;
 
             const res = await fetch(url, {
                 method: editingZone ? "PUT" : "POST",
@@ -170,7 +170,7 @@ export default function AdminShippingPage() {
 
         const token = localStorage.getItem("adminAccessToken");
         try {
-            const res = await fetch(`${API_URL}/api/shipping/zones/${id}`, {
+            const res = await fetch(`/api/shipping/zones/${id}`, {
                 method: "DELETE",
                 headers: { Authorization: `Bearer ${token}` },
             });
@@ -347,8 +347,8 @@ export default function AdminShippingPage() {
                                             type="button"
                                             onClick={() => toggleCountry(country.code)}
                                             className={`flex items-center gap-2 px-2 py-1.5 rounded text-sm transition-colors ${formData.countries.includes(country.code)
-                                                    ? "bg-blue-100 text-blue-700 border border-blue-300"
-                                                    : "bg-zinc-50 text-zinc-600 hover:bg-zinc-100"
+                                                ? "bg-blue-100 text-blue-700 border border-blue-300"
+                                                : "bg-zinc-50 text-zinc-600 hover:bg-zinc-100"
                                                 }`}
                                         >
                                             {formData.countries.includes(country.code) && (

@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { PrismaModule } from './prisma';
+import { TenantModule } from './modules/tenant';
 import { AuthModule } from './modules/auth';
 import { ProductsModule } from './modules/products';
 import { CategoriesModule } from './modules/categories';
@@ -29,6 +30,8 @@ import { ReviewsModule } from './modules/reviews/reviews.module';
 import { WishlistModule } from './modules/wishlist/wishlist.module';
 import { StockNotificationsModule } from './modules/stock-notifications/stock-notifications.module';
 import { ExportModule } from './modules/export/export.module';
+import { OwnerModule } from './modules/owner';
+import { PagesModule } from './modules/pages';
 
 @Module({
   imports: [
@@ -48,6 +51,9 @@ import { ExportModule } from './modules/export/export.module';
 
     // Database
     PrismaModule,
+
+    // Multi-tenancy (middleware disabled by default - enable in tenant.module.ts when ready)
+    TenantModule,
 
     // Feature modules
     AuthModule,
@@ -79,6 +85,12 @@ import { ExportModule } from './modules/export/export.module';
     WishlistModule,
     StockNotificationsModule,
     ExportModule,
+
+    // Platform owner module
+    OwnerModule,
+
+    // CMS
+    PagesModule,
   ],
 
 

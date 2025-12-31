@@ -26,6 +26,7 @@ export type AggregateEmailUnsubscribe = {
 
 export type EmailUnsubscribeMinAggregateOutputType = {
   id: string | null
+  tenantId: string | null
   email: string | null
   reason: string | null
   createdAt: Date | null
@@ -33,6 +34,7 @@ export type EmailUnsubscribeMinAggregateOutputType = {
 
 export type EmailUnsubscribeMaxAggregateOutputType = {
   id: string | null
+  tenantId: string | null
   email: string | null
   reason: string | null
   createdAt: Date | null
@@ -40,6 +42,7 @@ export type EmailUnsubscribeMaxAggregateOutputType = {
 
 export type EmailUnsubscribeCountAggregateOutputType = {
   id: number
+  tenantId: number
   email: number
   reason: number
   createdAt: number
@@ -49,6 +52,7 @@ export type EmailUnsubscribeCountAggregateOutputType = {
 
 export type EmailUnsubscribeMinAggregateInputType = {
   id?: true
+  tenantId?: true
   email?: true
   reason?: true
   createdAt?: true
@@ -56,6 +60,7 @@ export type EmailUnsubscribeMinAggregateInputType = {
 
 export type EmailUnsubscribeMaxAggregateInputType = {
   id?: true
+  tenantId?: true
   email?: true
   reason?: true
   createdAt?: true
@@ -63,6 +68,7 @@ export type EmailUnsubscribeMaxAggregateInputType = {
 
 export type EmailUnsubscribeCountAggregateInputType = {
   id?: true
+  tenantId?: true
   email?: true
   reason?: true
   createdAt?: true
@@ -143,6 +149,7 @@ export type EmailUnsubscribeGroupByArgs<ExtArgs extends runtime.Types.Extensions
 
 export type EmailUnsubscribeGroupByOutputType = {
   id: string
+  tenantId: string | null
   email: string
   reason: string | null
   createdAt: Date
@@ -171,30 +178,38 @@ export type EmailUnsubscribeWhereInput = {
   OR?: Prisma.EmailUnsubscribeWhereInput[]
   NOT?: Prisma.EmailUnsubscribeWhereInput | Prisma.EmailUnsubscribeWhereInput[]
   id?: Prisma.StringFilter<"EmailUnsubscribe"> | string
+  tenantId?: Prisma.StringNullableFilter<"EmailUnsubscribe"> | string | null
   email?: Prisma.StringFilter<"EmailUnsubscribe"> | string
   reason?: Prisma.StringNullableFilter<"EmailUnsubscribe"> | string | null
   createdAt?: Prisma.DateTimeFilter<"EmailUnsubscribe"> | Date | string
+  tenant?: Prisma.XOR<Prisma.TenantNullableScalarRelationFilter, Prisma.TenantWhereInput> | null
 }
 
 export type EmailUnsubscribeOrderByWithRelationInput = {
   id?: Prisma.SortOrder
+  tenantId?: Prisma.SortOrderInput | Prisma.SortOrder
   email?: Prisma.SortOrder
   reason?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  tenant?: Prisma.TenantOrderByWithRelationInput
 }
 
 export type EmailUnsubscribeWhereUniqueInput = Prisma.AtLeast<{
   id?: string
-  email?: string
+  tenantId_email?: Prisma.EmailUnsubscribeTenantIdEmailCompoundUniqueInput
   AND?: Prisma.EmailUnsubscribeWhereInput | Prisma.EmailUnsubscribeWhereInput[]
   OR?: Prisma.EmailUnsubscribeWhereInput[]
   NOT?: Prisma.EmailUnsubscribeWhereInput | Prisma.EmailUnsubscribeWhereInput[]
+  tenantId?: Prisma.StringNullableFilter<"EmailUnsubscribe"> | string | null
+  email?: Prisma.StringFilter<"EmailUnsubscribe"> | string
   reason?: Prisma.StringNullableFilter<"EmailUnsubscribe"> | string | null
   createdAt?: Prisma.DateTimeFilter<"EmailUnsubscribe"> | Date | string
-}, "id" | "email">
+  tenant?: Prisma.XOR<Prisma.TenantNullableScalarRelationFilter, Prisma.TenantWhereInput> | null
+}, "id" | "tenantId_email">
 
 export type EmailUnsubscribeOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
+  tenantId?: Prisma.SortOrderInput | Prisma.SortOrder
   email?: Prisma.SortOrder
   reason?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -208,6 +223,7 @@ export type EmailUnsubscribeScalarWhereWithAggregatesInput = {
   OR?: Prisma.EmailUnsubscribeScalarWhereWithAggregatesInput[]
   NOT?: Prisma.EmailUnsubscribeScalarWhereWithAggregatesInput | Prisma.EmailUnsubscribeScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"EmailUnsubscribe"> | string
+  tenantId?: Prisma.StringNullableWithAggregatesFilter<"EmailUnsubscribe"> | string | null
   email?: Prisma.StringWithAggregatesFilter<"EmailUnsubscribe"> | string
   reason?: Prisma.StringNullableWithAggregatesFilter<"EmailUnsubscribe"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"EmailUnsubscribe"> | Date | string
@@ -218,10 +234,12 @@ export type EmailUnsubscribeCreateInput = {
   email: string
   reason?: string | null
   createdAt?: Date | string
+  tenant?: Prisma.TenantCreateNestedOneWithoutEmailUnsubscribesInput
 }
 
 export type EmailUnsubscribeUncheckedCreateInput = {
   id?: string
+  tenantId?: string | null
   email: string
   reason?: string | null
   createdAt?: Date | string
@@ -232,10 +250,12 @@ export type EmailUnsubscribeUpdateInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  tenant?: Prisma.TenantUpdateOneWithoutEmailUnsubscribesNestedInput
 }
 
 export type EmailUnsubscribeUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  tenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.StringFieldUpdateOperationsInput | string
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -243,6 +263,7 @@ export type EmailUnsubscribeUncheckedUpdateInput = {
 
 export type EmailUnsubscribeCreateManyInput = {
   id?: string
+  tenantId?: string | null
   email: string
   reason?: string | null
   createdAt?: Date | string
@@ -257,13 +278,30 @@ export type EmailUnsubscribeUpdateManyMutationInput = {
 
 export type EmailUnsubscribeUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  tenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.StringFieldUpdateOperationsInput | string
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
+export type EmailUnsubscribeListRelationFilter = {
+  every?: Prisma.EmailUnsubscribeWhereInput
+  some?: Prisma.EmailUnsubscribeWhereInput
+  none?: Prisma.EmailUnsubscribeWhereInput
+}
+
+export type EmailUnsubscribeOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
+}
+
+export type EmailUnsubscribeTenantIdEmailCompoundUniqueInput = {
+  tenantId: string
+  email: string
+}
+
 export type EmailUnsubscribeCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  tenantId?: Prisma.SortOrder
   email?: Prisma.SortOrder
   reason?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -271,6 +309,7 @@ export type EmailUnsubscribeCountOrderByAggregateInput = {
 
 export type EmailUnsubscribeMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  tenantId?: Prisma.SortOrder
   email?: Prisma.SortOrder
   reason?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -278,48 +317,189 @@ export type EmailUnsubscribeMaxOrderByAggregateInput = {
 
 export type EmailUnsubscribeMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  tenantId?: Prisma.SortOrder
   email?: Prisma.SortOrder
   reason?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+}
+
+export type EmailUnsubscribeCreateNestedManyWithoutTenantInput = {
+  create?: Prisma.XOR<Prisma.EmailUnsubscribeCreateWithoutTenantInput, Prisma.EmailUnsubscribeUncheckedCreateWithoutTenantInput> | Prisma.EmailUnsubscribeCreateWithoutTenantInput[] | Prisma.EmailUnsubscribeUncheckedCreateWithoutTenantInput[]
+  connectOrCreate?: Prisma.EmailUnsubscribeCreateOrConnectWithoutTenantInput | Prisma.EmailUnsubscribeCreateOrConnectWithoutTenantInput[]
+  createMany?: Prisma.EmailUnsubscribeCreateManyTenantInputEnvelope
+  connect?: Prisma.EmailUnsubscribeWhereUniqueInput | Prisma.EmailUnsubscribeWhereUniqueInput[]
+}
+
+export type EmailUnsubscribeUncheckedCreateNestedManyWithoutTenantInput = {
+  create?: Prisma.XOR<Prisma.EmailUnsubscribeCreateWithoutTenantInput, Prisma.EmailUnsubscribeUncheckedCreateWithoutTenantInput> | Prisma.EmailUnsubscribeCreateWithoutTenantInput[] | Prisma.EmailUnsubscribeUncheckedCreateWithoutTenantInput[]
+  connectOrCreate?: Prisma.EmailUnsubscribeCreateOrConnectWithoutTenantInput | Prisma.EmailUnsubscribeCreateOrConnectWithoutTenantInput[]
+  createMany?: Prisma.EmailUnsubscribeCreateManyTenantInputEnvelope
+  connect?: Prisma.EmailUnsubscribeWhereUniqueInput | Prisma.EmailUnsubscribeWhereUniqueInput[]
+}
+
+export type EmailUnsubscribeUpdateManyWithoutTenantNestedInput = {
+  create?: Prisma.XOR<Prisma.EmailUnsubscribeCreateWithoutTenantInput, Prisma.EmailUnsubscribeUncheckedCreateWithoutTenantInput> | Prisma.EmailUnsubscribeCreateWithoutTenantInput[] | Prisma.EmailUnsubscribeUncheckedCreateWithoutTenantInput[]
+  connectOrCreate?: Prisma.EmailUnsubscribeCreateOrConnectWithoutTenantInput | Prisma.EmailUnsubscribeCreateOrConnectWithoutTenantInput[]
+  upsert?: Prisma.EmailUnsubscribeUpsertWithWhereUniqueWithoutTenantInput | Prisma.EmailUnsubscribeUpsertWithWhereUniqueWithoutTenantInput[]
+  createMany?: Prisma.EmailUnsubscribeCreateManyTenantInputEnvelope
+  set?: Prisma.EmailUnsubscribeWhereUniqueInput | Prisma.EmailUnsubscribeWhereUniqueInput[]
+  disconnect?: Prisma.EmailUnsubscribeWhereUniqueInput | Prisma.EmailUnsubscribeWhereUniqueInput[]
+  delete?: Prisma.EmailUnsubscribeWhereUniqueInput | Prisma.EmailUnsubscribeWhereUniqueInput[]
+  connect?: Prisma.EmailUnsubscribeWhereUniqueInput | Prisma.EmailUnsubscribeWhereUniqueInput[]
+  update?: Prisma.EmailUnsubscribeUpdateWithWhereUniqueWithoutTenantInput | Prisma.EmailUnsubscribeUpdateWithWhereUniqueWithoutTenantInput[]
+  updateMany?: Prisma.EmailUnsubscribeUpdateManyWithWhereWithoutTenantInput | Prisma.EmailUnsubscribeUpdateManyWithWhereWithoutTenantInput[]
+  deleteMany?: Prisma.EmailUnsubscribeScalarWhereInput | Prisma.EmailUnsubscribeScalarWhereInput[]
+}
+
+export type EmailUnsubscribeUncheckedUpdateManyWithoutTenantNestedInput = {
+  create?: Prisma.XOR<Prisma.EmailUnsubscribeCreateWithoutTenantInput, Prisma.EmailUnsubscribeUncheckedCreateWithoutTenantInput> | Prisma.EmailUnsubscribeCreateWithoutTenantInput[] | Prisma.EmailUnsubscribeUncheckedCreateWithoutTenantInput[]
+  connectOrCreate?: Prisma.EmailUnsubscribeCreateOrConnectWithoutTenantInput | Prisma.EmailUnsubscribeCreateOrConnectWithoutTenantInput[]
+  upsert?: Prisma.EmailUnsubscribeUpsertWithWhereUniqueWithoutTenantInput | Prisma.EmailUnsubscribeUpsertWithWhereUniqueWithoutTenantInput[]
+  createMany?: Prisma.EmailUnsubscribeCreateManyTenantInputEnvelope
+  set?: Prisma.EmailUnsubscribeWhereUniqueInput | Prisma.EmailUnsubscribeWhereUniqueInput[]
+  disconnect?: Prisma.EmailUnsubscribeWhereUniqueInput | Prisma.EmailUnsubscribeWhereUniqueInput[]
+  delete?: Prisma.EmailUnsubscribeWhereUniqueInput | Prisma.EmailUnsubscribeWhereUniqueInput[]
+  connect?: Prisma.EmailUnsubscribeWhereUniqueInput | Prisma.EmailUnsubscribeWhereUniqueInput[]
+  update?: Prisma.EmailUnsubscribeUpdateWithWhereUniqueWithoutTenantInput | Prisma.EmailUnsubscribeUpdateWithWhereUniqueWithoutTenantInput[]
+  updateMany?: Prisma.EmailUnsubscribeUpdateManyWithWhereWithoutTenantInput | Prisma.EmailUnsubscribeUpdateManyWithWhereWithoutTenantInput[]
+  deleteMany?: Prisma.EmailUnsubscribeScalarWhereInput | Prisma.EmailUnsubscribeScalarWhereInput[]
+}
+
+export type EmailUnsubscribeCreateWithoutTenantInput = {
+  id?: string
+  email: string
+  reason?: string | null
+  createdAt?: Date | string
+}
+
+export type EmailUnsubscribeUncheckedCreateWithoutTenantInput = {
+  id?: string
+  email: string
+  reason?: string | null
+  createdAt?: Date | string
+}
+
+export type EmailUnsubscribeCreateOrConnectWithoutTenantInput = {
+  where: Prisma.EmailUnsubscribeWhereUniqueInput
+  create: Prisma.XOR<Prisma.EmailUnsubscribeCreateWithoutTenantInput, Prisma.EmailUnsubscribeUncheckedCreateWithoutTenantInput>
+}
+
+export type EmailUnsubscribeCreateManyTenantInputEnvelope = {
+  data: Prisma.EmailUnsubscribeCreateManyTenantInput | Prisma.EmailUnsubscribeCreateManyTenantInput[]
+  skipDuplicates?: boolean
+}
+
+export type EmailUnsubscribeUpsertWithWhereUniqueWithoutTenantInput = {
+  where: Prisma.EmailUnsubscribeWhereUniqueInput
+  update: Prisma.XOR<Prisma.EmailUnsubscribeUpdateWithoutTenantInput, Prisma.EmailUnsubscribeUncheckedUpdateWithoutTenantInput>
+  create: Prisma.XOR<Prisma.EmailUnsubscribeCreateWithoutTenantInput, Prisma.EmailUnsubscribeUncheckedCreateWithoutTenantInput>
+}
+
+export type EmailUnsubscribeUpdateWithWhereUniqueWithoutTenantInput = {
+  where: Prisma.EmailUnsubscribeWhereUniqueInput
+  data: Prisma.XOR<Prisma.EmailUnsubscribeUpdateWithoutTenantInput, Prisma.EmailUnsubscribeUncheckedUpdateWithoutTenantInput>
+}
+
+export type EmailUnsubscribeUpdateManyWithWhereWithoutTenantInput = {
+  where: Prisma.EmailUnsubscribeScalarWhereInput
+  data: Prisma.XOR<Prisma.EmailUnsubscribeUpdateManyMutationInput, Prisma.EmailUnsubscribeUncheckedUpdateManyWithoutTenantInput>
+}
+
+export type EmailUnsubscribeScalarWhereInput = {
+  AND?: Prisma.EmailUnsubscribeScalarWhereInput | Prisma.EmailUnsubscribeScalarWhereInput[]
+  OR?: Prisma.EmailUnsubscribeScalarWhereInput[]
+  NOT?: Prisma.EmailUnsubscribeScalarWhereInput | Prisma.EmailUnsubscribeScalarWhereInput[]
+  id?: Prisma.StringFilter<"EmailUnsubscribe"> | string
+  tenantId?: Prisma.StringNullableFilter<"EmailUnsubscribe"> | string | null
+  email?: Prisma.StringFilter<"EmailUnsubscribe"> | string
+  reason?: Prisma.StringNullableFilter<"EmailUnsubscribe"> | string | null
+  createdAt?: Prisma.DateTimeFilter<"EmailUnsubscribe"> | Date | string
+}
+
+export type EmailUnsubscribeCreateManyTenantInput = {
+  id?: string
+  email: string
+  reason?: string | null
+  createdAt?: Date | string
+}
+
+export type EmailUnsubscribeUpdateWithoutTenantInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type EmailUnsubscribeUncheckedUpdateWithoutTenantInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type EmailUnsubscribeUncheckedUpdateManyWithoutTenantInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 
 
 export type EmailUnsubscribeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  tenantId?: boolean
   email?: boolean
   reason?: boolean
   createdAt?: boolean
+  tenant?: boolean | Prisma.EmailUnsubscribe$tenantArgs<ExtArgs>
 }, ExtArgs["result"]["emailUnsubscribe"]>
 
 export type EmailUnsubscribeSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  tenantId?: boolean
   email?: boolean
   reason?: boolean
   createdAt?: boolean
+  tenant?: boolean | Prisma.EmailUnsubscribe$tenantArgs<ExtArgs>
 }, ExtArgs["result"]["emailUnsubscribe"]>
 
 export type EmailUnsubscribeSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  tenantId?: boolean
   email?: boolean
   reason?: boolean
   createdAt?: boolean
+  tenant?: boolean | Prisma.EmailUnsubscribe$tenantArgs<ExtArgs>
 }, ExtArgs["result"]["emailUnsubscribe"]>
 
 export type EmailUnsubscribeSelectScalar = {
   id?: boolean
+  tenantId?: boolean
   email?: boolean
   reason?: boolean
   createdAt?: boolean
 }
 
-export type EmailUnsubscribeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "reason" | "createdAt", ExtArgs["result"]["emailUnsubscribe"]>
+export type EmailUnsubscribeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "tenantId" | "email" | "reason" | "createdAt", ExtArgs["result"]["emailUnsubscribe"]>
+export type EmailUnsubscribeInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  tenant?: boolean | Prisma.EmailUnsubscribe$tenantArgs<ExtArgs>
+}
+export type EmailUnsubscribeIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  tenant?: boolean | Prisma.EmailUnsubscribe$tenantArgs<ExtArgs>
+}
+export type EmailUnsubscribeIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  tenant?: boolean | Prisma.EmailUnsubscribe$tenantArgs<ExtArgs>
+}
 
 export type $EmailUnsubscribePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "EmailUnsubscribe"
-  objects: {}
+  objects: {
+    tenant: Prisma.$TenantPayload<ExtArgs> | null
+  }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
+    tenantId: string | null
     email: string
     reason: string | null
     createdAt: Date
@@ -717,6 +897,7 @@ readonly fields: EmailUnsubscribeFieldRefs;
  */
 export interface Prisma__EmailUnsubscribeClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  tenant<T extends Prisma.EmailUnsubscribe$tenantArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.EmailUnsubscribe$tenantArgs<ExtArgs>>): Prisma.Prisma__TenantClient<runtime.Types.Result.GetResult<Prisma.$TenantPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -747,6 +928,7 @@ export interface Prisma__EmailUnsubscribeClient<T, Null = never, ExtArgs extends
  */
 export interface EmailUnsubscribeFieldRefs {
   readonly id: Prisma.FieldRef<"EmailUnsubscribe", 'String'>
+  readonly tenantId: Prisma.FieldRef<"EmailUnsubscribe", 'String'>
   readonly email: Prisma.FieldRef<"EmailUnsubscribe", 'String'>
   readonly reason: Prisma.FieldRef<"EmailUnsubscribe", 'String'>
   readonly createdAt: Prisma.FieldRef<"EmailUnsubscribe", 'DateTime'>
@@ -767,6 +949,10 @@ export type EmailUnsubscribeFindUniqueArgs<ExtArgs extends runtime.Types.Extensi
    */
   omit?: Prisma.EmailUnsubscribeOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.EmailUnsubscribeInclude<ExtArgs> | null
+  /**
    * Filter, which EmailUnsubscribe to fetch.
    */
   where: Prisma.EmailUnsubscribeWhereUniqueInput
@@ -785,6 +971,10 @@ export type EmailUnsubscribeFindUniqueOrThrowArgs<ExtArgs extends runtime.Types.
    */
   omit?: Prisma.EmailUnsubscribeOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.EmailUnsubscribeInclude<ExtArgs> | null
+  /**
    * Filter, which EmailUnsubscribe to fetch.
    */
   where: Prisma.EmailUnsubscribeWhereUniqueInput
@@ -802,6 +992,10 @@ export type EmailUnsubscribeFindFirstArgs<ExtArgs extends runtime.Types.Extensio
    * Omit specific fields from the EmailUnsubscribe
    */
   omit?: Prisma.EmailUnsubscribeOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.EmailUnsubscribeInclude<ExtArgs> | null
   /**
    * Filter, which EmailUnsubscribe to fetch.
    */
@@ -851,6 +1045,10 @@ export type EmailUnsubscribeFindFirstOrThrowArgs<ExtArgs extends runtime.Types.E
    */
   omit?: Prisma.EmailUnsubscribeOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.EmailUnsubscribeInclude<ExtArgs> | null
+  /**
    * Filter, which EmailUnsubscribe to fetch.
    */
   where?: Prisma.EmailUnsubscribeWhereInput
@@ -899,6 +1097,10 @@ export type EmailUnsubscribeFindManyArgs<ExtArgs extends runtime.Types.Extension
    */
   omit?: Prisma.EmailUnsubscribeOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.EmailUnsubscribeInclude<ExtArgs> | null
+  /**
    * Filter, which EmailUnsubscribes to fetch.
    */
   where?: Prisma.EmailUnsubscribeWhereInput
@@ -942,6 +1144,10 @@ export type EmailUnsubscribeCreateArgs<ExtArgs extends runtime.Types.Extensions.
    */
   omit?: Prisma.EmailUnsubscribeOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.EmailUnsubscribeInclude<ExtArgs> | null
+  /**
    * The data needed to create a EmailUnsubscribe.
    */
   data: Prisma.XOR<Prisma.EmailUnsubscribeCreateInput, Prisma.EmailUnsubscribeUncheckedCreateInput>
@@ -975,6 +1181,10 @@ export type EmailUnsubscribeCreateManyAndReturnArgs<ExtArgs extends runtime.Type
    */
   data: Prisma.EmailUnsubscribeCreateManyInput | Prisma.EmailUnsubscribeCreateManyInput[]
   skipDuplicates?: boolean
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.EmailUnsubscribeIncludeCreateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -989,6 +1199,10 @@ export type EmailUnsubscribeUpdateArgs<ExtArgs extends runtime.Types.Extensions.
    * Omit specific fields from the EmailUnsubscribe
    */
   omit?: Prisma.EmailUnsubscribeOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.EmailUnsubscribeInclude<ExtArgs> | null
   /**
    * The data needed to update a EmailUnsubscribe.
    */
@@ -1041,6 +1255,10 @@ export type EmailUnsubscribeUpdateManyAndReturnArgs<ExtArgs extends runtime.Type
    * Limit how many EmailUnsubscribes to update.
    */
   limit?: number
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.EmailUnsubscribeIncludeUpdateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1055,6 +1273,10 @@ export type EmailUnsubscribeUpsertArgs<ExtArgs extends runtime.Types.Extensions.
    * Omit specific fields from the EmailUnsubscribe
    */
   omit?: Prisma.EmailUnsubscribeOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.EmailUnsubscribeInclude<ExtArgs> | null
   /**
    * The filter to search for the EmailUnsubscribe to update in case it exists.
    */
@@ -1082,6 +1304,10 @@ export type EmailUnsubscribeDeleteArgs<ExtArgs extends runtime.Types.Extensions.
    */
   omit?: Prisma.EmailUnsubscribeOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.EmailUnsubscribeInclude<ExtArgs> | null
+  /**
    * Filter which EmailUnsubscribe to delete.
    */
   where: Prisma.EmailUnsubscribeWhereUniqueInput
@@ -1102,6 +1328,25 @@ export type EmailUnsubscribeDeleteManyArgs<ExtArgs extends runtime.Types.Extensi
 }
 
 /**
+ * EmailUnsubscribe.tenant
+ */
+export type EmailUnsubscribe$tenantArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Tenant
+   */
+  select?: Prisma.TenantSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Tenant
+   */
+  omit?: Prisma.TenantOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TenantInclude<ExtArgs> | null
+  where?: Prisma.TenantWhereInput
+}
+
+/**
  * EmailUnsubscribe without action
  */
 export type EmailUnsubscribeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1113,4 +1358,8 @@ export type EmailUnsubscribeDefaultArgs<ExtArgs extends runtime.Types.Extensions
    * Omit specific fields from the EmailUnsubscribe
    */
   omit?: Prisma.EmailUnsubscribeOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.EmailUnsubscribeInclude<ExtArgs> | null
 }

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { transformProductImages } from '../../utils/image-url';
 
@@ -6,7 +6,7 @@ import { transformProductImages } from '../../utils/image-url';
 export class InventoryService {
     constructor(private prisma: PrismaService) { }
 
-    async getMovements(params: {
+    async getMovements(tenantId: string, params: {
         page: number;
         limit: number;
         productId?: string;
@@ -15,7 +15,16 @@ export class InventoryService {
         const { page, limit, productId, type } = params;
         const skip = (page - 1) * limit;
 
-        const where: Record<string, unknown> = {};
+        // Get product IDs for this tenant to filter movements
+        const tenantProducts = await this.prisma.product.findMany({
+            where: { tenantId },
+            select: { id: true },
+        });
+        const productIds = tenantProducts.map(p => p.id);
+
+        const where: Record<string, unknown> = {
+            productId: { in: productIds },
+        };
         if (productId) where.productId = productId;
         if (type) where.type = type;
 
@@ -48,9 +57,10 @@ export class InventoryService {
         };
     }
 
-    async getLowStockProducts(threshold: number = 5) {
+    async getLowStockProducts(tenantId: string, threshold: number = 5) {
         const products = await this.prisma.product.findMany({
             where: {
+                tenantId,
                 isActive: true,
                 stockQty: { lte: threshold },
             },
@@ -67,9 +77,9 @@ export class InventoryService {
         return products.map(transformProductImages);
     }
 
-    async getProductsWithStock() {
+    async getProductsWithStock(tenantId: string) {
         const products = await this.prisma.product.findMany({
-            where: { isActive: true },
+            where: { tenantId, isActive: true },
             select: {
                 id: true,
                 name: true,
@@ -85,18 +95,20 @@ export class InventoryService {
     }
 
     async adjustStock(
+        tenantId: string,
         productId: string,
         quantity: number,
         type: 'STOCK_IN' | 'STOCK_OUT' | 'ADJUSTMENT',
         reason?: string,
     ) {
         return this.prisma.$transaction(async (tx) => {
-            const product = await tx.product.findUnique({
-                where: { id: productId },
+            // Verify product belongs to tenant
+            const product = await tx.product.findFirst({
+                where: { tenantId, id: productId },
             });
 
             if (!product) {
-                throw new Error('Product not found');
+                throw new NotFoundException('Product not found');
             }
 
             const previousQty = product.stockQty;
@@ -147,7 +159,16 @@ export class InventoryService {
         });
     }
 
-    async getProductHistory(productId: string) {
+    async getProductHistory(tenantId: string, productId: string) {
+        // Verify product belongs to tenant
+        const product = await this.prisma.product.findFirst({
+            where: { tenantId, id: productId },
+        });
+
+        if (!product) {
+            throw new NotFoundException('Product not found');
+        }
+
         return this.prisma.inventoryMovement.findMany({
             where: { productId },
             include: {
@@ -160,23 +181,25 @@ export class InventoryService {
         });
     }
 
-    async getSummary() {
+    async getSummary(tenantId: string) {
         const [totalProducts, lowStock, outOfStock, totalValue] = await Promise.all([
-            this.prisma.product.count({ where: { isActive: true } }),
+            this.prisma.product.count({ where: { tenantId, isActive: true } }),
             this.prisma.product.count({
                 where: {
+                    tenantId,
                     isActive: true,
                     stockQty: { gt: 0, lte: 5 },
                 },
             }),
             this.prisma.product.count({
                 where: {
+                    tenantId,
                     isActive: true,
                     stockQty: 0,
                 },
             }),
             this.prisma.product.aggregate({
-                where: { isActive: true },
+                where: { tenantId, isActive: true },
                 _sum: {
                     stockQty: true,
                 },
@@ -185,7 +208,7 @@ export class InventoryService {
 
         // Calculate inventory value
         const products = await this.prisma.product.findMany({
-            where: { isActive: true },
+            where: { tenantId, isActive: true },
             select: { stockQty: true, price: true },
         });
 
@@ -203,3 +226,4 @@ export class InventoryService {
         };
     }
 }
+

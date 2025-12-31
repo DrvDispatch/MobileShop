@@ -6,10 +6,16 @@ import { ConfigService } from '@nestjs/config';
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     constructor(private configService: ConfigService) {
+        const callbackURL = configService.get<string>('GOOGLE_CALLBACK_URL')!;
+
+        console.log('[GoogleStrategy] Initializing with callback:', callbackURL);
+
+        // Cast to any to allow additional options that Passport accepts
+        // but TypeScript types don't include
         super({
             clientID: configService.get<string>('GOOGLE_CLIENT_ID')!,
             clientSecret: configService.get<string>('GOOGLE_CLIENT_SECRET')!,
-            callbackURL: configService.get<string>('GOOGLE_CALLBACK_URL')!,
+            callbackURL,
             scope: ['email', 'profile'],
         } as StrategyOptions);
     }
@@ -21,6 +27,11 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
         done: VerifyCallback,
     ): Promise<void> {
         const { id, emails, displayName, photos } = profile;
+
+        console.log('[GoogleStrategy] Validating user:', {
+            googleId: id,
+            email: emails?.[0]?.value
+        });
 
         const user = {
             googleId: id,
@@ -39,5 +50,6 @@ export interface GoogleUser {
     email: string;
     name: string;
     avatar?: string;
-    accessToken: string;
+    accessToken?: string;  // Optional - not returned by GoogleOAuthService
 }
+

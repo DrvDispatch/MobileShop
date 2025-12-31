@@ -18,7 +18,7 @@ import {
     CalendarRange,
 } from "lucide-react";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+// All API calls use relative paths to go through Next.js proxy for tenant resolution
 
 interface ExportOption {
     id: string;
@@ -112,7 +112,7 @@ export default function AdminExportPage() {
                 }
             });
 
-            const response = await fetch(`${API_URL}${option.endpoint}?${params}`, {
+            const response = await fetch(`${option.endpoint}?${params}`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
 
@@ -153,7 +153,7 @@ export default function AdminExportPage() {
                 filename = `jaaroverzicht-${selectedYear}.csv`;
             }
 
-            const response = await fetch(`${API_URL}${endpoint}`, {
+            const response = await fetch(`${endpoint}`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
 

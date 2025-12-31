@@ -138,8 +138,8 @@ export default function AdminOrderDetailPage() {
             setError(null);
             try {
                 const token = localStorage.getItem("adminAccessToken");
-                const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
-                const response = await fetch(`${API_URL}/api/orders/${orderId}`, {
+                // Use relative path to go through Next.js proxy for tenant resolution
+                const response = await fetch(`/api/orders/${orderId}`, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
 
@@ -181,7 +181,7 @@ export default function AdminOrderDetailPage() {
         setIsUpdating(true);
         try {
             const token = localStorage.getItem("adminAccessToken");
-            const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+            // Use relative path for tenant resolution
 
             const body: Record<string, string> = { status: selectedStatus };
             if (selectedStatus === "SHIPPED" && trackingNumber) {
@@ -191,7 +191,7 @@ export default function AdminOrderDetailPage() {
                 body.cancellationReason = cancellationReason;
             }
 
-            const response = await fetch(`${API_URL}/api/orders/${orderId}`, {
+            const response = await fetch(`/api/orders/${orderId}`, {
                 method: "PATCH",
                 headers: {
                     "Content-Type": "application/json",
@@ -220,8 +220,8 @@ export default function AdminOrderDetailPage() {
         setIsUpdating(true);
         try {
             const token = localStorage.getItem("adminAccessToken");
-            const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
-            const response = await fetch(`${API_URL}/api/orders/${orderId}`, {
+            // Use relative path for tenant resolution
+            const response = await fetch(`/api/orders/${orderId}`, {
                 method: "PATCH",
                 headers: {
                     "Content-Type": "application/json",
@@ -255,9 +255,9 @@ export default function AdminOrderDetailPage() {
         setIsCreatingRefund(true);
         try {
             const token = localStorage.getItem("adminAccessToken");
-            const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+            // Use relative path for tenant resolution
 
-            const response = await fetch(`${API_URL}/api/refunds`, {
+            const response = await fetch(`/api/refunds`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -788,10 +788,10 @@ export default function AdminOrderDetailPage() {
                                     variant="outline"
                                     className="w-full bg-white hover:bg-purple-50"
                                     onClick={async () => {
-                                        const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+                                        // Use relative path for tenant resolution
                                         const token = localStorage.getItem("adminAccessToken");
                                         try {
-                                            const response = await fetch(`${API_URL}/api/invoice/order/${order.id}`, {
+                                            const response = await fetch(`/api/invoice/order/${order.id}`, {
                                                 headers: { Authorization: `Bearer ${token}` },
                                             });
                                             if (response.ok) {
@@ -811,10 +811,10 @@ export default function AdminOrderDetailPage() {
                                     variant="outline"
                                     className="w-full bg-white hover:bg-purple-50"
                                     onClick={async () => {
-                                        const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+                                        // Use relative path for tenant resolution
                                         const token = localStorage.getItem("adminAccessToken");
                                         try {
-                                            const response = await fetch(`${API_URL}/api/invoice/order/${order.id}/download`, {
+                                            const response = await fetch(`/api/invoice/order/${order.id}/download`, {
                                                 headers: { Authorization: `Bearer ${token}` },
                                             });
                                             if (response.ok) {

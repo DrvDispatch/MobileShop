@@ -4,8 +4,6 @@ import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight, X, Tag, Truck, Wrench, Shield, Sparkles } from "lucide-react";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
-
 interface Banner {
     id: string;
     title: string;
@@ -27,7 +25,7 @@ export function PromotionalBanner() {
     useEffect(() => {
         const fetchBanners = async () => {
             try {
-                const res = await fetch(`${API_URL}/api/banners/active?position=TICKER`);
+                const res = await fetch('/api/banners/active?position=TICKER');
                 if (res.ok) {
                     const data = await res.json();
                     setBanners(data);

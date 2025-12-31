@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -6,9 +6,12 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { JwtStrategy } from './strategies';
 import { GoogleStrategy } from './strategies/google.strategy';
+import { GoogleOAuthService } from './services/google-oauth.service';
 import { RolesGuard } from './guards';
 import { GoogleAuthGuard } from './guards/google-auth.guard';
 import { EmailModule } from '../email';
+import { TenantModule } from '../tenant/tenant.module';
+import { OwnerModule } from '../owner/owner.module';
 
 @Module({
     imports: [
@@ -24,9 +27,11 @@ import { EmailModule } from '../email';
             }),
         }),
         EmailModule,
+        TenantModule,
+        forwardRef(() => OwnerModule),  // Use forwardRef to avoid circular dep
     ],
     controllers: [AuthController],
-    providers: [AuthService, JwtStrategy, GoogleStrategy, RolesGuard, GoogleAuthGuard],
+    providers: [AuthService, JwtStrategy, GoogleStrategy, GoogleOAuthService, RolesGuard, GoogleAuthGuard],
     exports: [AuthService, JwtStrategy, RolesGuard],
 })
 export class AuthModule { }

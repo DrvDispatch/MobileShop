@@ -183,7 +183,7 @@ export default function AdminTicketsPage() {
         setIsLoading(true);
         try {
             const token = localStorage.getItem("adminAccessToken");
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/tickets`, {
+            const res = await fetch(`/api/tickets`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             if (!res.ok) throw new Error("Failed to fetch tickets");
@@ -199,7 +199,7 @@ export default function AdminTicketsPage() {
     const fetchTicketDetails = async (id: string) => {
         try {
             const token = localStorage.getItem("adminAccessToken");
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/tickets/${id}`, {
+            const res = await fetch(`/api/tickets/${id}`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             if (res.ok) {
@@ -214,7 +214,7 @@ export default function AdminTicketsPage() {
     const updateStatus = async (id: string, status: string) => {
         try {
             const token = localStorage.getItem("adminAccessToken");
-            await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/tickets/${id}`, {
+            await fetch(`/api/tickets/${id}`, {
                 method: "PATCH",
                 headers: {
                     "Content-Type": "application/json",
@@ -245,7 +245,7 @@ export default function AdminTicketsPage() {
             formData.append("type", "tickets");
 
             try {
-                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/upload`, {
+                const res = await fetch(`/api/upload`, {
                     method: "POST",
                     body: formData,
                     signal,
@@ -298,7 +298,7 @@ export default function AdminTicketsPage() {
 
         try {
             const token = localStorage.getItem("adminAccessToken");
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/tickets/${selectedTicket.id}/messages`, {
+            const res = await fetch(`/api/tickets/${selectedTicket.id}/messages`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -336,7 +336,7 @@ export default function AdminTicketsPage() {
         }
         try {
             const token = localStorage.getItem("adminAccessToken");
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/tickets/${id}`, {
+            const res = await fetch(`/api/tickets/${id}`, {
                 method: "DELETE",
                 headers: { Authorization: `Bearer ${token}` },
             });

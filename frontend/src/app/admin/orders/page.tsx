@@ -294,8 +294,8 @@ function OrdersContent() {
         if (!silent) setIsLoading(true);
         try {
             const token = localStorage.getItem("adminAccessToken");
-            const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
-            const response = await fetch(`${API_URL}/api/orders/admin/all`, {
+            // Use relative path to go through Next.js proxy for tenant resolution
+            const response = await fetch(`/api/orders/admin/all`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -409,8 +409,8 @@ function OrdersContent() {
         setIsBulkUpdating(true);
         try {
             const token = localStorage.getItem("adminAccessToken");
-            const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
-            const response = await fetch(`${API_URL}/api/orders/bulk/status`, {
+            // Use relative path for tenant resolution
+            const response = await fetch(`/api/orders/bulk/status`, {
                 method: "PATCH",
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -443,8 +443,8 @@ function OrdersContent() {
 
         try {
             const token = localStorage.getItem("adminAccessToken");
-            const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
-            const response = await fetch(`${API_URL}/api/orders/bulk/labels`, {
+            // Use relative path for tenant resolution  
+            const response = await fetch(`/api/orders/bulk/labels`, {
                 method: "POST",
                 headers: {
                     Authorization: `Bearer ${token}`,

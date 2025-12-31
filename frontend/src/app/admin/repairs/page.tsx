@@ -18,7 +18,7 @@ import {
     RefreshCw,
 } from "lucide-react";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+// All API calls use relative paths to go through Next.js proxy for tenant resolution
 
 // Auth helper matching the devices page pattern
 const getAuthHeaders = () => {
@@ -103,10 +103,10 @@ export default function AdminRepairsPage() {
         setIsLoading(true);
         try {
             const [dtRes, brandsRes, devicesRes, stRes] = await Promise.all([
-                fetch(`${API_URL}/api/repairs/device-types`),
-                fetch(`${API_URL}/api/repairs/brands`),
-                fetch(`${API_URL}/api/repairs/devices`),
-                fetch(`${API_URL}/api/repairs/service-types`),
+                fetch(`/api/repairs/device-types`),
+                fetch(`/api/repairs/brands`),
+                fetch(`/api/repairs/devices`),
+                fetch(`/api/repairs/service-types`),
             ]);
 
             const dtData = dtRes.ok ? await dtRes.json().catch(() => []) : [];
@@ -136,7 +136,7 @@ export default function AdminRepairsPage() {
             const text = await file.text();
             const jsonData = JSON.parse(text);
 
-            const response = await fetch(`${API_URL}/api/repairs/admin/import`, {
+            const response = await fetch(`/api/repairs/admin/import`, {
                 method: "POST",
                 headers: getAuthHeaders(),
                 credentials: 'include',

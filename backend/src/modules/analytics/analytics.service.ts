@@ -13,7 +13,7 @@ export class AnalyticsService {
     /**
      * Get daily revenue for the last N days
      */
-    async getRevenueData(days: number = 30) {
+    async getRevenueData(tenantId: string, days: number = 30) {
         const now = new Date();
         const startDate = new Date(now);
         startDate.setDate(now.getDate() - days + 1); // +1 to include today
@@ -21,6 +21,7 @@ export class AnalyticsService {
 
         const orders = await this.prisma.order.findMany({
             where: {
+                tenantId,
                 createdAt: { gte: startDate },
                 status: { notIn: ['CANCELLED', 'PENDING'] },
             },
@@ -82,7 +83,7 @@ export class AnalyticsService {
     /**
      * Get sales trends comparing current vs previous period
      */
-    async getTrends() {
+    async getTrends(tenantId: string) {
         const now = new Date();
         const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
@@ -104,10 +105,10 @@ export class AnalyticsService {
 
         // Get orders for all periods
         const [currentWeek, prevWeek, currentMonth, prevMonth] = await Promise.all([
-            this.getOrdersSum(weekStart, now),
-            this.getOrdersSum(prevWeekStart, prevWeekEnd),
-            this.getOrdersSum(monthStart, now),
-            this.getOrdersSum(prevMonthStart, prevMonthEnd),
+            this.getOrdersSum(tenantId, weekStart, now),
+            this.getOrdersSum(tenantId, prevWeekStart, prevWeekEnd),
+            this.getOrdersSum(tenantId, monthStart, now),
+            this.getOrdersSum(tenantId, prevMonthStart, prevMonthEnd),
         ]);
 
         return {
@@ -124,9 +125,10 @@ export class AnalyticsService {
         };
     }
 
-    private async getOrdersSum(start: Date, end: Date) {
+    private async getOrdersSum(tenantId: string, start: Date, end: Date) {
         const orders = await this.prisma.order.findMany({
             where: {
+                tenantId,
                 createdAt: { gte: start, lt: end },
                 status: { notIn: ['CANCELLED', 'PENDING'] },
             },
@@ -148,10 +150,20 @@ export class AnalyticsService {
     /**
      * Get bestselling products
      */
-    async getBestsellers(limit: number = 10) {
-        // Get order items grouped by product
+    async getBestsellers(tenantId: string, limit: number = 10) {
+        // First get orders for this tenant to get their IDs
+        const tenantOrders = await this.prisma.order.findMany({
+            where: { tenantId },
+            select: { id: true },
+        });
+        const orderIds = tenantOrders.map(o => o.id);
+
+        // Get order items for those orders grouped by product
         const orderItems = await this.prisma.orderItem.groupBy({
             by: ['productId'],
+            where: {
+                orderId: { in: orderIds },
+            },
             _sum: {
                 quantity: true,
             },
@@ -166,10 +178,10 @@ export class AnalyticsService {
             take: limit,
         });
 
-        // Fetch product details
+        // Fetch product details (products should also be tenant-scoped)
         const productIds = orderItems.map(item => item.productId).filter((id): id is string => id !== null);
         const products = await this.prisma.product.findMany({
-            where: { id: { in: productIds } },
+            where: { id: { in: productIds }, tenantId },
             select: {
                 id: true,
                 name: true,
@@ -197,18 +209,18 @@ export class AnalyticsService {
     /**
      * Export analytics data as CSV
      */
-    async exportReport(type: 'revenue' | 'orders' | 'products', days: number = 30) {
+    async exportReport(tenantId: string, type: 'revenue' | 'orders' | 'products', days: number = 30) {
         const startDate = new Date();
         startDate.setDate(startDate.getDate() - days);
 
         if (type === 'revenue') {
-            const data = await this.getRevenueData(days);
+            const data = await this.getRevenueData(tenantId, days);
             return this.toCsv(data.data, ['date', 'revenue']);
         }
 
         if (type === 'orders') {
             const orders = await this.prisma.order.findMany({
-                where: { createdAt: { gte: startDate } },
+                where: { tenantId, createdAt: { gte: startDate } },
                 select: {
                     orderNumber: true,
                     customerName: true,
@@ -230,7 +242,7 @@ export class AnalyticsService {
         }
 
         if (type === 'products') {
-            const bestsellers = await this.getBestsellers(100);
+            const bestsellers = await this.getBestsellers(tenantId, 100);
             return this.toCsv(bestsellers.map(p => ({
                 name: p.name,
                 price: p.price,
@@ -257,3 +269,4 @@ export class AnalyticsService {
         return rows.join('\n');
     }
 }
+

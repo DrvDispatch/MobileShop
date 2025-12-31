@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Navbar, Footer } from "@/components/landing";
 import { Button } from "@/components/ui/button";
 import { useCartStore } from "@/lib/store";
+import { getImageUrl } from "@/lib/image-utils";
 import { Minus, Plus, X, ShoppingBag, ArrowRight } from "lucide-react";
 
 export default function CartPage() {
@@ -70,7 +71,7 @@ export default function CartPage() {
                                 {/* Image */}
                                 <div className="w-24 h-24 bg-zinc-200 rounded-lg flex-shrink-0 flex items-center justify-center overflow-hidden">
                                     {item.image ? (
-                                        <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                                        <img src={getImageUrl(item.image)} alt={item.name} className="w-full h-full object-cover" />
                                     ) : (
                                         <span className="text-zinc-400 text-xs">No image</span>
                                     )}

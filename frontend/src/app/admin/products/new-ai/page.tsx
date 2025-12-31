@@ -169,7 +169,7 @@ export default function NewProductWithAI() {
                 : modelName;
 
             // Call generate endpoint
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"}/api/gemini/generate`, {
+            const response = await fetch(`/api/gemini/generate`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -222,7 +222,7 @@ export default function NewProductWithAI() {
             formData.append("file", deviceImage);
             formData.append("modelHint", `${brand} ${modelName}`);
 
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"}/api/gemini/analyze`, {
+            const response = await fetch(`/api/gemini/analyze`, {
                 method: "POST",
                 headers: {
                     "Authorization": `Bearer ${localStorage.getItem("adminAccessToken")}`,

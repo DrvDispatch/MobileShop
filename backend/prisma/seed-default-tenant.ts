@@ -42,23 +42,27 @@ async function seedDefaultTenant() {
 
     console.log('✅ Default tenant created:', tenant.id);
 
-    // Create default domain (production)
+    // Create default domain (production) - pre-verified
     await prisma.tenantDomain.create({
         data: {
             tenantId: tenant.id,
             domain: DEFAULT_DOMAIN,
             isPrimary: true,
+            verificationStatus: 'VERIFIED',
+            verifiedAt: new Date(),
         }
     });
     console.log('✅ Production domain created:', DEFAULT_DOMAIN);
 
-    // Create localhost domain for local development
+    // Create localhost domain for local development - pre-verified
     // Note: Middleware normalizes domains by stripping port, so "localhost:3000" → "localhost"
     await prisma.tenantDomain.create({
         data: {
             tenantId: tenant.id,
             domain: 'localhost',
             isPrimary: false,
+            verificationStatus: 'VERIFIED',
+            verifiedAt: new Date(),
         }
     });
     console.log('✅ Development domain created: localhost');
@@ -88,6 +92,8 @@ async function seedDefaultTenant() {
             // SEO
             seoTitle: 'Smartphone Service | Refurbished Phones & Repairs',
             seoDescription: 'Premium refurbished smartphones and professional repair services in Antwerpen, Belgium.',
+            // Feature flags
+            features: JSON.stringify({ ecommerce: true, tickets: true, marketing: true }),
         }
     });
 
@@ -96,15 +102,50 @@ async function seedDefaultTenant() {
     return tenant;
 }
 
+async function seedOwnerUser() {
+    console.log('👤 Creating OWNER user...');
+
+    const existingOwner = await prisma.user.findFirst({
+        where: { role: 'OWNER' }
+    });
+
+    if (existingOwner) {
+        console.log('✅ OWNER user already exists:', existingOwner.email);
+        return existingOwner;
+    }
+
+    // Create platform owner user with bcrypt hash
+    // Password: "ServicePulse2024!" (change in production)
+    const OWNER_PASSWORD_HASH = '$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj3oK7.XRe6.' // bcrypt hash
+
+    const owner = await prisma.user.create({
+        data: {
+            tenantId: null, // OWNER has no tenant
+            email: 'owner@servicepulse.com',
+            name: 'Platform Owner',
+            role: 'OWNER',
+            passwordHash: OWNER_PASSWORD_HASH,
+            emailVerified: new Date(),
+            isActive: true,
+        }
+    });
+
+    console.log('✅ OWNER user created:', owner.email);
+    return owner;
+}
+
 async function backfillTenantIds() {
     console.log('📊 Backfilling tenantId for existing data...');
 
     // Get all tables that need tenantId backfill
     const tablesWithCounts: Record<string, number> = {};
 
-    // Users
+    // Users (exclude OWNER users - they should remain platform-level with tenantId: null)
     const usersUpdated = await prisma.user.updateMany({
-        where: { tenantId: null },
+        where: {
+            tenantId: null,
+            role: { not: 'OWNER' }  // Don't assign OWNER users to any tenant
+        },
         data: { tenantId: DEFAULT_TENANT_ID }
     });
     tablesWithCounts['User'] = usersUpdated.count;
@@ -231,6 +272,7 @@ async function main() {
 
     try {
         await seedDefaultTenant();
+        await seedOwnerUser();
         await backfillTenantIds();
 
         console.log('✅ Multi-tenant migration completed successfully!\n');

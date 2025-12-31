@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import { getImageUrl } from "@/lib/image-utils";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+// Use relative paths for tenant resolution
 
 interface WishlistItem {
     id: string;
@@ -48,7 +48,7 @@ export default function WishlistPage() {
                 return;
             }
 
-            const response = await fetch(`${API_URL}/api/wishlist`, {
+            const response = await fetch(`/api/wishlist`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
 
@@ -66,7 +66,7 @@ export default function WishlistPage() {
     const removeItem = async (productId: string) => {
         try {
             const token = localStorage.getItem("accessToken");
-            await fetch(`${API_URL}/api/wishlist/${productId}`, {
+            await fetch(`/api/wishlist/${productId}`, {
                 method: "DELETE",
                 headers: { Authorization: `Bearer ${token}` },
             });
@@ -126,10 +126,10 @@ export default function WishlistPage() {
                             <div
                                 key={item.id}
                                 className={`bg-white rounded-xl border p-4 transition-all ${item.product.stockQty === 0
-                                        ? "border-zinc-300 opacity-70"
-                                        : item.hasPriceDrop
-                                            ? "border-green-200 bg-green-50/30"
-                                            : "border-zinc-200"
+                                    ? "border-zinc-300 opacity-70"
+                                    : item.hasPriceDrop
+                                        ? "border-green-200 bg-green-50/30"
+                                        : "border-zinc-200"
                                     }`}
                             >
                                 <div className="flex gap-4">
