@@ -277,6 +277,23 @@ export type IntWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedIntFilter<$PrismaModel>
 }
 
+export type EnumTenantVerticalFilter<$PrismaModel = never> = {
+  equals?: $Enums.TenantVertical | Prisma.EnumTenantVerticalFieldRefInput<$PrismaModel>
+  in?: $Enums.TenantVertical[] | Prisma.ListEnumTenantVerticalFieldRefInput<$PrismaModel>
+  notIn?: $Enums.TenantVertical[] | Prisma.ListEnumTenantVerticalFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumTenantVerticalFilter<$PrismaModel> | $Enums.TenantVertical
+}
+
+export type EnumTenantVerticalWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.TenantVertical | Prisma.EnumTenantVerticalFieldRefInput<$PrismaModel>
+  in?: $Enums.TenantVertical[] | Prisma.ListEnumTenantVerticalFieldRefInput<$PrismaModel>
+  notIn?: $Enums.TenantVertical[] | Prisma.ListEnumTenantVerticalFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumTenantVerticalWithAggregatesFilter<$PrismaModel> | $Enums.TenantVertical
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumTenantVerticalFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumTenantVerticalFilter<$PrismaModel>
+}
+
 export type EnumCmsStatusFilter<$PrismaModel = never> = {
   equals?: $Enums.CmsStatus | Prisma.EnumCmsStatusFieldRefInput<$PrismaModel>
   in?: $Enums.CmsStatus[] | Prisma.ListEnumCmsStatusFieldRefInput<$PrismaModel>
@@ -1047,6 +1064,23 @@ export type NestedFloatFilter<$PrismaModel = never> = {
   gt?: number | Prisma.FloatFieldRefInput<$PrismaModel>
   gte?: number | Prisma.FloatFieldRefInput<$PrismaModel>
   not?: Prisma.NestedFloatFilter<$PrismaModel> | number
+}
+
+export type NestedEnumTenantVerticalFilter<$PrismaModel = never> = {
+  equals?: $Enums.TenantVertical | Prisma.EnumTenantVerticalFieldRefInput<$PrismaModel>
+  in?: $Enums.TenantVertical[] | Prisma.ListEnumTenantVerticalFieldRefInput<$PrismaModel>
+  notIn?: $Enums.TenantVertical[] | Prisma.ListEnumTenantVerticalFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumTenantVerticalFilter<$PrismaModel> | $Enums.TenantVertical
+}
+
+export type NestedEnumTenantVerticalWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.TenantVertical | Prisma.EnumTenantVerticalFieldRefInput<$PrismaModel>
+  in?: $Enums.TenantVertical[] | Prisma.ListEnumTenantVerticalFieldRefInput<$PrismaModel>
+  notIn?: $Enums.TenantVertical[] | Prisma.ListEnumTenantVerticalFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumTenantVerticalWithAggregatesFilter<$PrismaModel> | $Enums.TenantVertical
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumTenantVerticalFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumTenantVerticalFilter<$PrismaModel>
 }
 
 export type NestedEnumCmsStatusFilter<$PrismaModel = never> = {

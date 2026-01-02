@@ -1,9 +1,20 @@
 "use client";
 
-import { useEffect, useState, Suspense } from "react";
+/**
+ * Admin Products Page - UI Layer
+ * 
+ * This page is now a THIN UI LAYER that:
+ * - Consumes the useProducts hook for all business logic
+ * - Renders the products grid and controls
+ * - Applies styling and layout
+ * 
+ * All state management, API calls, pagination, and CRUD are in the hook.
+ * This component only handles presentation.
+ */
+
+import { Suspense } from "react";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
-import { api, Product } from "@/lib/api";
+import { useRouter } from "next/navigation";
 import { getImageUrl } from "@/lib/image-utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,6 +29,11 @@ import {
     RefreshCw,
     AlertTriangle,
 } from "lucide-react";
+import { useProducts, Product } from "@/lib/admin/products";
+
+// ============================================
+// UI-ONLY COMPONENTS
+// ============================================
 
 function ConditionBadge({ condition }: { condition: string }) {
     const classes: Record<string, string> = {
@@ -149,87 +165,42 @@ function ProductCard({ product, onEdit, onDelete, onView }: {
     );
 }
 
+function LoadingSkeleton() {
+    return (
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+                <div key={i} className="bg-white rounded-xl border border-zinc-200 overflow-hidden animate-pulse">
+                    <div className="aspect-square bg-zinc-200" />
+                    <div className="p-4 space-y-2">
+                        <div className="h-4 bg-zinc-200 rounded w-3/4" />
+                        <div className="h-3 bg-zinc-200 rounded w-1/2" />
+                        <div className="h-5 bg-zinc-200 rounded w-1/3" />
+                    </div>
+                </div>
+            ))}
+        </div>
+    );
+}
+
+function EmptyState() {
+    return (
+        <div className="bg-white rounded-xl border border-zinc-200 p-12 text-center">
+            <Package className="w-12 h-12 text-zinc-300 mx-auto mb-4" />
+            <p className="text-zinc-500 mb-4">Geen producten gevonden</p>
+            <Link href="/admin/products/new">
+                <Button>Product toevoegen</Button>
+            </Link>
+        </div>
+    );
+}
+
+// ============================================
+// MAIN CONTENT (consumes hook)
+// ============================================
+
 function ProductsContent() {
     const router = useRouter();
-    const searchParams = useSearchParams();
-
-    const [products, setProducts] = useState<Product[]>([]);
-    const [total, setTotal] = useState(0);
-    const [isLoading, setIsLoading] = useState(true);
-    const [isRefreshing, setIsRefreshing] = useState(false);
-    const [searchQuery, setSearchQuery] = useState(searchParams.get("search") || "");
-    const [page, setPage] = useState(parseInt(searchParams.get("page") || "1"));
-    const limit = 12;
-
-    // Stats state (calculated from ALL products)
-    const [stats, setStats] = useState({ active: 0, lowStock: 0, outOfStock: 0 });
-
-    const loadProducts = async () => {
-        setIsLoading(true);
-        try {
-            const response = await api.getProducts({
-                search: searchQuery || undefined,
-                page,
-                limit,
-            });
-            setProducts(response.data);
-            setTotal(response.meta?.total || 0);
-        } catch (error) {
-            console.error("Failed to load products:", error);
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    // Load stats from ALL products (separate call)
-    const loadStats = async () => {
-        try {
-            // Fetch all products for accurate stats
-            const allProducts = await api.getProducts({ limit: 1000 });
-            const all = allProducts.data;
-            setStats({
-                active: all.filter((p: Product) => p.isActive).length,
-                lowStock: all.filter((p: Product) => p.stockQty > 0 && p.stockQty <= 5).length,
-                outOfStock: all.filter((p: Product) => p.stockQty === 0).length,
-            });
-        } catch (error) {
-            console.error("Failed to load stats:", error);
-        }
-    };
-
-    useEffect(() => {
-        loadProducts();
-    }, [searchQuery, page]);
-
-    useEffect(() => {
-        loadStats();
-    }, []);
-
-    const handleRefresh = async () => {
-        setIsRefreshing(true);
-        await Promise.all([loadProducts(), loadStats()]);
-        setIsRefreshing(false);
-    };
-
-    const handleSearch = (e: React.FormEvent) => {
-        e.preventDefault();
-        setPage(1);
-    };
-
-    const totalPages = Math.ceil(total / limit);
-
-    const handleDelete = async (id: string, name: string) => {
-        if (!confirm(`Weet u zeker dat u "${name}" wilt verwijderen?`)) return;
-        try {
-            await api.deleteProduct(id);
-            setProducts(products.filter((p) => p.id !== id));
-            setTotal(total - 1);
-            loadStats(); // Refresh stats after delete
-        } catch (error) {
-            console.error("Failed to delete product:", error);
-            alert("Verwijderen mislukt");
-        }
-    };
+    const productsHook = useProducts();
 
     return (
         <div className="space-y-6">
@@ -237,11 +208,11 @@ function ProductsContent() {
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
                     <h1 className="text-2xl font-bold text-zinc-900">Producten</h1>
-                    <p className="text-zinc-500">{total} producten totaal</p>
+                    <p className="text-zinc-500">{productsHook.total} producten totaal</p>
                 </div>
                 <div className="flex gap-2">
-                    <Button variant="outline" size="sm" onClick={handleRefresh} disabled={isRefreshing}>
-                        <RefreshCw className={`w-4 h-4 mr-2 ${isRefreshing ? "animate-spin" : ""}`} />
+                    <Button variant="outline" size="sm" onClick={productsHook.refresh} disabled={productsHook.isRefreshing}>
+                        <RefreshCw className={`w-4 h-4 mr-2 ${productsHook.isRefreshing ? "animate-spin" : ""}`} />
                         Vernieuwen
                     </Button>
                     <Link href="/admin/products/new">
@@ -257,74 +228,57 @@ function ProductsContent() {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="bg-white rounded-xl border border-zinc-200 p-4">
                     <p className="text-sm text-zinc-500 mb-1">Totaal</p>
-                    <p className="text-2xl font-bold text-zinc-900">{total}</p>
+                    <p className="text-2xl font-bold text-zinc-900">{productsHook.total}</p>
                     <p className="text-xs text-zinc-500">producten</p>
                 </div>
                 <div className="bg-green-50 rounded-xl border border-green-200 p-4">
                     <p className="text-sm text-green-700 mb-1">Actief</p>
-                    <p className="text-2xl font-bold text-green-700">{stats.active}</p>
+                    <p className="text-2xl font-bold text-green-700">{productsHook.stats.active}</p>
                     <p className="text-xs text-green-600">zichtbaar in shop</p>
                 </div>
-                {stats.lowStock > 0 && (
+                {productsHook.stats.lowStock > 0 && (
                     <div className="bg-yellow-50 rounded-xl border border-yellow-200 p-4">
                         <p className="text-sm text-yellow-700 mb-1">Lage voorraad</p>
-                        <p className="text-2xl font-bold text-yellow-700">{stats.lowStock}</p>
+                        <p className="text-2xl font-bold text-yellow-700">{productsHook.stats.lowStock}</p>
                         <p className="text-xs text-yellow-600">≤5 op voorraad</p>
                     </div>
                 )}
-                {stats.outOfStock > 0 && (
+                {productsHook.stats.outOfStock > 0 && (
                     <div className="bg-red-50 rounded-xl border border-red-200 p-4">
                         <p className="text-sm text-red-700 mb-1">Uitverkocht</p>
-                        <p className="text-2xl font-bold text-red-700">{stats.outOfStock}</p>
+                        <p className="text-2xl font-bold text-red-700">{productsHook.stats.outOfStock}</p>
                         <p className="text-xs text-red-600">0 op voorraad</p>
                     </div>
                 )}
             </div>
 
             {/* Search */}
-            <form onSubmit={handleSearch} className="flex gap-2">
+            <form onSubmit={productsHook.handleSearch} className="flex gap-2">
                 <div className="relative flex-1 max-w-md">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
                     <Input
                         type="text"
                         placeholder="Zoek producten..."
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
+                        value={productsHook.searchQuery}
+                        onChange={(e) => productsHook.setSearchQuery(e.target.value)}
                         className="pl-10"
                     />
                 </div>
             </form>
 
             {/* Products Grid */}
-            {isLoading ? (
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                    {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-                        <div key={i} className="bg-white rounded-xl border border-zinc-200 overflow-hidden animate-pulse">
-                            <div className="aspect-square bg-zinc-200" />
-                            <div className="p-4 space-y-2">
-                                <div className="h-4 bg-zinc-200 rounded w-3/4" />
-                                <div className="h-3 bg-zinc-200 rounded w-1/2" />
-                                <div className="h-5 bg-zinc-200 rounded w-1/3" />
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            ) : products.length === 0 ? (
-                <div className="bg-white rounded-xl border border-zinc-200 p-12 text-center">
-                    <Package className="w-12 h-12 text-zinc-300 mx-auto mb-4" />
-                    <p className="text-zinc-500 mb-4">Geen producten gevonden</p>
-                    <Link href="/admin/products/new">
-                        <Button>Product toevoegen</Button>
-                    </Link>
-                </div>
+            {productsHook.isLoading ? (
+                <LoadingSkeleton />
+            ) : productsHook.filteredProducts.length === 0 ? (
+                <EmptyState />
             ) : (
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                    {products.map((product) => (
+                    {productsHook.filteredProducts.map((product) => (
                         <ProductCard
                             key={product.id}
                             product={product}
                             onEdit={() => router.push(`/admin/products/${product.id}/edit`)}
-                            onDelete={() => handleDelete(product.id, product.name)}
+                            onDelete={() => productsHook.deleteProduct(product.id, product.name)}
                             onView={() => window.open(`/phones/${product.slug}`, "_blank")}
                         />
                     ))}
@@ -332,28 +286,28 @@ function ProductsContent() {
             )}
 
             {/* Pagination */}
-            {totalPages > 1 && (
+            {productsHook.totalPages > 1 && (
                 <div className="flex items-center justify-between bg-white rounded-xl border border-zinc-200 p-4">
                     <p className="text-sm text-zinc-500">
-                        Toon {(page - 1) * limit + 1} tot {Math.min(page * limit, total)} van {total}
+                        Toon {(productsHook.page - 1) * productsHook.limit + 1} tot {Math.min(productsHook.page * productsHook.limit, productsHook.total)} van {productsHook.total}
                     </p>
                     <div className="flex items-center gap-2">
                         <Button
                             variant="outline"
                             size="sm"
-                            disabled={page <= 1}
-                            onClick={() => setPage(page - 1)}
+                            disabled={productsHook.page <= 1}
+                            onClick={() => productsHook.setPage(productsHook.page - 1)}
                         >
                             <ChevronLeft className="w-4 h-4" />
                         </Button>
                         <span className="text-sm text-zinc-600 px-2">
-                            Pagina {page} van {totalPages}
+                            Pagina {productsHook.page} van {productsHook.totalPages}
                         </span>
                         <Button
                             variant="outline"
                             size="sm"
-                            disabled={page >= totalPages}
-                            onClick={() => setPage(page + 1)}
+                            disabled={productsHook.page >= productsHook.totalPages}
+                            onClick={() => productsHook.setPage(productsHook.page + 1)}
                         >
                             <ChevronRight className="w-4 h-4" />
                         </Button>

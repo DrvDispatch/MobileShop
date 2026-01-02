@@ -193,6 +193,22 @@ export const ownerApi = {
         apiClient.get<{ brands: number; devices: number; serviceTypes: number; deviceServices: number }>(
             `/api/owner/tenants/${tenantId}/seed-stats`
         ),
+
+    // ===== PRODUCT CATALOG SEEDING =====
+
+    // Get available product count for seeding
+    getAvailableProductsCount: () =>
+        apiClient.get<{ count: number }>('/api/owner/products/available-count'),
+
+    // Seed products for a tenant (count=0 means all)
+    seedProducts: (tenantId: string, count: number = 0) =>
+        apiClient.post<{ created: number; skipped: number; errors: string[] }>(
+            `/api/owner/tenants/${tenantId}/products/seed?count=${count}`
+        ),
+
+    // Clear all products for a tenant
+    clearProducts: (tenantId: string) =>
+        apiClient.delete<{ deleted: number }>(`/api/owner/tenants/${tenantId}/products`),
 };
 
 // TenantFeatures type for feature control

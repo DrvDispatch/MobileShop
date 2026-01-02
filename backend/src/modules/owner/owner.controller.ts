@@ -22,7 +22,7 @@ import { TenantFeaturesService, UpdateFeaturesDto } from './tenant-features.serv
 import { TenantSeederService } from './tenant-seeder.service';
 import { CreateTenantUserDto, ResetTenantUserPasswordDto } from './dto/user.dto';
 import type { Request } from 'express';
-import { IsString, IsOptional, IsBoolean, IsObject, IsNumber } from 'class-validator';
+import { IsString, IsOptional, IsBoolean, IsObject, IsNumber, IsArray, IsInt } from 'class-validator';
 
 // DTOs
 class CreateTenantDto {
@@ -108,6 +108,59 @@ class UpdateConfigDto {
     @IsObject()
     @IsOptional()
     features?: Record<string, boolean>;
+
+    // Company/Invoice Settings
+    @IsString()
+    @IsOptional()
+    companyName?: string;
+
+    @IsString()
+    @IsOptional()
+    vatNumber?: string;
+
+    @IsObject()
+    @IsOptional()
+    address?: {
+        line1?: string;
+        line2?: string;
+        city?: string;
+        postalCode?: string;
+        country?: string;
+    };
+
+    @IsString()
+    @IsOptional()
+    bankAccount?: string;
+
+    @IsString()
+    @IsOptional()
+    bankName?: string;
+
+    @IsString()
+    @IsOptional()
+    invoicePrefix?: string;
+
+    @IsString()
+    @IsOptional()
+    invoiceFooter?: string;
+
+    @IsString()
+    @IsOptional()
+    website?: string;
+
+    // Business Hours Settings
+    @IsObject()
+    @IsOptional()
+    openingHours?: Record<string, { open: string; close: string } | null>;
+
+    @IsArray()
+    @IsOptional()
+    timeSlots?: string[];
+
+    @IsArray()
+    @IsOptional()
+    @IsInt({ each: true })
+    closedDays?: number[];
 }
 
 @ApiTags('Owner')
@@ -643,6 +696,67 @@ export class OwnerController {
         );
 
         return result;
+    }
+
+    // =====================================================
+    // PRODUCT SEEDING
+    // =====================================================
+
+    @Post('tenants/:id/products/seed')
+    @ApiOperation({ summary: 'Seed demo products for a tenant' })
+    @ApiResponse({ status: 201, description: 'Products seeded successfully' })
+    async seedProducts(
+        @Param('id') tenantId: string,
+        @Req() req: Request,
+        @Query('count') count?: string,
+    ) {
+        // Parse count - 0 or undefined means "all products"
+        const parsedCount = count !== undefined ? parseInt(count, 10) : 0;
+        const result = await this.ownerService.seedProducts(tenantId, {
+            count: parsedCount,
+        });
+
+        // Log action
+        await this.ownerService.logOwnerAction(
+            (req as any).user?.sub || 'unknown',
+            'SEED_PRODUCTS',
+            'TENANT',
+            tenantId,
+            { count: result.created },
+            req.ip,
+            req.headers['user-agent']
+        );
+
+        return result;
+    }
+
+    @Delete('tenants/:id/products')
+    @ApiOperation({ summary: 'Clear all products for a tenant' })
+    @ApiResponse({ status: 200, description: 'Products cleared successfully' })
+    async clearProducts(
+        @Param('id') tenantId: string,
+        @Req() req: Request
+    ) {
+        const result = await this.ownerService.clearProducts(tenantId);
+
+        // Log action
+        await this.ownerService.logOwnerAction(
+            (req as any).user?.sub || 'unknown',
+            'CLEAR_PRODUCTS',
+            'TENANT',
+            tenantId,
+            { deleted: result.deleted },
+            req.ip,
+            req.headers['user-agent']
+        );
+
+        return result;
+    }
+
+    @Get('products/available-count')
+    @ApiOperation({ summary: 'Get count of available seed products' })
+    async getAvailableProductsCount() {
+        return { count: this.ownerService.getAvailableProductsCount() };
     }
 
 }

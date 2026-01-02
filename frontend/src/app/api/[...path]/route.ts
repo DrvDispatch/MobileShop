@@ -105,7 +105,30 @@ async function proxyRequest(req: NextRequest, pathSegments: string[]) {
             responseHeaders.set("set-cookie", setCookie);
         }
     }
+    // Check if response is binary (PDF, images, etc.)
+    const contentType = upstream.headers.get("content-type") || "application/json";
+    const isBinary = contentType.includes("application/pdf") ||
+        contentType.includes("application/octet-stream") ||
+        contentType.includes("image/");
 
+    if (isBinary) {
+        // Handle binary content properly - don't convert to text
+        const buffer = await upstream.arrayBuffer();
+        responseHeaders.set("content-length", buffer.byteLength.toString());
+
+        // Forward content-disposition if present (for downloads)
+        const contentDisposition = upstream.headers.get("content-disposition");
+        if (contentDisposition) {
+            responseHeaders.set("content-disposition", contentDisposition);
+        }
+
+        return new NextResponse(buffer, {
+            status: upstream.status,
+            headers: responseHeaders,
+        });
+    }
+
+    // Handle text/JSON responses normally
     const responseBody = await upstream.text();
 
     return new NextResponse(responseBody, {

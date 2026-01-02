@@ -8,16 +8,16 @@ export class ExportService {
     constructor(private prisma: PrismaService) { }
 
     /**
-     * Export orders to CSV
+     * Export orders to CSV (tenant-scoped)
      */
-    async exportOrders(options: {
+    async exportOrders(tenantId: string, options: {
         startDate?: Date;
         endDate?: Date;
         status?: string;
     }): Promise<string> {
         const { startDate, endDate, status } = options;
 
-        const where: Record<string, unknown> = {};
+        const where: Record<string, unknown> = { tenantId };
         if (status) where.status = status;
         if (startDate || endDate) {
             where.createdAt = {};
@@ -63,15 +63,15 @@ export class ExportService {
     }
 
     /**
-     * Export products to CSV
+     * Export products to CSV (tenant-scoped)
      */
-    async exportProducts(options: {
+    async exportProducts(tenantId: string, options: {
         includeInactive?: boolean;
         lowStockOnly?: boolean;
     }): Promise<string> {
         const { includeInactive, lowStockOnly } = options;
 
-        const where: Record<string, unknown> = {};
+        const where: Record<string, unknown> = { tenantId };
         if (!includeInactive) where.isActive = true;
         if (lowStockOnly) where.stockQty = { lte: 5 };
 
@@ -109,15 +109,15 @@ export class ExportService {
     }
 
     /**
-     * Export customers to CSV
+     * Export customers to CSV (tenant-scoped)
      */
-    async exportCustomers(options: {
+    async exportCustomers(tenantId: string, options: {
         includeInactive?: boolean;
         vipOnly?: boolean;
     }): Promise<string> {
         const { includeInactive, vipOnly } = options;
 
-        const where: Record<string, unknown> = { role: 'CUSTOMER' };
+        const where: Record<string, unknown> = { tenantId, role: 'CUSTOMER' };
         if (!includeInactive) where.isActive = true;
         if (vipOnly) where.isVip = true;
 
@@ -151,15 +151,17 @@ export class ExportService {
     }
 
     /**
-     * Export refunds to CSV
+     * Export refunds to CSV (tenant-scoped via order)
      */
-    async exportRefunds(options: {
+    async exportRefunds(tenantId: string, options: {
         startDate?: Date;
         endDate?: Date;
     }): Promise<string> {
         const { startDate, endDate } = options;
 
-        const where: Record<string, unknown> = {};
+        const where: Record<string, unknown> = {
+            order: { tenantId },
+        };
         if (startDate || endDate) {
             where.createdAt = {};
             if (startDate) (where.createdAt as Record<string, Date>).gte = startDate;
@@ -197,10 +199,13 @@ export class ExportService {
     }
 
     /**
-     * Export reviews to CSV
+     * Export reviews to CSV (tenant-scoped via product)
      */
-    async exportReviews(): Promise<string> {
+    async exportReviews(tenantId: string): Promise<string> {
         const reviews = await this.prisma.productReview.findMany({
+            where: {
+                product: { tenantId },
+            },
             include: {
                 product: { select: { name: true } },
             },
@@ -247,24 +252,25 @@ export class ExportService {
     }
 
     /**
-     * BTW Aangifte - Quarterly VAT Summary for Belgian tax filing
-     * Required for quarterly BTW declarations
+     * BTW Aangifte - Quarterly VAT Summary for Belgian tax filing (tenant-scoped)
      */
-    async exportBTWAangifte(quarter: number, year: number): Promise<string> {
+    async exportBTWAangifte(tenantId: string, quarter: number, year: number): Promise<string> {
         const { startDate, endDate } = this.getQuarterDates(quarter, year);
         const BTW_RATE = 0.21;
 
-        // Get all paid orders in the quarter (paidAt not null = paid)
+        // Get all paid orders in the quarter (tenant-scoped)
         const orders = await this.prisma.order.findMany({
             where: {
+                tenantId,
                 paidAt: { gte: startDate, lte: endDate, not: null },
             },
             orderBy: { paidAt: 'asc' },
         });
 
-        // Get refunds in the quarter
+        // Get refunds in the quarter (tenant-scoped via order)
         const refunds = await this.prisma.refund.findMany({
             where: {
+                order: { tenantId },
                 status: 'SUCCEEDED',
                 processedAt: { gte: startDate, lte: endDate },
             },
@@ -313,25 +319,26 @@ export class ExportService {
     }
 
     /**
-     * Detailed Accountant Report - Transaction by transaction
-     * For bookkeeping and accountant review
+     * Detailed Accountant Report - Transaction by transaction (tenant-scoped)
      */
-    async exportAccountantReport(quarter: number, year: number): Promise<string> {
+    async exportAccountantReport(tenantId: string, quarter: number, year: number): Promise<string> {
         const { startDate, endDate } = this.getQuarterDates(quarter, year);
         const BTW_RATE = 0.21;
 
-        // Get all paid orders
+        // Get all paid orders (tenant-scoped)
         const orders = await this.prisma.order.findMany({
             where: {
+                tenantId,
                 paidAt: { gte: startDate, lte: endDate, not: null },
             },
             include: { items: true },
             orderBy: { paidAt: 'asc' },
         });
 
-        // Get refunds
+        // Get refunds (tenant-scoped via order)
         const refunds = await this.prisma.refund.findMany({
             where: {
+                order: { tenantId },
                 status: 'SUCCEEDED',
                 processedAt: { gte: startDate, lte: endDate },
             },
@@ -408,9 +415,9 @@ export class ExportService {
     }
 
     /**
-     * Annual Summary - Year-end overview for tax declaration
+     * Annual Summary - Year-end overview for tax declaration (tenant-scoped)
      */
-    async exportAnnualSummary(year: number): Promise<string> {
+    async exportAnnualSummary(tenantId: string, year: number): Promise<string> {
         const BTW_RATE = 0.21;
         const headers = ['Kwartaal', 'Aantal Facturen', 'Omzet Bruto (€)', 'Omzet Netto (€)', 'BTW (€)', 'Terugbetalingen (€)', 'Netto BTW (€)'];
         const rows: (string | number)[][] = [];
@@ -426,12 +433,14 @@ export class ExportService {
 
             const orders = await this.prisma.order.findMany({
                 where: {
+                    tenantId,
                     paidAt: { gte: startDate, lte: endDate, not: null },
                 },
             });
 
             const refunds = await this.prisma.refund.findMany({
                 where: {
+                    order: { tenantId },
                     status: 'SUCCEEDED',
                     processedAt: { gte: startDate, lte: endDate },
                 },

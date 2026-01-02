@@ -17,12 +17,12 @@ export class StockNotificationsService {
     }
 
     /**
-     * Subscribe to back-in-stock notification
+     * Subscribe to back-in-stock notification (tenant-scoped via product)
      */
-    async subscribe(email: string, productId: string, userId?: string) {
-        // Check product exists and is out of stock
-        const product = await this.prisma.product.findUnique({
-            where: { id: productId },
+    async subscribe(tenantId: string, email: string, productId: string, userId?: string) {
+        // Check product exists and belongs to tenant, and is out of stock
+        const product = await this.prisma.product.findFirst({
+            where: { id: productId, tenantId },
         });
 
         if (!product) {
@@ -61,9 +61,17 @@ export class StockNotificationsService {
     }
 
     /**
-     * Unsubscribe from notification
+     * Unsubscribe from notification (tenant-scoped via product)
      */
-    async unsubscribe(email: string, productId: string) {
+    async unsubscribe(tenantId: string, email: string, productId: string) {
+        // Verify product belongs to tenant
+        const product = await this.prisma.product.findFirst({
+            where: { id: productId, tenantId },
+        });
+        if (!product) {
+            throw new NotFoundException('Subscription not found');
+        }
+
         const subscription = await this.prisma.stockNotification.findUnique({
             where: {
                 productId_email: { productId, email },
@@ -82,9 +90,17 @@ export class StockNotificationsService {
     }
 
     /**
-     * Check if user is subscribed
+     * Check if user is subscribed (tenant-scoped via product)
      */
-    async isSubscribed(email: string, productId: string): Promise<boolean> {
+    async isSubscribed(tenantId: string, email: string, productId: string): Promise<boolean> {
+        // Verify product belongs to tenant
+        const product = await this.prisma.product.findFirst({
+            where: { id: productId, tenantId },
+        });
+        if (!product) {
+            return false;
+        }
+
         const subscription = await this.prisma.stockNotification.findUnique({
             where: {
                 productId_email: { productId, email },
@@ -95,12 +111,12 @@ export class StockNotificationsService {
     }
 
     /**
-     * Send notifications when product is back in stock
+     * Send notifications when product is back in stock (tenant-scoped)
      * Called from inventory/products service when stock increases
      */
-    async notifySubscribers(productId: string): Promise<number> {
-        const product = await this.prisma.product.findUnique({
-            where: { id: productId },
+    async notifySubscribers(tenantId: string, productId: string): Promise<number> {
+        const product = await this.prisma.product.findFirst({
+            where: { id: productId, tenantId },
             include: {
                 images: { where: { isPrimary: true }, take: 1 },
             },
@@ -110,7 +126,7 @@ export class StockNotificationsService {
             return 0;
         }
 
-        // Get pending subscribers
+        // Get pending subscribers for this product
         const subscribers = await this.prisma.stockNotification.findMany({
             where: {
                 productId,
@@ -203,9 +219,9 @@ export class StockNotificationsService {
     // ========== ADMIN METHODS ==========
 
     /**
-     * Get all subscriptions (admin)
+     * Get all subscriptions (admin, tenant-scoped via product)
      */
-    async getAllSubscriptions(options: {
+    async getAllSubscriptions(tenantId: string, options: {
         page?: number;
         limit?: number;
         productId?: string;
@@ -214,7 +230,9 @@ export class StockNotificationsService {
         const { page = 1, limit = 50, productId, notified } = options;
         const skip = (page - 1) * limit;
 
-        const where: Record<string, unknown> = {};
+        const where: Record<string, unknown> = {
+            product: { tenantId },
+        };
         if (productId) where.productId = productId;
         if (notified !== undefined) where.isNotified = notified;
 
@@ -238,19 +256,28 @@ export class StockNotificationsService {
     }
 
     /**
-     * Get waiting count per product (admin dashboard)
+     * Get waiting count per product (admin dashboard, tenant-scoped via product)
      */
-    async getWaitingCounts() {
+    async getWaitingCounts(tenantId: string) {
+        // Get all products for this tenant
+        const tenantProducts = await this.prisma.product.findMany({
+            where: { tenantId },
+            select: { id: true },
+        });
+        const productIds = tenantProducts.map(p => p.id);
+
         const counts = await this.prisma.stockNotification.groupBy({
             by: ['productId'],
-            where: { isNotified: false },
+            where: {
+                productId: { in: productIds },
+                isNotified: false
+            },
             _count: { id: true },
         });
 
         // Get product names
-        const productIds = counts.map(c => c.productId);
         const products = await this.prisma.product.findMany({
-            where: { id: { in: productIds } },
+            where: { id: { in: counts.map(c => c.productId) } },
             select: { id: true, name: true, stockQty: true },
         });
 

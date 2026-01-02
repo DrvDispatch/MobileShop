@@ -13,32 +13,36 @@ export class MarketingService {
     ) { }
 
     /**
-     * Get all available segments with user counts
+     * Get all available segments with user counts (tenant-scoped)
      */
-    async getSegments(): Promise<SegmentInfoDto[]> {
+    async getSegments(tenantId: string): Promise<SegmentInfoDto[]> {
         const [allCount, customersCount, appointmentCount, unsubscribedCount] = await Promise.all([
-            // All users with email
+            // All users with email (tenant-scoped)
             this.prisma.user.count({
-                where: { email: { not: '' } },
+                where: { tenantId, email: { not: '' } },
             }),
-            // Customers who have made orders
+            // Customers who have made orders (tenant-scoped)
             this.prisma.user.count({
                 where: {
+                    tenantId,
                     email: { not: '' },
                     orders: { some: {} },
                 },
             }),
-            // Users with completed appointments (using Appointment with COMPLETED status)
+            // Users with completed appointments (tenant-scoped)
             this.prisma.appointment.findMany({
                 where: {
+                    tenantId,
                     status: 'COMPLETED',
                     customerEmail: { not: '' },
                 },
                 select: { customerEmail: true },
                 distinct: ['customerEmail'],
             }).then(results => results.length),
-            // Unsubscribed users
-            this.prisma.emailUnsubscribe.count(),
+            // Unsubscribed users (tenant-scoped)
+            this.prisma.emailUnsubscribe.count({
+                where: { tenantId },
+            }),
         ]);
 
         return [
@@ -50,15 +54,15 @@ export class MarketingService {
     }
 
     /**
-     * Get users in a specific segment
+     * Get users in a specific segment (tenant-scoped)
      */
-    async getUsersBySegment(segment: UserSegment, limit = 100): Promise<MarketingUserDto[]> {
+    async getUsersBySegment(tenantId: string, segment: UserSegment, limit = 100): Promise<MarketingUserDto[]> {
         let users: MarketingUserDto[] = [];
 
         switch (segment) {
             case UserSegment.ALL:
                 const allUsers = await this.prisma.user.findMany({
-                    where: { email: { not: '' } },
+                    where: { tenantId, email: { not: '' } },
                     select: {
                         id: true,
                         email: true,
@@ -81,6 +85,7 @@ export class MarketingService {
             case UserSegment.CUSTOMERS:
                 const customers = await this.prisma.user.findMany({
                     where: {
+                        tenantId,
                         email: { not: '' },
                         orders: { some: {} },
                     },
@@ -111,9 +116,10 @@ export class MarketingService {
                 break;
 
             case UserSegment.APPOINTMENT_COMPLETED:
-                // Get unique emails from completed appointments with device info
+                // Get unique emails from completed appointments with device info (tenant-scoped)
                 const completedAppointments = await this.prisma.appointment.findMany({
                     where: {
+                        tenantId,
                         status: 'COMPLETED',
                         customerEmail: { not: '' },
                     },
@@ -145,6 +151,7 @@ export class MarketingService {
 
             case UserSegment.UNSUBSCRIBED:
                 const unsubscribed = await this.prisma.emailUnsubscribe.findMany({
+                    where: { tenantId },
                     select: {
                         id: true,
                         email: true,
@@ -167,9 +174,9 @@ export class MarketingService {
     }
 
     /**
-     * Send marketing email to users
+     * Send marketing email to users (tenant-scoped)
      */
-    async sendMarketingEmail(dto: SendMarketingEmailDto): Promise<{
+    async sendMarketingEmail(tenantId: string, dto: SendMarketingEmailDto): Promise<{
         success: boolean;
         sent: number;
         failed: number;
@@ -181,14 +188,15 @@ export class MarketingService {
         if (dto.specificEmail) {
             recipients = [{ email: dto.specificEmail, name: dto.specificEmail.split('@')[0] }];
         } else {
-            // Get users from segment
-            const users = await this.getUsersBySegment(dto.segment, 1000);
+            // Get users from segment (tenant-scoped)
+            const users = await this.getUsersBySegment(tenantId, dto.segment, 1000);
             recipients = users.map(u => ({ email: u.email, name: u.name }));
         }
 
-        // Filter out unsubscribed emails
+        // Filter out unsubscribed emails (tenant-scoped)
         const unsubscribedEmails = await this.prisma.emailUnsubscribe.findMany({
             where: {
+                tenantId,
                 email: { in: recipients.map(r => r.email.toLowerCase()) },
             },
             select: { email: true },
@@ -227,7 +235,7 @@ export class MarketingService {
                 await new Promise(resolve => setTimeout(resolve, 100));
             } catch (error) {
                 failed++;
-                errors.push(`Error sending to ${recipient.email}: ${error.message}`);
+                errors.push(`Error sending to ${recipient.email}: ${(error as Error).message}`);
             }
         }
 
@@ -242,13 +250,13 @@ export class MarketingService {
     }
 
     /**
-     * Add email to unsubscribe list
+     * Add email to unsubscribe list (tenant-scoped)
      */
-    async unsubscribe(email: string, reason?: string): Promise<{ success: boolean }> {
+    async unsubscribe(tenantId: string, email: string, reason?: string): Promise<{ success: boolean }> {
         try {
-            // Find existing unsubscribe record (tenantId is null for global/legacy)
+            // Find existing unsubscribe record (tenant-scoped)
             const existing = await this.prisma.emailUnsubscribe.findFirst({
-                where: { email: email.toLowerCase(), tenantId: null }
+                where: { email: email.toLowerCase(), tenantId }
             });
 
             if (existing) {
@@ -259,41 +267,41 @@ export class MarketingService {
             } else {
                 await this.prisma.emailUnsubscribe.create({
                     data: {
+                        tenantId,
                         email: email.toLowerCase(),
                         reason,
                     },
                 });
             }
-            this.logger.log(`Email ${email} unsubscribed`);
+            this.logger.log(`Email ${email} unsubscribed from tenant ${tenantId}`);
             return { success: true };
         } catch (error) {
-            this.logger.error(`Failed to unsubscribe ${email}: ${error.message}`);
+            this.logger.error(`Failed to unsubscribe ${email}: ${(error as Error).message}`);
             return { success: false };
         }
     }
 
     /**
-     * Check if email is unsubscribed
+     * Check if email is unsubscribed (tenant-scoped)
      */
-    async isUnsubscribed(email: string): Promise<boolean> {
-        // Using findFirst since email uniqueness is now per-tenant
+    async isUnsubscribed(tenantId: string, email: string): Promise<boolean> {
         const record = await this.prisma.emailUnsubscribe.findFirst({
-            where: { email: email.toLowerCase(), tenantId: null },
+            where: { email: email.toLowerCase(), tenantId },
         });
         return !!record;
     }
 
     /**
-     * Subscribe email to newsletter
+     * Subscribe email to newsletter (tenant-scoped)
      * Creates a user if not exists, or just returns success if already exists
      */
-    async subscribe(email: string, name?: string): Promise<{ success: boolean; message: string }> {
+    async subscribe(tenantId: string, email: string, name?: string): Promise<{ success: boolean; message: string }> {
         try {
             const normalizedEmail = email.toLowerCase().trim();
 
-            // Check if unsubscribed - if so, remove from unsubscribe list
+            // Check if unsubscribed - if so, remove from unsubscribe list (tenant-scoped)
             const unsubscribeRecord = await this.prisma.emailUnsubscribe.findFirst({
-                where: { email: normalizedEmail, tenantId: null },
+                where: { email: normalizedEmail, tenantId },
             });
 
             if (unsubscribeRecord) {
@@ -303,9 +311,9 @@ export class MarketingService {
                 this.logger.log(`Email ${email} re-subscribed (removed from unsubscribe list)`);
             }
 
-            // Check if user already exists (using findFirst since email uniqueness is per-tenant)
+            // Check if user already exists (tenant-scoped)
             const existingUser = await this.prisma.user.findFirst({
-                where: { email: normalizedEmail, tenantId: null },
+                where: { email: normalizedEmail, tenantId },
             });
 
             if (existingUser) {
@@ -313,16 +321,17 @@ export class MarketingService {
                 return { success: true, message: 'Je bent al ingeschreven!' };
             }
 
-            // Create new user with just email (no password required for newsletter)
+            // Create new user with just email (tenant-scoped)
             await this.prisma.user.create({
                 data: {
+                    tenantId,
                     email: normalizedEmail,
                     name: name || normalizedEmail.split('@')[0],
                     passwordHash: null, // No password - user can set later if they want an account
                 },
             });
 
-            this.logger.log(`Email ${email} subscribed to newsletter`);
+            this.logger.log(`Email ${email} subscribed to newsletter for tenant ${tenantId}`);
             return { success: true, message: 'Bedankt voor je inschrijving!' };
         } catch (error: unknown) {
             const errorMessage = error instanceof Error ? error.message : 'Unknown error';

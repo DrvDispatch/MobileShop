@@ -12,18 +12,9 @@ import {
     ShippingZoneDto,
 } from './dto';
 
-// Default settings if not in database
+// Default settings - checkout config only (tenant-neutral)
+// Store info must come from TenantConfig
 const DEFAULT_SETTINGS = {
-    'store.name': 'Smartphone Service',
-    'store.phone': '+32 3 123 45 67',
-    'store.email': 'info@smartphoneservice.be',
-    'store.address': {
-        line1: 'Korte Koepoortstraat 7',
-        city: 'Antwerpen',
-        postalCode: '2000',
-        country: 'BE',
-    },
-    'store.vatNumber': 'BE 1015.249.213',
     'checkout.defaultCountry': 'BE',
     'checkout.currency': 'EUR',
     'checkout.currencySymbol': '€',

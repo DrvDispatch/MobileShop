@@ -1,7 +1,16 @@
 'use client';
 
+/**
+ * @core-only
+ * 
+ * Tenant configuration provider. Handles fetching and caching tenant config.
+ * Skins must NOT call useTenant() directly for business logic.
+ * Tenant data is passed as typed props to skin components by route adapters.
+ */
+
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { PublicTenantConfig } from '@/lib/tenant-types';
+import { DEFAULT_UI_CONFIG } from '@/lib/useUIConfig';
 
 // API base URL - use relative path so requests go through Next.js rewrite proxy
 // This preserves the Host header for proper tenant resolution
@@ -26,11 +35,12 @@ export function useTenantOptional(): PublicTenantConfig | null {
 
 // Loading skeleton component
 function TenantLoadingSkeleton() {
+    const { loading: loadingLabels } = DEFAULT_UI_CONFIG.labels;
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-50">
             <div className="text-center">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-violet-600 mx-auto mb-4"></div>
-                <p className="text-gray-600">Laden...</p>
+                <p className="text-gray-600">{loadingLabels.loading}</p>
             </div>
         </div>
     );
@@ -38,17 +48,18 @@ function TenantLoadingSkeleton() {
 
 // Error component
 function TenantErrorDisplay({ error, onRetry }: { error: string; onRetry: () => void }) {
+    const { loading: loadingLabels } = DEFAULT_UI_CONFIG.labels;
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-50">
             <div className="text-center max-w-md p-6">
                 <div className="text-red-500 text-5xl mb-4">⚠️</div>
-                <h1 className="text-2xl font-bold text-gray-900 mb-2">Configuratie Fout</h1>
+                <h1 className="text-2xl font-bold text-gray-900 mb-2">{loadingLabels.configError}</h1>
                 <p className="text-gray-600 mb-4">{error}</p>
                 <button
                     onClick={onRetry}
                     className="bg-violet-600 text-white px-6 py-2 rounded-lg hover:bg-violet-700 transition-colors"
                 >
-                    Opnieuw proberen
+                    {loadingLabels.retry}
                 </button>
             </div>
         </div>

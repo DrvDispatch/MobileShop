@@ -1,8 +1,7 @@
 "use client";
 
 import { Navbar, Footer } from "@/components/landing";
-import { useSettingsStore } from "@/lib/store";
-import { useEffect } from "react";
+import { useTenant } from "@/lib/TenantProvider";
 import Link from "next/link";
 import {
     Smartphone,
@@ -21,13 +20,15 @@ import {
 import { FaWhatsapp } from "react-icons/fa";
 
 export default function AboutPage() {
-    const { settings, fetchSettings } = useSettingsStore();
+    const tenant = useTenant();
+    const { contact, branding, business } = tenant;
 
-    useEffect(() => {
-        fetchSettings();
-    }, [fetchSettings]);
-
-    const { store } = settings;
+    // Create store-like object from tenant for compatibility
+    const store = {
+        name: branding.shopName,
+        phone: contact.phone || '',
+        address: contact.address as { line1?: string; postalCode?: string; city?: string } || {}
+    };
 
     const stats = [
         { value: "5+", label: "Jaar ervaring", icon: <Clock className="w-5 h-5" /> },
@@ -68,8 +69,13 @@ export default function AboutPage() {
         "Softwareondersteuning"
     ];
 
-    const whatsappNumber = "32465638106";
-    const whatsappLink = `https://wa.me/${whatsappNumber}?text=Hallo,%20ik%20wil%20graag%20meer%20informatie...`;
+    // Format WhatsApp link from tenant config
+    const formatWhatsAppLink = (num: string | null): string | null => {
+        if (!num) return null;
+        const cleaned = num.replace(/[^0-9+]/g, '').replace(/^\+/, '');
+        return `https://wa.me/${cleaned}?text=Hallo,%20ik%20wil%20graag%20meer%20informatie...`;
+    };
+    const whatsappLink = formatWhatsAppLink(contact.whatsappNumber);
 
     return (
         <main className="min-h-screen bg-white">
@@ -214,22 +220,27 @@ export default function AboutPage() {
                         </div>
 
                         <div className="space-y-3">
-                            {[
-                                { day: "Maandag", hours: "09:00 - 18:00" },
-                                { day: "Dinsdag", hours: "09:00 - 18:00" },
-                                { day: "Woensdag", hours: "09:00 - 18:00" },
-                                { day: "Donderdag", hours: "09:00 - 18:00" },
-                                { day: "Vrijdag", hours: "09:00 - 18:00" },
-                                { day: "Zaterdag", hours: "10:00 - 17:00" },
-                                { day: "Zondag", hours: "Gesloten", closed: true },
-                            ].map(({ day, hours, closed }) => (
-                                <div key={day} className="flex justify-between py-2 border-b border-zinc-100 last:border-0">
-                                    <span className="text-zinc-500">{day}</span>
-                                    <span className={closed ? "text-red-500 font-medium" : "text-zinc-900 font-medium"}>
-                                        {hours}
-                                    </span>
-                                </div>
-                            ))}
+                            {(() => {
+                                const hours = business.openingHours as Record<string, { open: string; close: string } | null> | null;
+                                const dayNames: Record<string, string> = {
+                                    monday: 'Maandag', tuesday: 'Dinsdag', wednesday: 'Woensdag',
+                                    thursday: 'Donderdag', friday: 'Vrijdag', saturday: 'Zaterdag', sunday: 'Zondag'
+                                };
+                                if (!hours) {
+                                    return <p className="text-zinc-500 text-center">Neem contact op voor openingsuren</p>;
+                                }
+                                return Object.entries(dayNames).map(([key, name]) => {
+                                    const dayHours = hours[key];
+                                    return (
+                                        <div key={key} className="flex justify-between py-2 border-b border-zinc-100 last:border-0">
+                                            <span className="text-zinc-500">{name}</span>
+                                            <span className={`font-medium ${!dayHours ? 'text-red-500' : 'text-zinc-900'}`}>
+                                                {dayHours ? `${dayHours.open} - ${dayHours.close}` : 'Gesloten'}
+                                            </span>
+                                        </div>
+                                    );
+                                });
+                            })()}
                         </div>
                     </div>
                 </div>
@@ -249,15 +260,17 @@ export default function AboutPage() {
                             <Calendar className="w-5 h-5" />
                             Maak een afspraak
                         </Link>
-                        <a
-                            href={whatsappLink}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition-colors"
-                        >
-                            <FaWhatsapp className="w-5 h-5" />
-                            WhatsApp
-                        </a>
+                        {whatsappLink && (
+                            <a
+                                href={whatsappLink}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition-colors"
+                            >
+                                <FaWhatsapp className="w-5 h-5" />
+                                WhatsApp
+                            </a>
+                        )}
                         <a
                             href={`tel:${store.phone.replace(/\s/g, '')}`}
                             className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-zinc-800 text-white rounded-lg font-medium hover:bg-zinc-700 transition-colors border border-zinc-700"

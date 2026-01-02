@@ -3,6 +3,7 @@ import { StockNotificationsService } from './stock-notifications.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
+import { TenantId } from '../tenant/tenant.decorator';
 
 @Controller('api/stock-notifications')
 export class StockNotificationsController {
@@ -12,10 +13,12 @@ export class StockNotificationsController {
 
     @Post('subscribe')
     async subscribe(
+        @TenantId() tenantId: string,
         @Body() body: { email: string; productId: string },
         @Req() req?: { user?: { sub: string } },
     ) {
         return this.stockNotificationsService.subscribe(
+            tenantId,
             body.email,
             body.productId,
             req?.user?.sub,
@@ -23,16 +26,20 @@ export class StockNotificationsController {
     }
 
     @Post('unsubscribe')
-    async unsubscribe(@Body() body: { email: string; productId: string }) {
-        return this.stockNotificationsService.unsubscribe(body.email, body.productId);
+    async unsubscribe(
+        @TenantId() tenantId: string,
+        @Body() body: { email: string; productId: string },
+    ) {
+        return this.stockNotificationsService.unsubscribe(tenantId, body.email, body.productId);
     }
 
     @Get('check/:productId')
     async isSubscribed(
+        @TenantId() tenantId: string,
         @Param('productId') productId: string,
         @Query('email') email: string,
     ) {
-        const isSubscribed = await this.stockNotificationsService.isSubscribed(email, productId);
+        const isSubscribed = await this.stockNotificationsService.isSubscribed(tenantId, email, productId);
         return { isSubscribed };
     }
 
@@ -42,12 +49,13 @@ export class StockNotificationsController {
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Roles('ADMIN', 'STAFF')
     async getAllSubscriptions(
+        @TenantId() tenantId: string,
         @Query('page') page?: string,
         @Query('limit') limit?: string,
         @Query('productId') productId?: string,
         @Query('notified') notified?: string,
     ) {
-        return this.stockNotificationsService.getAllSubscriptions({
+        return this.stockNotificationsService.getAllSubscriptions(tenantId, {
             page: page ? parseInt(page) : 1,
             limit: limit ? parseInt(limit) : 50,
             productId,
@@ -58,7 +66,7 @@ export class StockNotificationsController {
     @Get('admin/waiting-counts')
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Roles('ADMIN', 'STAFF')
-    async getWaitingCounts() {
-        return this.stockNotificationsService.getWaitingCounts();
+    async getWaitingCounts(@TenantId() tenantId: string) {
+        return this.stockNotificationsService.getWaitingCounts(tenantId);
     }
 }

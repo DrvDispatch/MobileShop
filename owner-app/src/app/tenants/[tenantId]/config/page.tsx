@@ -26,6 +26,7 @@ export default function ConfigPage() {
     const [darkMode, setDarkMode] = useState(false);
     const [email, setEmail] = useState('');
     const [phone, setPhone] = useState('');
+    const [whatsappNumber, setWhatsappNumber] = useState('');
     const [locale, setLocale] = useState('nl');
     const [currency, setCurrency] = useState('EUR');
     const [timezone, setTimezone] = useState('Europe/Brussels');
@@ -34,6 +35,31 @@ export default function ConfigPage() {
         tickets: true,
         marketing: true,
     });
+
+    // Company/Invoice Settings
+    const [companyName, setCompanyName] = useState('');
+    const [vatNumber, setVatNumber] = useState('');
+    const [addressLine1, setAddressLine1] = useState('');
+    const [addressPostalCode, setAddressPostalCode] = useState('');
+    const [addressCity, setAddressCity] = useState('');
+    const [bankAccount, setBankAccount] = useState('');
+    const [bankName, setBankName] = useState('');
+    const [invoicePrefix, setInvoicePrefix] = useState('INV');
+    const [invoiceFooter, setInvoiceFooter] = useState('');
+    const [website, setWebsite] = useState('');
+
+    // Business Hours Settings
+    const [openingHours, setOpeningHours] = useState<Record<string, { open: string; close: string } | null>>({
+        monday: { open: '09:00', close: '18:00' },
+        tuesday: { open: '09:00', close: '18:00' },
+        wednesday: { open: '09:00', close: '18:00' },
+        thursday: { open: '09:00', close: '18:00' },
+        friday: { open: '09:00', close: '18:00' },
+        saturday: { open: '10:00', close: '17:00' },
+        sunday: null,
+    });
+    const [timeSlotsInput, setTimeSlotsInput] = useState('09:00, 10:00, 11:00, 14:00, 15:00, 16:00, 17:00');
+    const [closedDays, setClosedDays] = useState<number[]>([0]); // 0 = Sunday
 
     useEffect(() => {
         if (tenant?.config) {
@@ -47,6 +73,7 @@ export default function ConfigPage() {
             setDarkMode(config.darkMode ?? false);
             setEmail(config.email ?? '');
             setPhone(config.phone ?? '');
+            setWhatsappNumber(config.whatsappNumber ?? '');
             setLocale(config.locale ?? 'nl');
             setCurrency(config.currency ?? 'EUR');
             setTimezone(config.timezone ?? 'Europe/Brussels');
@@ -56,6 +83,29 @@ export default function ConfigPage() {
                     tickets: config.features.tickets ?? true,
                     marketing: config.features.marketing ?? true,
                 });
+            }
+            // Company/Invoice Settings
+            setCompanyName(config.companyName ?? '');
+            setVatNumber(config.vatNumber ?? '');
+            if (config.address) {
+                setAddressLine1(config.address.line1 ?? '');
+                setAddressPostalCode(config.address.postalCode ?? '');
+                setAddressCity(config.address.city ?? '');
+            }
+            setBankAccount(config.bankAccount ?? '');
+            setBankName(config.bankName ?? '');
+            setInvoicePrefix(config.invoicePrefix ?? 'INV');
+            setInvoiceFooter(config.invoiceFooter ?? '');
+            setWebsite(config.website ?? '');
+            // Business Hours Settings
+            if (config.openingHours) {
+                setOpeningHours(config.openingHours);
+            }
+            if (config.timeSlots) {
+                setTimeSlotsInput(config.timeSlots.join(', '));
+            }
+            if (config.closedDays) {
+                setClosedDays(config.closedDays);
             }
         }
     }, [tenant]);
@@ -76,10 +126,28 @@ export default function ConfigPage() {
                 darkMode,
                 email: email || undefined,
                 phone: phone || undefined,
+                whatsappNumber: whatsappNumber || undefined,
                 locale: locale || undefined,
                 currency: currency || undefined,
                 timezone: timezone || undefined,
                 features,
+                // Company/Invoice Settings
+                companyName: companyName || undefined,
+                vatNumber: vatNumber || undefined,
+                address: (addressLine1 || addressPostalCode || addressCity) ? {
+                    line1: addressLine1 || undefined,
+                    postalCode: addressPostalCode || undefined,
+                    city: addressCity || undefined,
+                } : undefined,
+                bankAccount: bankAccount || undefined,
+                bankName: bankName || undefined,
+                invoicePrefix: invoicePrefix || undefined,
+                invoiceFooter: invoiceFooter || undefined,
+                website: website || undefined,
+                // Business Hours Settings
+                openingHours: openingHours,
+                timeSlots: timeSlotsInput.split(',').map(s => s.trim()).filter(Boolean),
+                closedDays: closedDays,
             };
 
             await ownerApi.updateConfig(tenantId, updateData);
@@ -273,6 +341,22 @@ export default function ConfigPage() {
                                 className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent dark:bg-gray-800 dark:border-gray-700"
                             />
                         </div>
+                        <div>
+                            <label htmlFor="whatsappNumber" className="block text-sm font-medium mb-2">
+                                WhatsApp Number
+                            </label>
+                            <input
+                                id="whatsappNumber"
+                                type="tel"
+                                value={whatsappNumber}
+                                onChange={(e) => setWhatsappNumber(e.target.value)}
+                                placeholder="+32 4XX XX XX XX"
+                                className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent dark:bg-gray-800 dark:border-gray-700"
+                            />
+                            <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                                Used for chat widget and ticket support links
+                            </p>
+                        </div>
                     </CardContent>
                 </Card>
 
@@ -332,6 +416,277 @@ export default function ConfigPage() {
                                 <option value="Europe/London">Europe/London</option>
                                 <option value="Asia/Tokyo">Asia/Tokyo</option>
                             </select>
+                        </div>
+                    </CardContent>
+                </Card>
+
+                {/* Company Details */}
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Company Details</CardTitle>
+                        <CardDescription>Legal business information for invoices</CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                        <div className="grid grid-cols-2 gap-4">
+                            <div>
+                                <label htmlFor="companyName" className="block text-sm font-medium mb-2">
+                                    Company Name
+                                </label>
+                                <input
+                                    id="companyName"
+                                    type="text"
+                                    value={companyName}
+                                    onChange={(e) => setCompanyName(e.target.value)}
+                                    placeholder="My Company BV"
+                                    className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent dark:bg-gray-800 dark:border-gray-700"
+                                />
+                            </div>
+                            <div>
+                                <label htmlFor="vatNumber" className="block text-sm font-medium mb-2">
+                                    VAT Number
+                                </label>
+                                <input
+                                    id="vatNumber"
+                                    type="text"
+                                    value={vatNumber}
+                                    onChange={(e) => setVatNumber(e.target.value)}
+                                    placeholder="BE0123456789"
+                                    className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent dark:bg-gray-800 dark:border-gray-700"
+                                />
+                            </div>
+                        </div>
+                        <div>
+                            <label htmlFor="addressLine1" className="block text-sm font-medium mb-2">
+                                Address
+                            </label>
+                            <input
+                                id="addressLine1"
+                                type="text"
+                                value={addressLine1}
+                                onChange={(e) => setAddressLine1(e.target.value)}
+                                placeholder="Street address"
+                                className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent dark:bg-gray-800 dark:border-gray-700"
+                            />
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div>
+                                <label htmlFor="addressPostalCode" className="block text-sm font-medium mb-2">
+                                    Postal Code
+                                </label>
+                                <input
+                                    id="addressPostalCode"
+                                    type="text"
+                                    value={addressPostalCode}
+                                    onChange={(e) => setAddressPostalCode(e.target.value)}
+                                    placeholder="1000"
+                                    className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent dark:bg-gray-800 dark:border-gray-700"
+                                />
+                            </div>
+                            <div>
+                                <label htmlFor="addressCity" className="block text-sm font-medium mb-2">
+                                    City
+                                </label>
+                                <input
+                                    id="addressCity"
+                                    type="text"
+                                    value={addressCity}
+                                    onChange={(e) => setAddressCity(e.target.value)}
+                                    placeholder="Brussels"
+                                    className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent dark:bg-gray-800 dark:border-gray-700"
+                                />
+                            </div>
+                        </div>
+                        <div>
+                            <label htmlFor="website" className="block text-sm font-medium mb-2">
+                                Website
+                            </label>
+                            <input
+                                id="website"
+                                type="url"
+                                value={website}
+                                onChange={(e) => setWebsite(e.target.value)}
+                                placeholder="https://example.com"
+                                className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent dark:bg-gray-800 dark:border-gray-700"
+                            />
+                        </div>
+                    </CardContent>
+                </Card>
+
+                {/* Invoice Settings */}
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Invoice Settings</CardTitle>
+                        <CardDescription>Configure invoice generation preferences</CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                        <div className="grid grid-cols-2 gap-4">
+                            <div>
+                                <label htmlFor="invoicePrefix" className="block text-sm font-medium mb-2">
+                                    Invoice Prefix
+                                </label>
+                                <input
+                                    id="invoicePrefix"
+                                    type="text"
+                                    value={invoicePrefix}
+                                    onChange={(e) => setInvoicePrefix(e.target.value)}
+                                    placeholder="INV"
+                                    className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent dark:bg-gray-800 dark:border-gray-700"
+                                />
+                            </div>
+                            <div>
+                                <label htmlFor="bankAccount" className="block text-sm font-medium mb-2">
+                                    Bank Account (IBAN)
+                                </label>
+                                <input
+                                    id="bankAccount"
+                                    type="text"
+                                    value={bankAccount}
+                                    onChange={(e) => setBankAccount(e.target.value)}
+                                    placeholder="BE00 0000 0000 0000"
+                                    className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent dark:bg-gray-800 dark:border-gray-700"
+                                />
+                            </div>
+                        </div>
+                        <div>
+                            <label htmlFor="bankName" className="block text-sm font-medium mb-2">
+                                Bank Name
+                            </label>
+                            <input
+                                id="bankName"
+                                type="text"
+                                value={bankName}
+                                onChange={(e) => setBankName(e.target.value)}
+                                placeholder="ING Bank"
+                                className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent dark:bg-gray-800 dark:border-gray-700"
+                            />
+                        </div>
+                        <div>
+                            <label htmlFor="invoiceFooter" className="block text-sm font-medium mb-2">
+                                Invoice Footer Text
+                            </label>
+                            <textarea
+                                id="invoiceFooter"
+                                value={invoiceFooter}
+                                onChange={(e) => setInvoiceFooter(e.target.value)}
+                                placeholder="Thank you for your business! Payment is due within 30 days."
+                                rows={3}
+                                className="flex w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent dark:bg-gray-800 dark:border-gray-700"
+                            />
+                        </div>
+                    </CardContent>
+                </Card>
+
+                {/* Business Hours */}
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Business Hours</CardTitle>
+                        <CardDescription>Configure opening hours and appointment time slots</CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-6">
+                        {/* Opening Hours per Day */}
+                        <div>
+                            <label className="block text-sm font-medium mb-3">Opening Hours</label>
+                            <div className="space-y-2">
+                                {(['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'] as const).map((day) => (
+                                    <div key={day} className="flex items-center gap-3">
+                                        <div className="w-24 text-sm capitalize">{day}</div>
+                                        <input
+                                            type="checkbox"
+                                            checked={openingHours[day] !== null}
+                                            onChange={(e) => {
+                                                setOpeningHours(prev => ({
+                                                    ...prev,
+                                                    [day]: e.target.checked ? { open: '09:00', close: '18:00' } : null
+                                                }));
+                                            }}
+                                            className="h-4 w-4 rounded border-gray-300"
+                                        />
+                                        {openingHours[day] && (
+                                            <>
+                                                <input
+                                                    type="time"
+                                                    value={openingHours[day]?.open || '09:00'}
+                                                    onChange={(e) => {
+                                                        setOpeningHours(prev => ({
+                                                            ...prev,
+                                                            [day]: { ...prev[day]!, open: e.target.value }
+                                                        }));
+                                                    }}
+                                                    className="h-9 rounded-md border border-gray-300 bg-white px-2 text-sm dark:bg-gray-800 dark:border-gray-700"
+                                                />
+                                                <span className="text-sm">to</span>
+                                                <input
+                                                    type="time"
+                                                    value={openingHours[day]?.close || '18:00'}
+                                                    onChange={(e) => {
+                                                        setOpeningHours(prev => ({
+                                                            ...prev,
+                                                            [day]: { ...prev[day]!, close: e.target.value }
+                                                        }));
+                                                    }}
+                                                    className="h-9 rounded-md border border-gray-300 bg-white px-2 text-sm dark:bg-gray-800 dark:border-gray-700"
+                                                />
+                                            </>
+                                        )}
+                                        {!openingHours[day] && (
+                                            <span className="text-sm text-gray-500">Closed</span>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Time Slots */}
+                        <div>
+                            <label htmlFor="timeSlots" className="block text-sm font-medium mb-2">
+                                Appointment Time Slots
+                            </label>
+                            <input
+                                id="timeSlots"
+                                type="text"
+                                value={timeSlotsInput}
+                                onChange={(e) => setTimeSlotsInput(e.target.value)}
+                                placeholder="09:00, 10:00, 11:00, 14:00, 15:00, 16:00, 17:00"
+                                className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent dark:bg-gray-800 dark:border-gray-700"
+                            />
+                            <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                                Comma-separated list of available appointment times (e.g., 09:00, 10:00, 14:00)
+                            </p>
+                        </div>
+
+                        {/* Closed Days */}
+                        <div>
+                            <label className="block text-sm font-medium mb-2">Closed Days</label>
+                            <div className="flex flex-wrap gap-3">
+                                {[
+                                    { value: 0, label: 'Sun' },
+                                    { value: 1, label: 'Mon' },
+                                    { value: 2, label: 'Tue' },
+                                    { value: 3, label: 'Wed' },
+                                    { value: 4, label: 'Thu' },
+                                    { value: 5, label: 'Fri' },
+                                    { value: 6, label: 'Sat' },
+                                ].map(({ value, label }) => (
+                                    <label key={value} className="flex items-center gap-2 cursor-pointer">
+                                        <input
+                                            type="checkbox"
+                                            checked={closedDays.includes(value)}
+                                            onChange={(e) => {
+                                                if (e.target.checked) {
+                                                    setClosedDays(prev => [...prev, value].sort());
+                                                } else {
+                                                    setClosedDays(prev => prev.filter(d => d !== value));
+                                                }
+                                            }}
+                                            className="h-4 w-4 rounded border-gray-300"
+                                        />
+                                        <span className="text-sm">{label}</span>
+                                    </label>
+                                ))}
+                            </div>
+                            <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                                Days when appointments cannot be booked
+                            </p>
                         </div>
                     </CardContent>
                 </Card>

@@ -58,6 +58,7 @@ export type TenantConfigMinAggregateOutputType = {
   bankName: string | null
   invoicePrefix: string | null
   invoiceFooter: string | null
+  website: string | null
   googleAnalyticsId: string | null
   cookiebotId: string | null
   seoTitle: string | null
@@ -90,6 +91,7 @@ export type TenantConfigMaxAggregateOutputType = {
   bankName: string | null
   invoicePrefix: string | null
   invoiceFooter: string | null
+  website: string | null
   googleAnalyticsId: string | null
   cookiebotId: string | null
   seoTitle: string | null
@@ -126,6 +128,7 @@ export type TenantConfigCountAggregateOutputType = {
   bankName: number
   invoicePrefix: number
   invoiceFooter: number
+  website: number
   googleAnalyticsId: number
   cookiebotId: number
   seoTitle: number
@@ -169,6 +172,7 @@ export type TenantConfigMinAggregateInputType = {
   bankName?: true
   invoicePrefix?: true
   invoiceFooter?: true
+  website?: true
   googleAnalyticsId?: true
   cookiebotId?: true
   seoTitle?: true
@@ -201,6 +205,7 @@ export type TenantConfigMaxAggregateInputType = {
   bankName?: true
   invoicePrefix?: true
   invoiceFooter?: true
+  website?: true
   googleAnalyticsId?: true
   cookiebotId?: true
   seoTitle?: true
@@ -237,6 +242,7 @@ export type TenantConfigCountAggregateInputType = {
   bankName?: true
   invoicePrefix?: true
   invoiceFooter?: true
+  website?: true
   googleAnalyticsId?: true
   cookiebotId?: true
   seoTitle?: true
@@ -361,6 +367,7 @@ export type TenantConfigGroupByOutputType = {
   bankName: string | null
   invoicePrefix: string
   invoiceFooter: string | null
+  website: string | null
   googleAnalyticsId: string | null
   cookiebotId: string | null
   seoTitle: string | null
@@ -421,6 +428,7 @@ export type TenantConfigWhereInput = {
   bankName?: Prisma.StringNullableFilter<"TenantConfig"> | string | null
   invoicePrefix?: Prisma.StringFilter<"TenantConfig"> | string
   invoiceFooter?: Prisma.StringNullableFilter<"TenantConfig"> | string | null
+  website?: Prisma.StringNullableFilter<"TenantConfig"> | string | null
   googleAnalyticsId?: Prisma.StringNullableFilter<"TenantConfig"> | string | null
   cookiebotId?: Prisma.StringNullableFilter<"TenantConfig"> | string | null
   seoTitle?: Prisma.StringNullableFilter<"TenantConfig"> | string | null
@@ -459,6 +467,7 @@ export type TenantConfigOrderByWithRelationInput = {
   bankName?: Prisma.SortOrderInput | Prisma.SortOrder
   invoicePrefix?: Prisma.SortOrder
   invoiceFooter?: Prisma.SortOrderInput | Prisma.SortOrder
+  website?: Prisma.SortOrderInput | Prisma.SortOrder
   googleAnalyticsId?: Prisma.SortOrderInput | Prisma.SortOrder
   cookiebotId?: Prisma.SortOrderInput | Prisma.SortOrder
   seoTitle?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -500,6 +509,7 @@ export type TenantConfigWhereUniqueInput = Prisma.AtLeast<{
   bankName?: Prisma.StringNullableFilter<"TenantConfig"> | string | null
   invoicePrefix?: Prisma.StringFilter<"TenantConfig"> | string
   invoiceFooter?: Prisma.StringNullableFilter<"TenantConfig"> | string | null
+  website?: Prisma.StringNullableFilter<"TenantConfig"> | string | null
   googleAnalyticsId?: Prisma.StringNullableFilter<"TenantConfig"> | string | null
   cookiebotId?: Prisma.StringNullableFilter<"TenantConfig"> | string | null
   seoTitle?: Prisma.StringNullableFilter<"TenantConfig"> | string | null
@@ -538,6 +548,7 @@ export type TenantConfigOrderByWithAggregationInput = {
   bankName?: Prisma.SortOrderInput | Prisma.SortOrder
   invoicePrefix?: Prisma.SortOrder
   invoiceFooter?: Prisma.SortOrderInput | Prisma.SortOrder
+  website?: Prisma.SortOrderInput | Prisma.SortOrder
   googleAnalyticsId?: Prisma.SortOrderInput | Prisma.SortOrder
   cookiebotId?: Prisma.SortOrderInput | Prisma.SortOrder
   seoTitle?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -583,6 +594,7 @@ export type TenantConfigScalarWhereWithAggregatesInput = {
   bankName?: Prisma.StringNullableWithAggregatesFilter<"TenantConfig"> | string | null
   invoicePrefix?: Prisma.StringWithAggregatesFilter<"TenantConfig"> | string
   invoiceFooter?: Prisma.StringNullableWithAggregatesFilter<"TenantConfig"> | string | null
+  website?: Prisma.StringNullableWithAggregatesFilter<"TenantConfig"> | string | null
   googleAnalyticsId?: Prisma.StringNullableWithAggregatesFilter<"TenantConfig"> | string | null
   cookiebotId?: Prisma.StringNullableWithAggregatesFilter<"TenantConfig"> | string | null
   seoTitle?: Prisma.StringNullableWithAggregatesFilter<"TenantConfig"> | string | null
@@ -619,6 +631,7 @@ export type TenantConfigCreateInput = {
   bankName?: string | null
   invoicePrefix?: string
   invoiceFooter?: string | null
+  website?: string | null
   googleAnalyticsId?: string | null
   cookiebotId?: string | null
   seoTitle?: string | null
@@ -657,6 +670,7 @@ export type TenantConfigUncheckedCreateInput = {
   bankName?: string | null
   invoicePrefix?: string
   invoiceFooter?: string | null
+  website?: string | null
   googleAnalyticsId?: string | null
   cookiebotId?: string | null
   seoTitle?: string | null
@@ -693,6 +707,7 @@ export type TenantConfigUpdateInput = {
   bankName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   invoicePrefix?: Prisma.StringFieldUpdateOperationsInput | string
   invoiceFooter?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   googleAnalyticsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   cookiebotId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   seoTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -731,6 +746,7 @@ export type TenantConfigUncheckedUpdateInput = {
   bankName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   invoicePrefix?: Prisma.StringFieldUpdateOperationsInput | string
   invoiceFooter?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   googleAnalyticsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   cookiebotId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   seoTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -768,6 +784,7 @@ export type TenantConfigCreateManyInput = {
   bankName?: string | null
   invoicePrefix?: string
   invoiceFooter?: string | null
+  website?: string | null
   googleAnalyticsId?: string | null
   cookiebotId?: string | null
   seoTitle?: string | null
@@ -804,6 +821,7 @@ export type TenantConfigUpdateManyMutationInput = {
   bankName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   invoicePrefix?: Prisma.StringFieldUpdateOperationsInput | string
   invoiceFooter?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   googleAnalyticsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   cookiebotId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   seoTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -841,6 +859,7 @@ export type TenantConfigUncheckedUpdateManyInput = {
   bankName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   invoicePrefix?: Prisma.StringFieldUpdateOperationsInput | string
   invoiceFooter?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   googleAnalyticsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   cookiebotId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   seoTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -891,6 +910,7 @@ export type TenantConfigCountOrderByAggregateInput = {
   bankName?: Prisma.SortOrder
   invoicePrefix?: Prisma.SortOrder
   invoiceFooter?: Prisma.SortOrder
+  website?: Prisma.SortOrder
   googleAnalyticsId?: Prisma.SortOrder
   cookiebotId?: Prisma.SortOrder
   seoTitle?: Prisma.SortOrder
@@ -928,6 +948,7 @@ export type TenantConfigMaxOrderByAggregateInput = {
   bankName?: Prisma.SortOrder
   invoicePrefix?: Prisma.SortOrder
   invoiceFooter?: Prisma.SortOrder
+  website?: Prisma.SortOrder
   googleAnalyticsId?: Prisma.SortOrder
   cookiebotId?: Prisma.SortOrder
   seoTitle?: Prisma.SortOrder
@@ -960,6 +981,7 @@ export type TenantConfigMinOrderByAggregateInput = {
   bankName?: Prisma.SortOrder
   invoicePrefix?: Prisma.SortOrder
   invoiceFooter?: Prisma.SortOrder
+  website?: Prisma.SortOrder
   googleAnalyticsId?: Prisma.SortOrder
   cookiebotId?: Prisma.SortOrder
   seoTitle?: Prisma.SortOrder
@@ -1040,6 +1062,7 @@ export type TenantConfigCreateWithoutTenantInput = {
   bankName?: string | null
   invoicePrefix?: string
   invoiceFooter?: string | null
+  website?: string | null
   googleAnalyticsId?: string | null
   cookiebotId?: string | null
   seoTitle?: string | null
@@ -1076,6 +1099,7 @@ export type TenantConfigUncheckedCreateWithoutTenantInput = {
   bankName?: string | null
   invoicePrefix?: string
   invoiceFooter?: string | null
+  website?: string | null
   googleAnalyticsId?: string | null
   cookiebotId?: string | null
   seoTitle?: string | null
@@ -1128,6 +1152,7 @@ export type TenantConfigUpdateWithoutTenantInput = {
   bankName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   invoicePrefix?: Prisma.StringFieldUpdateOperationsInput | string
   invoiceFooter?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   googleAnalyticsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   cookiebotId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   seoTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1164,6 +1189,7 @@ export type TenantConfigUncheckedUpdateWithoutTenantInput = {
   bankName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   invoicePrefix?: Prisma.StringFieldUpdateOperationsInput | string
   invoiceFooter?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   googleAnalyticsId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   cookiebotId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   seoTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1203,6 +1229,7 @@ export type TenantConfigSelect<ExtArgs extends runtime.Types.Extensions.Internal
   bankName?: boolean
   invoicePrefix?: boolean
   invoiceFooter?: boolean
+  website?: boolean
   googleAnalyticsId?: boolean
   cookiebotId?: boolean
   seoTitle?: boolean
@@ -1241,6 +1268,7 @@ export type TenantConfigSelectCreateManyAndReturn<ExtArgs extends runtime.Types.
   bankName?: boolean
   invoicePrefix?: boolean
   invoiceFooter?: boolean
+  website?: boolean
   googleAnalyticsId?: boolean
   cookiebotId?: boolean
   seoTitle?: boolean
@@ -1279,6 +1307,7 @@ export type TenantConfigSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.
   bankName?: boolean
   invoicePrefix?: boolean
   invoiceFooter?: boolean
+  website?: boolean
   googleAnalyticsId?: boolean
   cookiebotId?: boolean
   seoTitle?: boolean
@@ -1317,6 +1346,7 @@ export type TenantConfigSelectScalar = {
   bankName?: boolean
   invoicePrefix?: boolean
   invoiceFooter?: boolean
+  website?: boolean
   googleAnalyticsId?: boolean
   cookiebotId?: boolean
   seoTitle?: boolean
@@ -1326,7 +1356,7 @@ export type TenantConfigSelectScalar = {
   updatedAt?: boolean
 }
 
-export type TenantConfigOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "tenantId" | "shopName" | "logoUrl" | "faviconUrl" | "primaryColor" | "secondaryColor" | "accentColor" | "borderRadius" | "darkMode" | "email" | "phone" | "whatsappNumber" | "address" | "locale" | "currency" | "currencySymbol" | "timezone" | "openingHours" | "timeSlots" | "closedDays" | "companyName" | "vatNumber" | "bankAccount" | "bankName" | "invoicePrefix" | "invoiceFooter" | "googleAnalyticsId" | "cookiebotId" | "seoTitle" | "seoDescription" | "features" | "createdAt" | "updatedAt", ExtArgs["result"]["tenantConfig"]>
+export type TenantConfigOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "tenantId" | "shopName" | "logoUrl" | "faviconUrl" | "primaryColor" | "secondaryColor" | "accentColor" | "borderRadius" | "darkMode" | "email" | "phone" | "whatsappNumber" | "address" | "locale" | "currency" | "currencySymbol" | "timezone" | "openingHours" | "timeSlots" | "closedDays" | "companyName" | "vatNumber" | "bankAccount" | "bankName" | "invoicePrefix" | "invoiceFooter" | "website" | "googleAnalyticsId" | "cookiebotId" | "seoTitle" | "seoDescription" | "features" | "createdAt" | "updatedAt", ExtArgs["result"]["tenantConfig"]>
 export type TenantConfigInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
 }
@@ -1370,6 +1400,7 @@ export type $TenantConfigPayload<ExtArgs extends runtime.Types.Extensions.Intern
     bankName: string | null
     invoicePrefix: string
     invoiceFooter: string | null
+    website: string | null
     googleAnalyticsId: string | null
     cookiebotId: string | null
     seoTitle: string | null
@@ -1828,6 +1859,7 @@ export interface TenantConfigFieldRefs {
   readonly bankName: Prisma.FieldRef<"TenantConfig", 'String'>
   readonly invoicePrefix: Prisma.FieldRef<"TenantConfig", 'String'>
   readonly invoiceFooter: Prisma.FieldRef<"TenantConfig", 'String'>
+  readonly website: Prisma.FieldRef<"TenantConfig", 'String'>
   readonly googleAnalyticsId: Prisma.FieldRef<"TenantConfig", 'String'>
   readonly cookiebotId: Prisma.FieldRef<"TenantConfig", 'String'>
   readonly seoTitle: Prisma.FieldRef<"TenantConfig", 'String'>

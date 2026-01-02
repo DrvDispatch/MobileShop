@@ -217,6 +217,7 @@ export type TenantWhereInput = {
   domains?: Prisma.TenantDomainListRelationFilter
   config?: Prisma.XOR<Prisma.TenantConfigNullableScalarRelationFilter, Prisma.TenantConfigWhereInput> | null
   features?: Prisma.XOR<Prisma.TenantFeatureNullableScalarRelationFilter, Prisma.TenantFeatureWhereInput> | null
+  uiConfig?: Prisma.XOR<Prisma.TenantUIConfigNullableScalarRelationFilter, Prisma.TenantUIConfigWhereInput> | null
   users?: Prisma.UserListRelationFilter
   products?: Prisma.ProductListRelationFilter
   categories?: Prisma.CategoryListRelationFilter
@@ -253,6 +254,7 @@ export type TenantOrderByWithRelationInput = {
   domains?: Prisma.TenantDomainOrderByRelationAggregateInput
   config?: Prisma.TenantConfigOrderByWithRelationInput
   features?: Prisma.TenantFeatureOrderByWithRelationInput
+  uiConfig?: Prisma.TenantUIConfigOrderByWithRelationInput
   users?: Prisma.UserOrderByRelationAggregateInput
   products?: Prisma.ProductOrderByRelationAggregateInput
   categories?: Prisma.CategoryOrderByRelationAggregateInput
@@ -292,6 +294,7 @@ export type TenantWhereUniqueInput = Prisma.AtLeast<{
   domains?: Prisma.TenantDomainListRelationFilter
   config?: Prisma.XOR<Prisma.TenantConfigNullableScalarRelationFilter, Prisma.TenantConfigWhereInput> | null
   features?: Prisma.XOR<Prisma.TenantFeatureNullableScalarRelationFilter, Prisma.TenantFeatureWhereInput> | null
+  uiConfig?: Prisma.XOR<Prisma.TenantUIConfigNullableScalarRelationFilter, Prisma.TenantUIConfigWhereInput> | null
   users?: Prisma.UserListRelationFilter
   products?: Prisma.ProductListRelationFilter
   categories?: Prisma.CategoryListRelationFilter
@@ -358,6 +361,7 @@ export type TenantCreateInput = {
   domains?: Prisma.TenantDomainCreateNestedManyWithoutTenantInput
   config?: Prisma.TenantConfigCreateNestedOneWithoutTenantInput
   features?: Prisma.TenantFeatureCreateNestedOneWithoutTenantInput
+  uiConfig?: Prisma.TenantUIConfigCreateNestedOneWithoutTenantInput
   users?: Prisma.UserCreateNestedManyWithoutTenantInput
   products?: Prisma.ProductCreateNestedManyWithoutTenantInput
   categories?: Prisma.CategoryCreateNestedManyWithoutTenantInput
@@ -394,6 +398,7 @@ export type TenantUncheckedCreateInput = {
   domains?: Prisma.TenantDomainUncheckedCreateNestedManyWithoutTenantInput
   config?: Prisma.TenantConfigUncheckedCreateNestedOneWithoutTenantInput
   features?: Prisma.TenantFeatureUncheckedCreateNestedOneWithoutTenantInput
+  uiConfig?: Prisma.TenantUIConfigUncheckedCreateNestedOneWithoutTenantInput
   users?: Prisma.UserUncheckedCreateNestedManyWithoutTenantInput
   products?: Prisma.ProductUncheckedCreateNestedManyWithoutTenantInput
   categories?: Prisma.CategoryUncheckedCreateNestedManyWithoutTenantInput
@@ -430,6 +435,7 @@ export type TenantUpdateInput = {
   domains?: Prisma.TenantDomainUpdateManyWithoutTenantNestedInput
   config?: Prisma.TenantConfigUpdateOneWithoutTenantNestedInput
   features?: Prisma.TenantFeatureUpdateOneWithoutTenantNestedInput
+  uiConfig?: Prisma.TenantUIConfigUpdateOneWithoutTenantNestedInput
   users?: Prisma.UserUpdateManyWithoutTenantNestedInput
   products?: Prisma.ProductUpdateManyWithoutTenantNestedInput
   categories?: Prisma.CategoryUpdateManyWithoutTenantNestedInput
@@ -466,6 +472,7 @@ export type TenantUncheckedUpdateInput = {
   domains?: Prisma.TenantDomainUncheckedUpdateManyWithoutTenantNestedInput
   config?: Prisma.TenantConfigUncheckedUpdateOneWithoutTenantNestedInput
   features?: Prisma.TenantFeatureUncheckedUpdateOneWithoutTenantNestedInput
+  uiConfig?: Prisma.TenantUIConfigUncheckedUpdateOneWithoutTenantNestedInput
   users?: Prisma.UserUncheckedUpdateManyWithoutTenantNestedInput
   products?: Prisma.ProductUncheckedUpdateManyWithoutTenantNestedInput
   categories?: Prisma.CategoryUncheckedUpdateManyWithoutTenantNestedInput
@@ -631,6 +638,20 @@ export type TenantUpdateOneRequiredWithoutFeaturesNestedInput = {
   upsert?: Prisma.TenantUpsertWithoutFeaturesInput
   connect?: Prisma.TenantWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.TenantUpdateToOneWithWhereWithoutFeaturesInput, Prisma.TenantUpdateWithoutFeaturesInput>, Prisma.TenantUncheckedUpdateWithoutFeaturesInput>
+}
+
+export type TenantCreateNestedOneWithoutUiConfigInput = {
+  create?: Prisma.XOR<Prisma.TenantCreateWithoutUiConfigInput, Prisma.TenantUncheckedCreateWithoutUiConfigInput>
+  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutUiConfigInput
+  connect?: Prisma.TenantWhereUniqueInput
+}
+
+export type TenantUpdateOneRequiredWithoutUiConfigNestedInput = {
+  create?: Prisma.XOR<Prisma.TenantCreateWithoutUiConfigInput, Prisma.TenantUncheckedCreateWithoutUiConfigInput>
+  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutUiConfigInput
+  upsert?: Prisma.TenantUpsertWithoutUiConfigInput
+  connect?: Prisma.TenantWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.TenantUpdateToOneWithWhereWithoutUiConfigInput, Prisma.TenantUpdateWithoutUiConfigInput>, Prisma.TenantUncheckedUpdateWithoutUiConfigInput>
 }
 
 export type TenantCreateNestedOneWithoutHomepageInput = {
@@ -977,6 +998,7 @@ export type TenantCreateWithoutDomainsInput = {
   onboardingStatus?: string | null
   config?: Prisma.TenantConfigCreateNestedOneWithoutTenantInput
   features?: Prisma.TenantFeatureCreateNestedOneWithoutTenantInput
+  uiConfig?: Prisma.TenantUIConfigCreateNestedOneWithoutTenantInput
   users?: Prisma.UserCreateNestedManyWithoutTenantInput
   products?: Prisma.ProductCreateNestedManyWithoutTenantInput
   categories?: Prisma.CategoryCreateNestedManyWithoutTenantInput
@@ -1012,6 +1034,7 @@ export type TenantUncheckedCreateWithoutDomainsInput = {
   onboardingStatus?: string | null
   config?: Prisma.TenantConfigUncheckedCreateNestedOneWithoutTenantInput
   features?: Prisma.TenantFeatureUncheckedCreateNestedOneWithoutTenantInput
+  uiConfig?: Prisma.TenantUIConfigUncheckedCreateNestedOneWithoutTenantInput
   users?: Prisma.UserUncheckedCreateNestedManyWithoutTenantInput
   products?: Prisma.ProductUncheckedCreateNestedManyWithoutTenantInput
   categories?: Prisma.CategoryUncheckedCreateNestedManyWithoutTenantInput
@@ -1063,6 +1086,7 @@ export type TenantUpdateWithoutDomainsInput = {
   onboardingStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   config?: Prisma.TenantConfigUpdateOneWithoutTenantNestedInput
   features?: Prisma.TenantFeatureUpdateOneWithoutTenantNestedInput
+  uiConfig?: Prisma.TenantUIConfigUpdateOneWithoutTenantNestedInput
   users?: Prisma.UserUpdateManyWithoutTenantNestedInput
   products?: Prisma.ProductUpdateManyWithoutTenantNestedInput
   categories?: Prisma.CategoryUpdateManyWithoutTenantNestedInput
@@ -1098,6 +1122,7 @@ export type TenantUncheckedUpdateWithoutDomainsInput = {
   onboardingStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   config?: Prisma.TenantConfigUncheckedUpdateOneWithoutTenantNestedInput
   features?: Prisma.TenantFeatureUncheckedUpdateOneWithoutTenantNestedInput
+  uiConfig?: Prisma.TenantUIConfigUncheckedUpdateOneWithoutTenantNestedInput
   users?: Prisma.UserUncheckedUpdateManyWithoutTenantNestedInput
   products?: Prisma.ProductUncheckedUpdateManyWithoutTenantNestedInput
   categories?: Prisma.CategoryUncheckedUpdateManyWithoutTenantNestedInput
@@ -1133,6 +1158,7 @@ export type TenantCreateWithoutConfigInput = {
   onboardingStatus?: string | null
   domains?: Prisma.TenantDomainCreateNestedManyWithoutTenantInput
   features?: Prisma.TenantFeatureCreateNestedOneWithoutTenantInput
+  uiConfig?: Prisma.TenantUIConfigCreateNestedOneWithoutTenantInput
   users?: Prisma.UserCreateNestedManyWithoutTenantInput
   products?: Prisma.ProductCreateNestedManyWithoutTenantInput
   categories?: Prisma.CategoryCreateNestedManyWithoutTenantInput
@@ -1168,6 +1194,7 @@ export type TenantUncheckedCreateWithoutConfigInput = {
   onboardingStatus?: string | null
   domains?: Prisma.TenantDomainUncheckedCreateNestedManyWithoutTenantInput
   features?: Prisma.TenantFeatureUncheckedCreateNestedOneWithoutTenantInput
+  uiConfig?: Prisma.TenantUIConfigUncheckedCreateNestedOneWithoutTenantInput
   users?: Prisma.UserUncheckedCreateNestedManyWithoutTenantInput
   products?: Prisma.ProductUncheckedCreateNestedManyWithoutTenantInput
   categories?: Prisma.CategoryUncheckedCreateNestedManyWithoutTenantInput
@@ -1219,6 +1246,7 @@ export type TenantUpdateWithoutConfigInput = {
   onboardingStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   domains?: Prisma.TenantDomainUpdateManyWithoutTenantNestedInput
   features?: Prisma.TenantFeatureUpdateOneWithoutTenantNestedInput
+  uiConfig?: Prisma.TenantUIConfigUpdateOneWithoutTenantNestedInput
   users?: Prisma.UserUpdateManyWithoutTenantNestedInput
   products?: Prisma.ProductUpdateManyWithoutTenantNestedInput
   categories?: Prisma.CategoryUpdateManyWithoutTenantNestedInput
@@ -1254,6 +1282,7 @@ export type TenantUncheckedUpdateWithoutConfigInput = {
   onboardingStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   domains?: Prisma.TenantDomainUncheckedUpdateManyWithoutTenantNestedInput
   features?: Prisma.TenantFeatureUncheckedUpdateOneWithoutTenantNestedInput
+  uiConfig?: Prisma.TenantUIConfigUncheckedUpdateOneWithoutTenantNestedInput
   users?: Prisma.UserUncheckedUpdateManyWithoutTenantNestedInput
   products?: Prisma.ProductUncheckedUpdateManyWithoutTenantNestedInput
   categories?: Prisma.CategoryUncheckedUpdateManyWithoutTenantNestedInput
@@ -1289,6 +1318,7 @@ export type TenantCreateWithoutFeaturesInput = {
   onboardingStatus?: string | null
   domains?: Prisma.TenantDomainCreateNestedManyWithoutTenantInput
   config?: Prisma.TenantConfigCreateNestedOneWithoutTenantInput
+  uiConfig?: Prisma.TenantUIConfigCreateNestedOneWithoutTenantInput
   users?: Prisma.UserCreateNestedManyWithoutTenantInput
   products?: Prisma.ProductCreateNestedManyWithoutTenantInput
   categories?: Prisma.CategoryCreateNestedManyWithoutTenantInput
@@ -1324,6 +1354,7 @@ export type TenantUncheckedCreateWithoutFeaturesInput = {
   onboardingStatus?: string | null
   domains?: Prisma.TenantDomainUncheckedCreateNestedManyWithoutTenantInput
   config?: Prisma.TenantConfigUncheckedCreateNestedOneWithoutTenantInput
+  uiConfig?: Prisma.TenantUIConfigUncheckedCreateNestedOneWithoutTenantInput
   users?: Prisma.UserUncheckedCreateNestedManyWithoutTenantInput
   products?: Prisma.ProductUncheckedCreateNestedManyWithoutTenantInput
   categories?: Prisma.CategoryUncheckedCreateNestedManyWithoutTenantInput
@@ -1375,6 +1406,7 @@ export type TenantUpdateWithoutFeaturesInput = {
   onboardingStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   domains?: Prisma.TenantDomainUpdateManyWithoutTenantNestedInput
   config?: Prisma.TenantConfigUpdateOneWithoutTenantNestedInput
+  uiConfig?: Prisma.TenantUIConfigUpdateOneWithoutTenantNestedInput
   users?: Prisma.UserUpdateManyWithoutTenantNestedInput
   products?: Prisma.ProductUpdateManyWithoutTenantNestedInput
   categories?: Prisma.CategoryUpdateManyWithoutTenantNestedInput
@@ -1410,6 +1442,167 @@ export type TenantUncheckedUpdateWithoutFeaturesInput = {
   onboardingStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   domains?: Prisma.TenantDomainUncheckedUpdateManyWithoutTenantNestedInput
   config?: Prisma.TenantConfigUncheckedUpdateOneWithoutTenantNestedInput
+  uiConfig?: Prisma.TenantUIConfigUncheckedUpdateOneWithoutTenantNestedInput
+  users?: Prisma.UserUncheckedUpdateManyWithoutTenantNestedInput
+  products?: Prisma.ProductUncheckedUpdateManyWithoutTenantNestedInput
+  categories?: Prisma.CategoryUncheckedUpdateManyWithoutTenantNestedInput
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutTenantNestedInput
+  appointments?: Prisma.AppointmentUncheckedUpdateManyWithoutTenantNestedInput
+  tickets?: Prisma.TicketUncheckedUpdateManyWithoutTenantNestedInput
+  repairTickets?: Prisma.RepairTicketUncheckedUpdateManyWithoutTenantNestedInput
+  invoices?: Prisma.InvoiceUncheckedUpdateManyWithoutTenantNestedInput
+  settings?: Prisma.SettingUncheckedUpdateManyWithoutTenantNestedInput
+  banners?: Prisma.PromotionalBannerUncheckedUpdateManyWithoutTenantNestedInput
+  discountCodes?: Prisma.DiscountCodeUncheckedUpdateManyWithoutTenantNestedInput
+  shippingZones?: Prisma.ShippingZoneUncheckedUpdateManyWithoutTenantNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutTenantNestedInput
+  feedbackRatings?: Prisma.FeedbackRatingUncheckedUpdateManyWithoutTenantNestedInput
+  emailUnsubscribes?: Prisma.EmailUnsubscribeUncheckedUpdateManyWithoutTenantNestedInput
+  repairDeviceServices?: Prisma.RepairDeviceServiceUncheckedUpdateManyWithoutTenantNestedInput
+  repairBrands?: Prisma.RepairBrandUncheckedUpdateManyWithoutTenantNestedInput
+  repairDevices?: Prisma.RepairDeviceUncheckedUpdateManyWithoutTenantNestedInput
+  repairServiceTypes?: Prisma.RepairServiceTypeUncheckedUpdateManyWithoutTenantNestedInput
+  homepage?: Prisma.TenantHomepageUncheckedUpdateOneWithoutTenantNestedInput
+  pages?: Prisma.TenantPageUncheckedUpdateManyWithoutTenantNestedInput
+}
+
+export type TenantCreateWithoutUiConfigInput = {
+  id?: string
+  name: string
+  slug: string
+  status?: $Enums.TenantStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  suspendedAt?: Date | string | null
+  archivedAt?: Date | string | null
+  onboardingStatus?: string | null
+  domains?: Prisma.TenantDomainCreateNestedManyWithoutTenantInput
+  config?: Prisma.TenantConfigCreateNestedOneWithoutTenantInput
+  features?: Prisma.TenantFeatureCreateNestedOneWithoutTenantInput
+  users?: Prisma.UserCreateNestedManyWithoutTenantInput
+  products?: Prisma.ProductCreateNestedManyWithoutTenantInput
+  categories?: Prisma.CategoryCreateNestedManyWithoutTenantInput
+  orders?: Prisma.OrderCreateNestedManyWithoutTenantInput
+  appointments?: Prisma.AppointmentCreateNestedManyWithoutTenantInput
+  tickets?: Prisma.TicketCreateNestedManyWithoutTenantInput
+  repairTickets?: Prisma.RepairTicketCreateNestedManyWithoutTenantInput
+  invoices?: Prisma.InvoiceCreateNestedManyWithoutTenantInput
+  settings?: Prisma.SettingCreateNestedManyWithoutTenantInput
+  banners?: Prisma.PromotionalBannerCreateNestedManyWithoutTenantInput
+  discountCodes?: Prisma.DiscountCodeCreateNestedManyWithoutTenantInput
+  shippingZones?: Prisma.ShippingZoneCreateNestedManyWithoutTenantInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutTenantInput
+  feedbackRatings?: Prisma.FeedbackRatingCreateNestedManyWithoutTenantInput
+  emailUnsubscribes?: Prisma.EmailUnsubscribeCreateNestedManyWithoutTenantInput
+  repairDeviceServices?: Prisma.RepairDeviceServiceCreateNestedManyWithoutTenantInput
+  repairBrands?: Prisma.RepairBrandCreateNestedManyWithoutTenantInput
+  repairDevices?: Prisma.RepairDeviceCreateNestedManyWithoutTenantInput
+  repairServiceTypes?: Prisma.RepairServiceTypeCreateNestedManyWithoutTenantInput
+  homepage?: Prisma.TenantHomepageCreateNestedOneWithoutTenantInput
+  pages?: Prisma.TenantPageCreateNestedManyWithoutTenantInput
+}
+
+export type TenantUncheckedCreateWithoutUiConfigInput = {
+  id?: string
+  name: string
+  slug: string
+  status?: $Enums.TenantStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  suspendedAt?: Date | string | null
+  archivedAt?: Date | string | null
+  onboardingStatus?: string | null
+  domains?: Prisma.TenantDomainUncheckedCreateNestedManyWithoutTenantInput
+  config?: Prisma.TenantConfigUncheckedCreateNestedOneWithoutTenantInput
+  features?: Prisma.TenantFeatureUncheckedCreateNestedOneWithoutTenantInput
+  users?: Prisma.UserUncheckedCreateNestedManyWithoutTenantInput
+  products?: Prisma.ProductUncheckedCreateNestedManyWithoutTenantInput
+  categories?: Prisma.CategoryUncheckedCreateNestedManyWithoutTenantInput
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutTenantInput
+  appointments?: Prisma.AppointmentUncheckedCreateNestedManyWithoutTenantInput
+  tickets?: Prisma.TicketUncheckedCreateNestedManyWithoutTenantInput
+  repairTickets?: Prisma.RepairTicketUncheckedCreateNestedManyWithoutTenantInput
+  invoices?: Prisma.InvoiceUncheckedCreateNestedManyWithoutTenantInput
+  settings?: Prisma.SettingUncheckedCreateNestedManyWithoutTenantInput
+  banners?: Prisma.PromotionalBannerUncheckedCreateNestedManyWithoutTenantInput
+  discountCodes?: Prisma.DiscountCodeUncheckedCreateNestedManyWithoutTenantInput
+  shippingZones?: Prisma.ShippingZoneUncheckedCreateNestedManyWithoutTenantInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutTenantInput
+  feedbackRatings?: Prisma.FeedbackRatingUncheckedCreateNestedManyWithoutTenantInput
+  emailUnsubscribes?: Prisma.EmailUnsubscribeUncheckedCreateNestedManyWithoutTenantInput
+  repairDeviceServices?: Prisma.RepairDeviceServiceUncheckedCreateNestedManyWithoutTenantInput
+  repairBrands?: Prisma.RepairBrandUncheckedCreateNestedManyWithoutTenantInput
+  repairDevices?: Prisma.RepairDeviceUncheckedCreateNestedManyWithoutTenantInput
+  repairServiceTypes?: Prisma.RepairServiceTypeUncheckedCreateNestedManyWithoutTenantInput
+  homepage?: Prisma.TenantHomepageUncheckedCreateNestedOneWithoutTenantInput
+  pages?: Prisma.TenantPageUncheckedCreateNestedManyWithoutTenantInput
+}
+
+export type TenantCreateOrConnectWithoutUiConfigInput = {
+  where: Prisma.TenantWhereUniqueInput
+  create: Prisma.XOR<Prisma.TenantCreateWithoutUiConfigInput, Prisma.TenantUncheckedCreateWithoutUiConfigInput>
+}
+
+export type TenantUpsertWithoutUiConfigInput = {
+  update: Prisma.XOR<Prisma.TenantUpdateWithoutUiConfigInput, Prisma.TenantUncheckedUpdateWithoutUiConfigInput>
+  create: Prisma.XOR<Prisma.TenantCreateWithoutUiConfigInput, Prisma.TenantUncheckedCreateWithoutUiConfigInput>
+  where?: Prisma.TenantWhereInput
+}
+
+export type TenantUpdateToOneWithWhereWithoutUiConfigInput = {
+  where?: Prisma.TenantWhereInput
+  data: Prisma.XOR<Prisma.TenantUpdateWithoutUiConfigInput, Prisma.TenantUncheckedUpdateWithoutUiConfigInput>
+}
+
+export type TenantUpdateWithoutUiConfigInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumTenantStatusFieldUpdateOperationsInput | $Enums.TenantStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  onboardingStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  domains?: Prisma.TenantDomainUpdateManyWithoutTenantNestedInput
+  config?: Prisma.TenantConfigUpdateOneWithoutTenantNestedInput
+  features?: Prisma.TenantFeatureUpdateOneWithoutTenantNestedInput
+  users?: Prisma.UserUpdateManyWithoutTenantNestedInput
+  products?: Prisma.ProductUpdateManyWithoutTenantNestedInput
+  categories?: Prisma.CategoryUpdateManyWithoutTenantNestedInput
+  orders?: Prisma.OrderUpdateManyWithoutTenantNestedInput
+  appointments?: Prisma.AppointmentUpdateManyWithoutTenantNestedInput
+  tickets?: Prisma.TicketUpdateManyWithoutTenantNestedInput
+  repairTickets?: Prisma.RepairTicketUpdateManyWithoutTenantNestedInput
+  invoices?: Prisma.InvoiceUpdateManyWithoutTenantNestedInput
+  settings?: Prisma.SettingUpdateManyWithoutTenantNestedInput
+  banners?: Prisma.PromotionalBannerUpdateManyWithoutTenantNestedInput
+  discountCodes?: Prisma.DiscountCodeUpdateManyWithoutTenantNestedInput
+  shippingZones?: Prisma.ShippingZoneUpdateManyWithoutTenantNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutTenantNestedInput
+  feedbackRatings?: Prisma.FeedbackRatingUpdateManyWithoutTenantNestedInput
+  emailUnsubscribes?: Prisma.EmailUnsubscribeUpdateManyWithoutTenantNestedInput
+  repairDeviceServices?: Prisma.RepairDeviceServiceUpdateManyWithoutTenantNestedInput
+  repairBrands?: Prisma.RepairBrandUpdateManyWithoutTenantNestedInput
+  repairDevices?: Prisma.RepairDeviceUpdateManyWithoutTenantNestedInput
+  repairServiceTypes?: Prisma.RepairServiceTypeUpdateManyWithoutTenantNestedInput
+  homepage?: Prisma.TenantHomepageUpdateOneWithoutTenantNestedInput
+  pages?: Prisma.TenantPageUpdateManyWithoutTenantNestedInput
+}
+
+export type TenantUncheckedUpdateWithoutUiConfigInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumTenantStatusFieldUpdateOperationsInput | $Enums.TenantStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  onboardingStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  domains?: Prisma.TenantDomainUncheckedUpdateManyWithoutTenantNestedInput
+  config?: Prisma.TenantConfigUncheckedUpdateOneWithoutTenantNestedInput
+  features?: Prisma.TenantFeatureUncheckedUpdateOneWithoutTenantNestedInput
   users?: Prisma.UserUncheckedUpdateManyWithoutTenantNestedInput
   products?: Prisma.ProductUncheckedUpdateManyWithoutTenantNestedInput
   categories?: Prisma.CategoryUncheckedUpdateManyWithoutTenantNestedInput
@@ -1446,6 +1639,7 @@ export type TenantCreateWithoutHomepageInput = {
   domains?: Prisma.TenantDomainCreateNestedManyWithoutTenantInput
   config?: Prisma.TenantConfigCreateNestedOneWithoutTenantInput
   features?: Prisma.TenantFeatureCreateNestedOneWithoutTenantInput
+  uiConfig?: Prisma.TenantUIConfigCreateNestedOneWithoutTenantInput
   users?: Prisma.UserCreateNestedManyWithoutTenantInput
   products?: Prisma.ProductCreateNestedManyWithoutTenantInput
   categories?: Prisma.CategoryCreateNestedManyWithoutTenantInput
@@ -1481,6 +1675,7 @@ export type TenantUncheckedCreateWithoutHomepageInput = {
   domains?: Prisma.TenantDomainUncheckedCreateNestedManyWithoutTenantInput
   config?: Prisma.TenantConfigUncheckedCreateNestedOneWithoutTenantInput
   features?: Prisma.TenantFeatureUncheckedCreateNestedOneWithoutTenantInput
+  uiConfig?: Prisma.TenantUIConfigUncheckedCreateNestedOneWithoutTenantInput
   users?: Prisma.UserUncheckedCreateNestedManyWithoutTenantInput
   products?: Prisma.ProductUncheckedCreateNestedManyWithoutTenantInput
   categories?: Prisma.CategoryUncheckedCreateNestedManyWithoutTenantInput
@@ -1532,6 +1727,7 @@ export type TenantUpdateWithoutHomepageInput = {
   domains?: Prisma.TenantDomainUpdateManyWithoutTenantNestedInput
   config?: Prisma.TenantConfigUpdateOneWithoutTenantNestedInput
   features?: Prisma.TenantFeatureUpdateOneWithoutTenantNestedInput
+  uiConfig?: Prisma.TenantUIConfigUpdateOneWithoutTenantNestedInput
   users?: Prisma.UserUpdateManyWithoutTenantNestedInput
   products?: Prisma.ProductUpdateManyWithoutTenantNestedInput
   categories?: Prisma.CategoryUpdateManyWithoutTenantNestedInput
@@ -1567,6 +1763,7 @@ export type TenantUncheckedUpdateWithoutHomepageInput = {
   domains?: Prisma.TenantDomainUncheckedUpdateManyWithoutTenantNestedInput
   config?: Prisma.TenantConfigUncheckedUpdateOneWithoutTenantNestedInput
   features?: Prisma.TenantFeatureUncheckedUpdateOneWithoutTenantNestedInput
+  uiConfig?: Prisma.TenantUIConfigUncheckedUpdateOneWithoutTenantNestedInput
   users?: Prisma.UserUncheckedUpdateManyWithoutTenantNestedInput
   products?: Prisma.ProductUncheckedUpdateManyWithoutTenantNestedInput
   categories?: Prisma.CategoryUncheckedUpdateManyWithoutTenantNestedInput
@@ -1602,6 +1799,7 @@ export type TenantCreateWithoutPagesInput = {
   domains?: Prisma.TenantDomainCreateNestedManyWithoutTenantInput
   config?: Prisma.TenantConfigCreateNestedOneWithoutTenantInput
   features?: Prisma.TenantFeatureCreateNestedOneWithoutTenantInput
+  uiConfig?: Prisma.TenantUIConfigCreateNestedOneWithoutTenantInput
   users?: Prisma.UserCreateNestedManyWithoutTenantInput
   products?: Prisma.ProductCreateNestedManyWithoutTenantInput
   categories?: Prisma.CategoryCreateNestedManyWithoutTenantInput
@@ -1637,6 +1835,7 @@ export type TenantUncheckedCreateWithoutPagesInput = {
   domains?: Prisma.TenantDomainUncheckedCreateNestedManyWithoutTenantInput
   config?: Prisma.TenantConfigUncheckedCreateNestedOneWithoutTenantInput
   features?: Prisma.TenantFeatureUncheckedCreateNestedOneWithoutTenantInput
+  uiConfig?: Prisma.TenantUIConfigUncheckedCreateNestedOneWithoutTenantInput
   users?: Prisma.UserUncheckedCreateNestedManyWithoutTenantInput
   products?: Prisma.ProductUncheckedCreateNestedManyWithoutTenantInput
   categories?: Prisma.CategoryUncheckedCreateNestedManyWithoutTenantInput
@@ -1688,6 +1887,7 @@ export type TenantUpdateWithoutPagesInput = {
   domains?: Prisma.TenantDomainUpdateManyWithoutTenantNestedInput
   config?: Prisma.TenantConfigUpdateOneWithoutTenantNestedInput
   features?: Prisma.TenantFeatureUpdateOneWithoutTenantNestedInput
+  uiConfig?: Prisma.TenantUIConfigUpdateOneWithoutTenantNestedInput
   users?: Prisma.UserUpdateManyWithoutTenantNestedInput
   products?: Prisma.ProductUpdateManyWithoutTenantNestedInput
   categories?: Prisma.CategoryUpdateManyWithoutTenantNestedInput
@@ -1723,6 +1923,7 @@ export type TenantUncheckedUpdateWithoutPagesInput = {
   domains?: Prisma.TenantDomainUncheckedUpdateManyWithoutTenantNestedInput
   config?: Prisma.TenantConfigUncheckedUpdateOneWithoutTenantNestedInput
   features?: Prisma.TenantFeatureUncheckedUpdateOneWithoutTenantNestedInput
+  uiConfig?: Prisma.TenantUIConfigUncheckedUpdateOneWithoutTenantNestedInput
   users?: Prisma.UserUncheckedUpdateManyWithoutTenantNestedInput
   products?: Prisma.ProductUncheckedUpdateManyWithoutTenantNestedInput
   categories?: Prisma.CategoryUncheckedUpdateManyWithoutTenantNestedInput
@@ -1758,6 +1959,7 @@ export type TenantCreateWithoutUsersInput = {
   domains?: Prisma.TenantDomainCreateNestedManyWithoutTenantInput
   config?: Prisma.TenantConfigCreateNestedOneWithoutTenantInput
   features?: Prisma.TenantFeatureCreateNestedOneWithoutTenantInput
+  uiConfig?: Prisma.TenantUIConfigCreateNestedOneWithoutTenantInput
   products?: Prisma.ProductCreateNestedManyWithoutTenantInput
   categories?: Prisma.CategoryCreateNestedManyWithoutTenantInput
   orders?: Prisma.OrderCreateNestedManyWithoutTenantInput
@@ -1793,6 +1995,7 @@ export type TenantUncheckedCreateWithoutUsersInput = {
   domains?: Prisma.TenantDomainUncheckedCreateNestedManyWithoutTenantInput
   config?: Prisma.TenantConfigUncheckedCreateNestedOneWithoutTenantInput
   features?: Prisma.TenantFeatureUncheckedCreateNestedOneWithoutTenantInput
+  uiConfig?: Prisma.TenantUIConfigUncheckedCreateNestedOneWithoutTenantInput
   products?: Prisma.ProductUncheckedCreateNestedManyWithoutTenantInput
   categories?: Prisma.CategoryUncheckedCreateNestedManyWithoutTenantInput
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutTenantInput
@@ -1844,6 +2047,7 @@ export type TenantUpdateWithoutUsersInput = {
   domains?: Prisma.TenantDomainUpdateManyWithoutTenantNestedInput
   config?: Prisma.TenantConfigUpdateOneWithoutTenantNestedInput
   features?: Prisma.TenantFeatureUpdateOneWithoutTenantNestedInput
+  uiConfig?: Prisma.TenantUIConfigUpdateOneWithoutTenantNestedInput
   products?: Prisma.ProductUpdateManyWithoutTenantNestedInput
   categories?: Prisma.CategoryUpdateManyWithoutTenantNestedInput
   orders?: Prisma.OrderUpdateManyWithoutTenantNestedInput
@@ -1879,6 +2083,7 @@ export type TenantUncheckedUpdateWithoutUsersInput = {
   domains?: Prisma.TenantDomainUncheckedUpdateManyWithoutTenantNestedInput
   config?: Prisma.TenantConfigUncheckedUpdateOneWithoutTenantNestedInput
   features?: Prisma.TenantFeatureUncheckedUpdateOneWithoutTenantNestedInput
+  uiConfig?: Prisma.TenantUIConfigUncheckedUpdateOneWithoutTenantNestedInput
   products?: Prisma.ProductUncheckedUpdateManyWithoutTenantNestedInput
   categories?: Prisma.CategoryUncheckedUpdateManyWithoutTenantNestedInput
   orders?: Prisma.OrderUncheckedUpdateManyWithoutTenantNestedInput
@@ -1914,6 +2119,7 @@ export type TenantCreateWithoutCategoriesInput = {
   domains?: Prisma.TenantDomainCreateNestedManyWithoutTenantInput
   config?: Prisma.TenantConfigCreateNestedOneWithoutTenantInput
   features?: Prisma.TenantFeatureCreateNestedOneWithoutTenantInput
+  uiConfig?: Prisma.TenantUIConfigCreateNestedOneWithoutTenantInput
   users?: Prisma.UserCreateNestedManyWithoutTenantInput
   products?: Prisma.ProductCreateNestedManyWithoutTenantInput
   orders?: Prisma.OrderCreateNestedManyWithoutTenantInput
@@ -1949,6 +2155,7 @@ export type TenantUncheckedCreateWithoutCategoriesInput = {
   domains?: Prisma.TenantDomainUncheckedCreateNestedManyWithoutTenantInput
   config?: Prisma.TenantConfigUncheckedCreateNestedOneWithoutTenantInput
   features?: Prisma.TenantFeatureUncheckedCreateNestedOneWithoutTenantInput
+  uiConfig?: Prisma.TenantUIConfigUncheckedCreateNestedOneWithoutTenantInput
   users?: Prisma.UserUncheckedCreateNestedManyWithoutTenantInput
   products?: Prisma.ProductUncheckedCreateNestedManyWithoutTenantInput
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutTenantInput
@@ -2000,6 +2207,7 @@ export type TenantUpdateWithoutCategoriesInput = {
   domains?: Prisma.TenantDomainUpdateManyWithoutTenantNestedInput
   config?: Prisma.TenantConfigUpdateOneWithoutTenantNestedInput
   features?: Prisma.TenantFeatureUpdateOneWithoutTenantNestedInput
+  uiConfig?: Prisma.TenantUIConfigUpdateOneWithoutTenantNestedInput
   users?: Prisma.UserUpdateManyWithoutTenantNestedInput
   products?: Prisma.ProductUpdateManyWithoutTenantNestedInput
   orders?: Prisma.OrderUpdateManyWithoutTenantNestedInput
@@ -2035,6 +2243,7 @@ export type TenantUncheckedUpdateWithoutCategoriesInput = {
   domains?: Prisma.TenantDomainUncheckedUpdateManyWithoutTenantNestedInput
   config?: Prisma.TenantConfigUncheckedUpdateOneWithoutTenantNestedInput
   features?: Prisma.TenantFeatureUncheckedUpdateOneWithoutTenantNestedInput
+  uiConfig?: Prisma.TenantUIConfigUncheckedUpdateOneWithoutTenantNestedInput
   users?: Prisma.UserUncheckedUpdateManyWithoutTenantNestedInput
   products?: Prisma.ProductUncheckedUpdateManyWithoutTenantNestedInput
   orders?: Prisma.OrderUncheckedUpdateManyWithoutTenantNestedInput
@@ -2070,6 +2279,7 @@ export type TenantCreateWithoutProductsInput = {
   domains?: Prisma.TenantDomainCreateNestedManyWithoutTenantInput
   config?: Prisma.TenantConfigCreateNestedOneWithoutTenantInput
   features?: Prisma.TenantFeatureCreateNestedOneWithoutTenantInput
+  uiConfig?: Prisma.TenantUIConfigCreateNestedOneWithoutTenantInput
   users?: Prisma.UserCreateNestedManyWithoutTenantInput
   categories?: Prisma.CategoryCreateNestedManyWithoutTenantInput
   orders?: Prisma.OrderCreateNestedManyWithoutTenantInput
@@ -2105,6 +2315,7 @@ export type TenantUncheckedCreateWithoutProductsInput = {
   domains?: Prisma.TenantDomainUncheckedCreateNestedManyWithoutTenantInput
   config?: Prisma.TenantConfigUncheckedCreateNestedOneWithoutTenantInput
   features?: Prisma.TenantFeatureUncheckedCreateNestedOneWithoutTenantInput
+  uiConfig?: Prisma.TenantUIConfigUncheckedCreateNestedOneWithoutTenantInput
   users?: Prisma.UserUncheckedCreateNestedManyWithoutTenantInput
   categories?: Prisma.CategoryUncheckedCreateNestedManyWithoutTenantInput
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutTenantInput
@@ -2156,6 +2367,7 @@ export type TenantUpdateWithoutProductsInput = {
   domains?: Prisma.TenantDomainUpdateManyWithoutTenantNestedInput
   config?: Prisma.TenantConfigUpdateOneWithoutTenantNestedInput
   features?: Prisma.TenantFeatureUpdateOneWithoutTenantNestedInput
+  uiConfig?: Prisma.TenantUIConfigUpdateOneWithoutTenantNestedInput
   users?: Prisma.UserUpdateManyWithoutTenantNestedInput
   categories?: Prisma.CategoryUpdateManyWithoutTenantNestedInput
   orders?: Prisma.OrderUpdateManyWithoutTenantNestedInput
@@ -2191,6 +2403,7 @@ export type TenantUncheckedUpdateWithoutProductsInput = {
   domains?: Prisma.TenantDomainUncheckedUpdateManyWithoutTenantNestedInput
   config?: Prisma.TenantConfigUncheckedUpdateOneWithoutTenantNestedInput
   features?: Prisma.TenantFeatureUncheckedUpdateOneWithoutTenantNestedInput
+  uiConfig?: Prisma.TenantUIConfigUncheckedUpdateOneWithoutTenantNestedInput
   users?: Prisma.UserUncheckedUpdateManyWithoutTenantNestedInput
   categories?: Prisma.CategoryUncheckedUpdateManyWithoutTenantNestedInput
   orders?: Prisma.OrderUncheckedUpdateManyWithoutTenantNestedInput
@@ -2226,6 +2439,7 @@ export type TenantCreateWithoutOrdersInput = {
   domains?: Prisma.TenantDomainCreateNestedManyWithoutTenantInput
   config?: Prisma.TenantConfigCreateNestedOneWithoutTenantInput
   features?: Prisma.TenantFeatureCreateNestedOneWithoutTenantInput
+  uiConfig?: Prisma.TenantUIConfigCreateNestedOneWithoutTenantInput
   users?: Prisma.UserCreateNestedManyWithoutTenantInput
   products?: Prisma.ProductCreateNestedManyWithoutTenantInput
   categories?: Prisma.CategoryCreateNestedManyWithoutTenantInput
@@ -2261,6 +2475,7 @@ export type TenantUncheckedCreateWithoutOrdersInput = {
   domains?: Prisma.TenantDomainUncheckedCreateNestedManyWithoutTenantInput
   config?: Prisma.TenantConfigUncheckedCreateNestedOneWithoutTenantInput
   features?: Prisma.TenantFeatureUncheckedCreateNestedOneWithoutTenantInput
+  uiConfig?: Prisma.TenantUIConfigUncheckedCreateNestedOneWithoutTenantInput
   users?: Prisma.UserUncheckedCreateNestedManyWithoutTenantInput
   products?: Prisma.ProductUncheckedCreateNestedManyWithoutTenantInput
   categories?: Prisma.CategoryUncheckedCreateNestedManyWithoutTenantInput
@@ -2312,6 +2527,7 @@ export type TenantUpdateWithoutOrdersInput = {
   domains?: Prisma.TenantDomainUpdateManyWithoutTenantNestedInput
   config?: Prisma.TenantConfigUpdateOneWithoutTenantNestedInput
   features?: Prisma.TenantFeatureUpdateOneWithoutTenantNestedInput
+  uiConfig?: Prisma.TenantUIConfigUpdateOneWithoutTenantNestedInput
   users?: Prisma.UserUpdateManyWithoutTenantNestedInput
   products?: Prisma.ProductUpdateManyWithoutTenantNestedInput
   categories?: Prisma.CategoryUpdateManyWithoutTenantNestedInput
@@ -2347,6 +2563,7 @@ export type TenantUncheckedUpdateWithoutOrdersInput = {
   domains?: Prisma.TenantDomainUncheckedUpdateManyWithoutTenantNestedInput
   config?: Prisma.TenantConfigUncheckedUpdateOneWithoutTenantNestedInput
   features?: Prisma.TenantFeatureUncheckedUpdateOneWithoutTenantNestedInput
+  uiConfig?: Prisma.TenantUIConfigUncheckedUpdateOneWithoutTenantNestedInput
   users?: Prisma.UserUncheckedUpdateManyWithoutTenantNestedInput
   products?: Prisma.ProductUncheckedUpdateManyWithoutTenantNestedInput
   categories?: Prisma.CategoryUncheckedUpdateManyWithoutTenantNestedInput
@@ -2382,6 +2599,7 @@ export type TenantCreateWithoutRepairTicketsInput = {
   domains?: Prisma.TenantDomainCreateNestedManyWithoutTenantInput
   config?: Prisma.TenantConfigCreateNestedOneWithoutTenantInput
   features?: Prisma.TenantFeatureCreateNestedOneWithoutTenantInput
+  uiConfig?: Prisma.TenantUIConfigCreateNestedOneWithoutTenantInput
   users?: Prisma.UserCreateNestedManyWithoutTenantInput
   products?: Prisma.ProductCreateNestedManyWithoutTenantInput
   categories?: Prisma.CategoryCreateNestedManyWithoutTenantInput
@@ -2417,6 +2635,7 @@ export type TenantUncheckedCreateWithoutRepairTicketsInput = {
   domains?: Prisma.TenantDomainUncheckedCreateNestedManyWithoutTenantInput
   config?: Prisma.TenantConfigUncheckedCreateNestedOneWithoutTenantInput
   features?: Prisma.TenantFeatureUncheckedCreateNestedOneWithoutTenantInput
+  uiConfig?: Prisma.TenantUIConfigUncheckedCreateNestedOneWithoutTenantInput
   users?: Prisma.UserUncheckedCreateNestedManyWithoutTenantInput
   products?: Prisma.ProductUncheckedCreateNestedManyWithoutTenantInput
   categories?: Prisma.CategoryUncheckedCreateNestedManyWithoutTenantInput
@@ -2468,6 +2687,7 @@ export type TenantUpdateWithoutRepairTicketsInput = {
   domains?: Prisma.TenantDomainUpdateManyWithoutTenantNestedInput
   config?: Prisma.TenantConfigUpdateOneWithoutTenantNestedInput
   features?: Prisma.TenantFeatureUpdateOneWithoutTenantNestedInput
+  uiConfig?: Prisma.TenantUIConfigUpdateOneWithoutTenantNestedInput
   users?: Prisma.UserUpdateManyWithoutTenantNestedInput
   products?: Prisma.ProductUpdateManyWithoutTenantNestedInput
   categories?: Prisma.CategoryUpdateManyWithoutTenantNestedInput
@@ -2503,6 +2723,7 @@ export type TenantUncheckedUpdateWithoutRepairTicketsInput = {
   domains?: Prisma.TenantDomainUncheckedUpdateManyWithoutTenantNestedInput
   config?: Prisma.TenantConfigUncheckedUpdateOneWithoutTenantNestedInput
   features?: Prisma.TenantFeatureUncheckedUpdateOneWithoutTenantNestedInput
+  uiConfig?: Prisma.TenantUIConfigUncheckedUpdateOneWithoutTenantNestedInput
   users?: Prisma.UserUncheckedUpdateManyWithoutTenantNestedInput
   products?: Prisma.ProductUncheckedUpdateManyWithoutTenantNestedInput
   categories?: Prisma.CategoryUncheckedUpdateManyWithoutTenantNestedInput
@@ -2538,6 +2759,7 @@ export type TenantCreateWithoutSettingsInput = {
   domains?: Prisma.TenantDomainCreateNestedManyWithoutTenantInput
   config?: Prisma.TenantConfigCreateNestedOneWithoutTenantInput
   features?: Prisma.TenantFeatureCreateNestedOneWithoutTenantInput
+  uiConfig?: Prisma.TenantUIConfigCreateNestedOneWithoutTenantInput
   users?: Prisma.UserCreateNestedManyWithoutTenantInput
   products?: Prisma.ProductCreateNestedManyWithoutTenantInput
   categories?: Prisma.CategoryCreateNestedManyWithoutTenantInput
@@ -2573,6 +2795,7 @@ export type TenantUncheckedCreateWithoutSettingsInput = {
   domains?: Prisma.TenantDomainUncheckedCreateNestedManyWithoutTenantInput
   config?: Prisma.TenantConfigUncheckedCreateNestedOneWithoutTenantInput
   features?: Prisma.TenantFeatureUncheckedCreateNestedOneWithoutTenantInput
+  uiConfig?: Prisma.TenantUIConfigUncheckedCreateNestedOneWithoutTenantInput
   users?: Prisma.UserUncheckedCreateNestedManyWithoutTenantInput
   products?: Prisma.ProductUncheckedCreateNestedManyWithoutTenantInput
   categories?: Prisma.CategoryUncheckedCreateNestedManyWithoutTenantInput
@@ -2624,6 +2847,7 @@ export type TenantUpdateWithoutSettingsInput = {
   domains?: Prisma.TenantDomainUpdateManyWithoutTenantNestedInput
   config?: Prisma.TenantConfigUpdateOneWithoutTenantNestedInput
   features?: Prisma.TenantFeatureUpdateOneWithoutTenantNestedInput
+  uiConfig?: Prisma.TenantUIConfigUpdateOneWithoutTenantNestedInput
   users?: Prisma.UserUpdateManyWithoutTenantNestedInput
   products?: Prisma.ProductUpdateManyWithoutTenantNestedInput
   categories?: Prisma.CategoryUpdateManyWithoutTenantNestedInput
@@ -2659,6 +2883,7 @@ export type TenantUncheckedUpdateWithoutSettingsInput = {
   domains?: Prisma.TenantDomainUncheckedUpdateManyWithoutTenantNestedInput
   config?: Prisma.TenantConfigUncheckedUpdateOneWithoutTenantNestedInput
   features?: Prisma.TenantFeatureUncheckedUpdateOneWithoutTenantNestedInput
+  uiConfig?: Prisma.TenantUIConfigUncheckedUpdateOneWithoutTenantNestedInput
   users?: Prisma.UserUncheckedUpdateManyWithoutTenantNestedInput
   products?: Prisma.ProductUncheckedUpdateManyWithoutTenantNestedInput
   categories?: Prisma.CategoryUncheckedUpdateManyWithoutTenantNestedInput
@@ -2694,6 +2919,7 @@ export type TenantCreateWithoutShippingZonesInput = {
   domains?: Prisma.TenantDomainCreateNestedManyWithoutTenantInput
   config?: Prisma.TenantConfigCreateNestedOneWithoutTenantInput
   features?: Prisma.TenantFeatureCreateNestedOneWithoutTenantInput
+  uiConfig?: Prisma.TenantUIConfigCreateNestedOneWithoutTenantInput
   users?: Prisma.UserCreateNestedManyWithoutTenantInput
   products?: Prisma.ProductCreateNestedManyWithoutTenantInput
   categories?: Prisma.CategoryCreateNestedManyWithoutTenantInput
@@ -2729,6 +2955,7 @@ export type TenantUncheckedCreateWithoutShippingZonesInput = {
   domains?: Prisma.TenantDomainUncheckedCreateNestedManyWithoutTenantInput
   config?: Prisma.TenantConfigUncheckedCreateNestedOneWithoutTenantInput
   features?: Prisma.TenantFeatureUncheckedCreateNestedOneWithoutTenantInput
+  uiConfig?: Prisma.TenantUIConfigUncheckedCreateNestedOneWithoutTenantInput
   users?: Prisma.UserUncheckedCreateNestedManyWithoutTenantInput
   products?: Prisma.ProductUncheckedCreateNestedManyWithoutTenantInput
   categories?: Prisma.CategoryUncheckedCreateNestedManyWithoutTenantInput
@@ -2780,6 +3007,7 @@ export type TenantUpdateWithoutShippingZonesInput = {
   domains?: Prisma.TenantDomainUpdateManyWithoutTenantNestedInput
   config?: Prisma.TenantConfigUpdateOneWithoutTenantNestedInput
   features?: Prisma.TenantFeatureUpdateOneWithoutTenantNestedInput
+  uiConfig?: Prisma.TenantUIConfigUpdateOneWithoutTenantNestedInput
   users?: Prisma.UserUpdateManyWithoutTenantNestedInput
   products?: Prisma.ProductUpdateManyWithoutTenantNestedInput
   categories?: Prisma.CategoryUpdateManyWithoutTenantNestedInput
@@ -2815,6 +3043,7 @@ export type TenantUncheckedUpdateWithoutShippingZonesInput = {
   domains?: Prisma.TenantDomainUncheckedUpdateManyWithoutTenantNestedInput
   config?: Prisma.TenantConfigUncheckedUpdateOneWithoutTenantNestedInput
   features?: Prisma.TenantFeatureUncheckedUpdateOneWithoutTenantNestedInput
+  uiConfig?: Prisma.TenantUIConfigUncheckedUpdateOneWithoutTenantNestedInput
   users?: Prisma.UserUncheckedUpdateManyWithoutTenantNestedInput
   products?: Prisma.ProductUncheckedUpdateManyWithoutTenantNestedInput
   categories?: Prisma.CategoryUncheckedUpdateManyWithoutTenantNestedInput
@@ -2850,6 +3079,7 @@ export type TenantCreateWithoutAppointmentsInput = {
   domains?: Prisma.TenantDomainCreateNestedManyWithoutTenantInput
   config?: Prisma.TenantConfigCreateNestedOneWithoutTenantInput
   features?: Prisma.TenantFeatureCreateNestedOneWithoutTenantInput
+  uiConfig?: Prisma.TenantUIConfigCreateNestedOneWithoutTenantInput
   users?: Prisma.UserCreateNestedManyWithoutTenantInput
   products?: Prisma.ProductCreateNestedManyWithoutTenantInput
   categories?: Prisma.CategoryCreateNestedManyWithoutTenantInput
@@ -2885,6 +3115,7 @@ export type TenantUncheckedCreateWithoutAppointmentsInput = {
   domains?: Prisma.TenantDomainUncheckedCreateNestedManyWithoutTenantInput
   config?: Prisma.TenantConfigUncheckedCreateNestedOneWithoutTenantInput
   features?: Prisma.TenantFeatureUncheckedCreateNestedOneWithoutTenantInput
+  uiConfig?: Prisma.TenantUIConfigUncheckedCreateNestedOneWithoutTenantInput
   users?: Prisma.UserUncheckedCreateNestedManyWithoutTenantInput
   products?: Prisma.ProductUncheckedCreateNestedManyWithoutTenantInput
   categories?: Prisma.CategoryUncheckedCreateNestedManyWithoutTenantInput
@@ -2936,6 +3167,7 @@ export type TenantUpdateWithoutAppointmentsInput = {
   domains?: Prisma.TenantDomainUpdateManyWithoutTenantNestedInput
   config?: Prisma.TenantConfigUpdateOneWithoutTenantNestedInput
   features?: Prisma.TenantFeatureUpdateOneWithoutTenantNestedInput
+  uiConfig?: Prisma.TenantUIConfigUpdateOneWithoutTenantNestedInput
   users?: Prisma.UserUpdateManyWithoutTenantNestedInput
   products?: Prisma.ProductUpdateManyWithoutTenantNestedInput
   categories?: Prisma.CategoryUpdateManyWithoutTenantNestedInput
@@ -2971,6 +3203,7 @@ export type TenantUncheckedUpdateWithoutAppointmentsInput = {
   domains?: Prisma.TenantDomainUncheckedUpdateManyWithoutTenantNestedInput
   config?: Prisma.TenantConfigUncheckedUpdateOneWithoutTenantNestedInput
   features?: Prisma.TenantFeatureUncheckedUpdateOneWithoutTenantNestedInput
+  uiConfig?: Prisma.TenantUIConfigUncheckedUpdateOneWithoutTenantNestedInput
   users?: Prisma.UserUncheckedUpdateManyWithoutTenantNestedInput
   products?: Prisma.ProductUncheckedUpdateManyWithoutTenantNestedInput
   categories?: Prisma.CategoryUncheckedUpdateManyWithoutTenantNestedInput
@@ -3006,6 +3239,7 @@ export type TenantCreateWithoutTicketsInput = {
   domains?: Prisma.TenantDomainCreateNestedManyWithoutTenantInput
   config?: Prisma.TenantConfigCreateNestedOneWithoutTenantInput
   features?: Prisma.TenantFeatureCreateNestedOneWithoutTenantInput
+  uiConfig?: Prisma.TenantUIConfigCreateNestedOneWithoutTenantInput
   users?: Prisma.UserCreateNestedManyWithoutTenantInput
   products?: Prisma.ProductCreateNestedManyWithoutTenantInput
   categories?: Prisma.CategoryCreateNestedManyWithoutTenantInput
@@ -3041,6 +3275,7 @@ export type TenantUncheckedCreateWithoutTicketsInput = {
   domains?: Prisma.TenantDomainUncheckedCreateNestedManyWithoutTenantInput
   config?: Prisma.TenantConfigUncheckedCreateNestedOneWithoutTenantInput
   features?: Prisma.TenantFeatureUncheckedCreateNestedOneWithoutTenantInput
+  uiConfig?: Prisma.TenantUIConfigUncheckedCreateNestedOneWithoutTenantInput
   users?: Prisma.UserUncheckedCreateNestedManyWithoutTenantInput
   products?: Prisma.ProductUncheckedCreateNestedManyWithoutTenantInput
   categories?: Prisma.CategoryUncheckedCreateNestedManyWithoutTenantInput
@@ -3092,6 +3327,7 @@ export type TenantUpdateWithoutTicketsInput = {
   domains?: Prisma.TenantDomainUpdateManyWithoutTenantNestedInput
   config?: Prisma.TenantConfigUpdateOneWithoutTenantNestedInput
   features?: Prisma.TenantFeatureUpdateOneWithoutTenantNestedInput
+  uiConfig?: Prisma.TenantUIConfigUpdateOneWithoutTenantNestedInput
   users?: Prisma.UserUpdateManyWithoutTenantNestedInput
   products?: Prisma.ProductUpdateManyWithoutTenantNestedInput
   categories?: Prisma.CategoryUpdateManyWithoutTenantNestedInput
@@ -3127,6 +3363,7 @@ export type TenantUncheckedUpdateWithoutTicketsInput = {
   domains?: Prisma.TenantDomainUncheckedUpdateManyWithoutTenantNestedInput
   config?: Prisma.TenantConfigUncheckedUpdateOneWithoutTenantNestedInput
   features?: Prisma.TenantFeatureUncheckedUpdateOneWithoutTenantNestedInput
+  uiConfig?: Prisma.TenantUIConfigUncheckedUpdateOneWithoutTenantNestedInput
   users?: Prisma.UserUncheckedUpdateManyWithoutTenantNestedInput
   products?: Prisma.ProductUncheckedUpdateManyWithoutTenantNestedInput
   categories?: Prisma.CategoryUncheckedUpdateManyWithoutTenantNestedInput
@@ -3162,6 +3399,7 @@ export type TenantCreateWithoutRepairBrandsInput = {
   domains?: Prisma.TenantDomainCreateNestedManyWithoutTenantInput
   config?: Prisma.TenantConfigCreateNestedOneWithoutTenantInput
   features?: Prisma.TenantFeatureCreateNestedOneWithoutTenantInput
+  uiConfig?: Prisma.TenantUIConfigCreateNestedOneWithoutTenantInput
   users?: Prisma.UserCreateNestedManyWithoutTenantInput
   products?: Prisma.ProductCreateNestedManyWithoutTenantInput
   categories?: Prisma.CategoryCreateNestedManyWithoutTenantInput
@@ -3197,6 +3435,7 @@ export type TenantUncheckedCreateWithoutRepairBrandsInput = {
   domains?: Prisma.TenantDomainUncheckedCreateNestedManyWithoutTenantInput
   config?: Prisma.TenantConfigUncheckedCreateNestedOneWithoutTenantInput
   features?: Prisma.TenantFeatureUncheckedCreateNestedOneWithoutTenantInput
+  uiConfig?: Prisma.TenantUIConfigUncheckedCreateNestedOneWithoutTenantInput
   users?: Prisma.UserUncheckedCreateNestedManyWithoutTenantInput
   products?: Prisma.ProductUncheckedCreateNestedManyWithoutTenantInput
   categories?: Prisma.CategoryUncheckedCreateNestedManyWithoutTenantInput
@@ -3248,6 +3487,7 @@ export type TenantUpdateWithoutRepairBrandsInput = {
   domains?: Prisma.TenantDomainUpdateManyWithoutTenantNestedInput
   config?: Prisma.TenantConfigUpdateOneWithoutTenantNestedInput
   features?: Prisma.TenantFeatureUpdateOneWithoutTenantNestedInput
+  uiConfig?: Prisma.TenantUIConfigUpdateOneWithoutTenantNestedInput
   users?: Prisma.UserUpdateManyWithoutTenantNestedInput
   products?: Prisma.ProductUpdateManyWithoutTenantNestedInput
   categories?: Prisma.CategoryUpdateManyWithoutTenantNestedInput
@@ -3283,6 +3523,7 @@ export type TenantUncheckedUpdateWithoutRepairBrandsInput = {
   domains?: Prisma.TenantDomainUncheckedUpdateManyWithoutTenantNestedInput
   config?: Prisma.TenantConfigUncheckedUpdateOneWithoutTenantNestedInput
   features?: Prisma.TenantFeatureUncheckedUpdateOneWithoutTenantNestedInput
+  uiConfig?: Prisma.TenantUIConfigUncheckedUpdateOneWithoutTenantNestedInput
   users?: Prisma.UserUncheckedUpdateManyWithoutTenantNestedInput
   products?: Prisma.ProductUncheckedUpdateManyWithoutTenantNestedInput
   categories?: Prisma.CategoryUncheckedUpdateManyWithoutTenantNestedInput
@@ -3318,6 +3559,7 @@ export type TenantCreateWithoutRepairDevicesInput = {
   domains?: Prisma.TenantDomainCreateNestedManyWithoutTenantInput
   config?: Prisma.TenantConfigCreateNestedOneWithoutTenantInput
   features?: Prisma.TenantFeatureCreateNestedOneWithoutTenantInput
+  uiConfig?: Prisma.TenantUIConfigCreateNestedOneWithoutTenantInput
   users?: Prisma.UserCreateNestedManyWithoutTenantInput
   products?: Prisma.ProductCreateNestedManyWithoutTenantInput
   categories?: Prisma.CategoryCreateNestedManyWithoutTenantInput
@@ -3353,6 +3595,7 @@ export type TenantUncheckedCreateWithoutRepairDevicesInput = {
   domains?: Prisma.TenantDomainUncheckedCreateNestedManyWithoutTenantInput
   config?: Prisma.TenantConfigUncheckedCreateNestedOneWithoutTenantInput
   features?: Prisma.TenantFeatureUncheckedCreateNestedOneWithoutTenantInput
+  uiConfig?: Prisma.TenantUIConfigUncheckedCreateNestedOneWithoutTenantInput
   users?: Prisma.UserUncheckedCreateNestedManyWithoutTenantInput
   products?: Prisma.ProductUncheckedCreateNestedManyWithoutTenantInput
   categories?: Prisma.CategoryUncheckedCreateNestedManyWithoutTenantInput
@@ -3404,6 +3647,7 @@ export type TenantUpdateWithoutRepairDevicesInput = {
   domains?: Prisma.TenantDomainUpdateManyWithoutTenantNestedInput
   config?: Prisma.TenantConfigUpdateOneWithoutTenantNestedInput
   features?: Prisma.TenantFeatureUpdateOneWithoutTenantNestedInput
+  uiConfig?: Prisma.TenantUIConfigUpdateOneWithoutTenantNestedInput
   users?: Prisma.UserUpdateManyWithoutTenantNestedInput
   products?: Prisma.ProductUpdateManyWithoutTenantNestedInput
   categories?: Prisma.CategoryUpdateManyWithoutTenantNestedInput
@@ -3439,6 +3683,7 @@ export type TenantUncheckedUpdateWithoutRepairDevicesInput = {
   domains?: Prisma.TenantDomainUncheckedUpdateManyWithoutTenantNestedInput
   config?: Prisma.TenantConfigUncheckedUpdateOneWithoutTenantNestedInput
   features?: Prisma.TenantFeatureUncheckedUpdateOneWithoutTenantNestedInput
+  uiConfig?: Prisma.TenantUIConfigUncheckedUpdateOneWithoutTenantNestedInput
   users?: Prisma.UserUncheckedUpdateManyWithoutTenantNestedInput
   products?: Prisma.ProductUncheckedUpdateManyWithoutTenantNestedInput
   categories?: Prisma.CategoryUncheckedUpdateManyWithoutTenantNestedInput
@@ -3474,6 +3719,7 @@ export type TenantCreateWithoutRepairServiceTypesInput = {
   domains?: Prisma.TenantDomainCreateNestedManyWithoutTenantInput
   config?: Prisma.TenantConfigCreateNestedOneWithoutTenantInput
   features?: Prisma.TenantFeatureCreateNestedOneWithoutTenantInput
+  uiConfig?: Prisma.TenantUIConfigCreateNestedOneWithoutTenantInput
   users?: Prisma.UserCreateNestedManyWithoutTenantInput
   products?: Prisma.ProductCreateNestedManyWithoutTenantInput
   categories?: Prisma.CategoryCreateNestedManyWithoutTenantInput
@@ -3509,6 +3755,7 @@ export type TenantUncheckedCreateWithoutRepairServiceTypesInput = {
   domains?: Prisma.TenantDomainUncheckedCreateNestedManyWithoutTenantInput
   config?: Prisma.TenantConfigUncheckedCreateNestedOneWithoutTenantInput
   features?: Prisma.TenantFeatureUncheckedCreateNestedOneWithoutTenantInput
+  uiConfig?: Prisma.TenantUIConfigUncheckedCreateNestedOneWithoutTenantInput
   users?: Prisma.UserUncheckedCreateNestedManyWithoutTenantInput
   products?: Prisma.ProductUncheckedCreateNestedManyWithoutTenantInput
   categories?: Prisma.CategoryUncheckedCreateNestedManyWithoutTenantInput
@@ -3560,6 +3807,7 @@ export type TenantUpdateWithoutRepairServiceTypesInput = {
   domains?: Prisma.TenantDomainUpdateManyWithoutTenantNestedInput
   config?: Prisma.TenantConfigUpdateOneWithoutTenantNestedInput
   features?: Prisma.TenantFeatureUpdateOneWithoutTenantNestedInput
+  uiConfig?: Prisma.TenantUIConfigUpdateOneWithoutTenantNestedInput
   users?: Prisma.UserUpdateManyWithoutTenantNestedInput
   products?: Prisma.ProductUpdateManyWithoutTenantNestedInput
   categories?: Prisma.CategoryUpdateManyWithoutTenantNestedInput
@@ -3595,6 +3843,7 @@ export type TenantUncheckedUpdateWithoutRepairServiceTypesInput = {
   domains?: Prisma.TenantDomainUncheckedUpdateManyWithoutTenantNestedInput
   config?: Prisma.TenantConfigUncheckedUpdateOneWithoutTenantNestedInput
   features?: Prisma.TenantFeatureUncheckedUpdateOneWithoutTenantNestedInput
+  uiConfig?: Prisma.TenantUIConfigUncheckedUpdateOneWithoutTenantNestedInput
   users?: Prisma.UserUncheckedUpdateManyWithoutTenantNestedInput
   products?: Prisma.ProductUncheckedUpdateManyWithoutTenantNestedInput
   categories?: Prisma.CategoryUncheckedUpdateManyWithoutTenantNestedInput
@@ -3630,6 +3879,7 @@ export type TenantCreateWithoutRepairDeviceServicesInput = {
   domains?: Prisma.TenantDomainCreateNestedManyWithoutTenantInput
   config?: Prisma.TenantConfigCreateNestedOneWithoutTenantInput
   features?: Prisma.TenantFeatureCreateNestedOneWithoutTenantInput
+  uiConfig?: Prisma.TenantUIConfigCreateNestedOneWithoutTenantInput
   users?: Prisma.UserCreateNestedManyWithoutTenantInput
   products?: Prisma.ProductCreateNestedManyWithoutTenantInput
   categories?: Prisma.CategoryCreateNestedManyWithoutTenantInput
@@ -3665,6 +3915,7 @@ export type TenantUncheckedCreateWithoutRepairDeviceServicesInput = {
   domains?: Prisma.TenantDomainUncheckedCreateNestedManyWithoutTenantInput
   config?: Prisma.TenantConfigUncheckedCreateNestedOneWithoutTenantInput
   features?: Prisma.TenantFeatureUncheckedCreateNestedOneWithoutTenantInput
+  uiConfig?: Prisma.TenantUIConfigUncheckedCreateNestedOneWithoutTenantInput
   users?: Prisma.UserUncheckedCreateNestedManyWithoutTenantInput
   products?: Prisma.ProductUncheckedCreateNestedManyWithoutTenantInput
   categories?: Prisma.CategoryUncheckedCreateNestedManyWithoutTenantInput
@@ -3716,6 +3967,7 @@ export type TenantUpdateWithoutRepairDeviceServicesInput = {
   domains?: Prisma.TenantDomainUpdateManyWithoutTenantNestedInput
   config?: Prisma.TenantConfigUpdateOneWithoutTenantNestedInput
   features?: Prisma.TenantFeatureUpdateOneWithoutTenantNestedInput
+  uiConfig?: Prisma.TenantUIConfigUpdateOneWithoutTenantNestedInput
   users?: Prisma.UserUpdateManyWithoutTenantNestedInput
   products?: Prisma.ProductUpdateManyWithoutTenantNestedInput
   categories?: Prisma.CategoryUpdateManyWithoutTenantNestedInput
@@ -3751,6 +4003,7 @@ export type TenantUncheckedUpdateWithoutRepairDeviceServicesInput = {
   domains?: Prisma.TenantDomainUncheckedUpdateManyWithoutTenantNestedInput
   config?: Prisma.TenantConfigUncheckedUpdateOneWithoutTenantNestedInput
   features?: Prisma.TenantFeatureUncheckedUpdateOneWithoutTenantNestedInput
+  uiConfig?: Prisma.TenantUIConfigUncheckedUpdateOneWithoutTenantNestedInput
   users?: Prisma.UserUncheckedUpdateManyWithoutTenantNestedInput
   products?: Prisma.ProductUncheckedUpdateManyWithoutTenantNestedInput
   categories?: Prisma.CategoryUncheckedUpdateManyWithoutTenantNestedInput
@@ -3786,6 +4039,7 @@ export type TenantCreateWithoutFeedbackRatingsInput = {
   domains?: Prisma.TenantDomainCreateNestedManyWithoutTenantInput
   config?: Prisma.TenantConfigCreateNestedOneWithoutTenantInput
   features?: Prisma.TenantFeatureCreateNestedOneWithoutTenantInput
+  uiConfig?: Prisma.TenantUIConfigCreateNestedOneWithoutTenantInput
   users?: Prisma.UserCreateNestedManyWithoutTenantInput
   products?: Prisma.ProductCreateNestedManyWithoutTenantInput
   categories?: Prisma.CategoryCreateNestedManyWithoutTenantInput
@@ -3821,6 +4075,7 @@ export type TenantUncheckedCreateWithoutFeedbackRatingsInput = {
   domains?: Prisma.TenantDomainUncheckedCreateNestedManyWithoutTenantInput
   config?: Prisma.TenantConfigUncheckedCreateNestedOneWithoutTenantInput
   features?: Prisma.TenantFeatureUncheckedCreateNestedOneWithoutTenantInput
+  uiConfig?: Prisma.TenantUIConfigUncheckedCreateNestedOneWithoutTenantInput
   users?: Prisma.UserUncheckedCreateNestedManyWithoutTenantInput
   products?: Prisma.ProductUncheckedCreateNestedManyWithoutTenantInput
   categories?: Prisma.CategoryUncheckedCreateNestedManyWithoutTenantInput
@@ -3872,6 +4127,7 @@ export type TenantUpdateWithoutFeedbackRatingsInput = {
   domains?: Prisma.TenantDomainUpdateManyWithoutTenantNestedInput
   config?: Prisma.TenantConfigUpdateOneWithoutTenantNestedInput
   features?: Prisma.TenantFeatureUpdateOneWithoutTenantNestedInput
+  uiConfig?: Prisma.TenantUIConfigUpdateOneWithoutTenantNestedInput
   users?: Prisma.UserUpdateManyWithoutTenantNestedInput
   products?: Prisma.ProductUpdateManyWithoutTenantNestedInput
   categories?: Prisma.CategoryUpdateManyWithoutTenantNestedInput
@@ -3907,6 +4163,7 @@ export type TenantUncheckedUpdateWithoutFeedbackRatingsInput = {
   domains?: Prisma.TenantDomainUncheckedUpdateManyWithoutTenantNestedInput
   config?: Prisma.TenantConfigUncheckedUpdateOneWithoutTenantNestedInput
   features?: Prisma.TenantFeatureUncheckedUpdateOneWithoutTenantNestedInput
+  uiConfig?: Prisma.TenantUIConfigUncheckedUpdateOneWithoutTenantNestedInput
   users?: Prisma.UserUncheckedUpdateManyWithoutTenantNestedInput
   products?: Prisma.ProductUncheckedUpdateManyWithoutTenantNestedInput
   categories?: Prisma.CategoryUncheckedUpdateManyWithoutTenantNestedInput
@@ -3942,6 +4199,7 @@ export type TenantCreateWithoutEmailUnsubscribesInput = {
   domains?: Prisma.TenantDomainCreateNestedManyWithoutTenantInput
   config?: Prisma.TenantConfigCreateNestedOneWithoutTenantInput
   features?: Prisma.TenantFeatureCreateNestedOneWithoutTenantInput
+  uiConfig?: Prisma.TenantUIConfigCreateNestedOneWithoutTenantInput
   users?: Prisma.UserCreateNestedManyWithoutTenantInput
   products?: Prisma.ProductCreateNestedManyWithoutTenantInput
   categories?: Prisma.CategoryCreateNestedManyWithoutTenantInput
@@ -3977,6 +4235,7 @@ export type TenantUncheckedCreateWithoutEmailUnsubscribesInput = {
   domains?: Prisma.TenantDomainUncheckedCreateNestedManyWithoutTenantInput
   config?: Prisma.TenantConfigUncheckedCreateNestedOneWithoutTenantInput
   features?: Prisma.TenantFeatureUncheckedCreateNestedOneWithoutTenantInput
+  uiConfig?: Prisma.TenantUIConfigUncheckedCreateNestedOneWithoutTenantInput
   users?: Prisma.UserUncheckedCreateNestedManyWithoutTenantInput
   products?: Prisma.ProductUncheckedCreateNestedManyWithoutTenantInput
   categories?: Prisma.CategoryUncheckedCreateNestedManyWithoutTenantInput
@@ -4028,6 +4287,7 @@ export type TenantUpdateWithoutEmailUnsubscribesInput = {
   domains?: Prisma.TenantDomainUpdateManyWithoutTenantNestedInput
   config?: Prisma.TenantConfigUpdateOneWithoutTenantNestedInput
   features?: Prisma.TenantFeatureUpdateOneWithoutTenantNestedInput
+  uiConfig?: Prisma.TenantUIConfigUpdateOneWithoutTenantNestedInput
   users?: Prisma.UserUpdateManyWithoutTenantNestedInput
   products?: Prisma.ProductUpdateManyWithoutTenantNestedInput
   categories?: Prisma.CategoryUpdateManyWithoutTenantNestedInput
@@ -4063,6 +4323,7 @@ export type TenantUncheckedUpdateWithoutEmailUnsubscribesInput = {
   domains?: Prisma.TenantDomainUncheckedUpdateManyWithoutTenantNestedInput
   config?: Prisma.TenantConfigUncheckedUpdateOneWithoutTenantNestedInput
   features?: Prisma.TenantFeatureUncheckedUpdateOneWithoutTenantNestedInput
+  uiConfig?: Prisma.TenantUIConfigUncheckedUpdateOneWithoutTenantNestedInput
   users?: Prisma.UserUncheckedUpdateManyWithoutTenantNestedInput
   products?: Prisma.ProductUncheckedUpdateManyWithoutTenantNestedInput
   categories?: Prisma.CategoryUncheckedUpdateManyWithoutTenantNestedInput
@@ -4098,6 +4359,7 @@ export type TenantCreateWithoutDiscountCodesInput = {
   domains?: Prisma.TenantDomainCreateNestedManyWithoutTenantInput
   config?: Prisma.TenantConfigCreateNestedOneWithoutTenantInput
   features?: Prisma.TenantFeatureCreateNestedOneWithoutTenantInput
+  uiConfig?: Prisma.TenantUIConfigCreateNestedOneWithoutTenantInput
   users?: Prisma.UserCreateNestedManyWithoutTenantInput
   products?: Prisma.ProductCreateNestedManyWithoutTenantInput
   categories?: Prisma.CategoryCreateNestedManyWithoutTenantInput
@@ -4133,6 +4395,7 @@ export type TenantUncheckedCreateWithoutDiscountCodesInput = {
   domains?: Prisma.TenantDomainUncheckedCreateNestedManyWithoutTenantInput
   config?: Prisma.TenantConfigUncheckedCreateNestedOneWithoutTenantInput
   features?: Prisma.TenantFeatureUncheckedCreateNestedOneWithoutTenantInput
+  uiConfig?: Prisma.TenantUIConfigUncheckedCreateNestedOneWithoutTenantInput
   users?: Prisma.UserUncheckedCreateNestedManyWithoutTenantInput
   products?: Prisma.ProductUncheckedCreateNestedManyWithoutTenantInput
   categories?: Prisma.CategoryUncheckedCreateNestedManyWithoutTenantInput
@@ -4184,6 +4447,7 @@ export type TenantUpdateWithoutDiscountCodesInput = {
   domains?: Prisma.TenantDomainUpdateManyWithoutTenantNestedInput
   config?: Prisma.TenantConfigUpdateOneWithoutTenantNestedInput
   features?: Prisma.TenantFeatureUpdateOneWithoutTenantNestedInput
+  uiConfig?: Prisma.TenantUIConfigUpdateOneWithoutTenantNestedInput
   users?: Prisma.UserUpdateManyWithoutTenantNestedInput
   products?: Prisma.ProductUpdateManyWithoutTenantNestedInput
   categories?: Prisma.CategoryUpdateManyWithoutTenantNestedInput
@@ -4219,6 +4483,7 @@ export type TenantUncheckedUpdateWithoutDiscountCodesInput = {
   domains?: Prisma.TenantDomainUncheckedUpdateManyWithoutTenantNestedInput
   config?: Prisma.TenantConfigUncheckedUpdateOneWithoutTenantNestedInput
   features?: Prisma.TenantFeatureUncheckedUpdateOneWithoutTenantNestedInput
+  uiConfig?: Prisma.TenantUIConfigUncheckedUpdateOneWithoutTenantNestedInput
   users?: Prisma.UserUncheckedUpdateManyWithoutTenantNestedInput
   products?: Prisma.ProductUncheckedUpdateManyWithoutTenantNestedInput
   categories?: Prisma.CategoryUncheckedUpdateManyWithoutTenantNestedInput
@@ -4254,6 +4519,7 @@ export type TenantCreateWithoutBannersInput = {
   domains?: Prisma.TenantDomainCreateNestedManyWithoutTenantInput
   config?: Prisma.TenantConfigCreateNestedOneWithoutTenantInput
   features?: Prisma.TenantFeatureCreateNestedOneWithoutTenantInput
+  uiConfig?: Prisma.TenantUIConfigCreateNestedOneWithoutTenantInput
   users?: Prisma.UserCreateNestedManyWithoutTenantInput
   products?: Prisma.ProductCreateNestedManyWithoutTenantInput
   categories?: Prisma.CategoryCreateNestedManyWithoutTenantInput
@@ -4289,6 +4555,7 @@ export type TenantUncheckedCreateWithoutBannersInput = {
   domains?: Prisma.TenantDomainUncheckedCreateNestedManyWithoutTenantInput
   config?: Prisma.TenantConfigUncheckedCreateNestedOneWithoutTenantInput
   features?: Prisma.TenantFeatureUncheckedCreateNestedOneWithoutTenantInput
+  uiConfig?: Prisma.TenantUIConfigUncheckedCreateNestedOneWithoutTenantInput
   users?: Prisma.UserUncheckedCreateNestedManyWithoutTenantInput
   products?: Prisma.ProductUncheckedCreateNestedManyWithoutTenantInput
   categories?: Prisma.CategoryUncheckedCreateNestedManyWithoutTenantInput
@@ -4340,6 +4607,7 @@ export type TenantUpdateWithoutBannersInput = {
   domains?: Prisma.TenantDomainUpdateManyWithoutTenantNestedInput
   config?: Prisma.TenantConfigUpdateOneWithoutTenantNestedInput
   features?: Prisma.TenantFeatureUpdateOneWithoutTenantNestedInput
+  uiConfig?: Prisma.TenantUIConfigUpdateOneWithoutTenantNestedInput
   users?: Prisma.UserUpdateManyWithoutTenantNestedInput
   products?: Prisma.ProductUpdateManyWithoutTenantNestedInput
   categories?: Prisma.CategoryUpdateManyWithoutTenantNestedInput
@@ -4375,6 +4643,7 @@ export type TenantUncheckedUpdateWithoutBannersInput = {
   domains?: Prisma.TenantDomainUncheckedUpdateManyWithoutTenantNestedInput
   config?: Prisma.TenantConfigUncheckedUpdateOneWithoutTenantNestedInput
   features?: Prisma.TenantFeatureUncheckedUpdateOneWithoutTenantNestedInput
+  uiConfig?: Prisma.TenantUIConfigUncheckedUpdateOneWithoutTenantNestedInput
   users?: Prisma.UserUncheckedUpdateManyWithoutTenantNestedInput
   products?: Prisma.ProductUncheckedUpdateManyWithoutTenantNestedInput
   categories?: Prisma.CategoryUncheckedUpdateManyWithoutTenantNestedInput
@@ -4410,6 +4679,7 @@ export type TenantCreateWithoutAuditLogsInput = {
   domains?: Prisma.TenantDomainCreateNestedManyWithoutTenantInput
   config?: Prisma.TenantConfigCreateNestedOneWithoutTenantInput
   features?: Prisma.TenantFeatureCreateNestedOneWithoutTenantInput
+  uiConfig?: Prisma.TenantUIConfigCreateNestedOneWithoutTenantInput
   users?: Prisma.UserCreateNestedManyWithoutTenantInput
   products?: Prisma.ProductCreateNestedManyWithoutTenantInput
   categories?: Prisma.CategoryCreateNestedManyWithoutTenantInput
@@ -4445,6 +4715,7 @@ export type TenantUncheckedCreateWithoutAuditLogsInput = {
   domains?: Prisma.TenantDomainUncheckedCreateNestedManyWithoutTenantInput
   config?: Prisma.TenantConfigUncheckedCreateNestedOneWithoutTenantInput
   features?: Prisma.TenantFeatureUncheckedCreateNestedOneWithoutTenantInput
+  uiConfig?: Prisma.TenantUIConfigUncheckedCreateNestedOneWithoutTenantInput
   users?: Prisma.UserUncheckedCreateNestedManyWithoutTenantInput
   products?: Prisma.ProductUncheckedCreateNestedManyWithoutTenantInput
   categories?: Prisma.CategoryUncheckedCreateNestedManyWithoutTenantInput
@@ -4496,6 +4767,7 @@ export type TenantUpdateWithoutAuditLogsInput = {
   domains?: Prisma.TenantDomainUpdateManyWithoutTenantNestedInput
   config?: Prisma.TenantConfigUpdateOneWithoutTenantNestedInput
   features?: Prisma.TenantFeatureUpdateOneWithoutTenantNestedInput
+  uiConfig?: Prisma.TenantUIConfigUpdateOneWithoutTenantNestedInput
   users?: Prisma.UserUpdateManyWithoutTenantNestedInput
   products?: Prisma.ProductUpdateManyWithoutTenantNestedInput
   categories?: Prisma.CategoryUpdateManyWithoutTenantNestedInput
@@ -4531,6 +4803,7 @@ export type TenantUncheckedUpdateWithoutAuditLogsInput = {
   domains?: Prisma.TenantDomainUncheckedUpdateManyWithoutTenantNestedInput
   config?: Prisma.TenantConfigUncheckedUpdateOneWithoutTenantNestedInput
   features?: Prisma.TenantFeatureUncheckedUpdateOneWithoutTenantNestedInput
+  uiConfig?: Prisma.TenantUIConfigUncheckedUpdateOneWithoutTenantNestedInput
   users?: Prisma.UserUncheckedUpdateManyWithoutTenantNestedInput
   products?: Prisma.ProductUncheckedUpdateManyWithoutTenantNestedInput
   categories?: Prisma.CategoryUncheckedUpdateManyWithoutTenantNestedInput
@@ -4566,6 +4839,7 @@ export type TenantCreateWithoutInvoicesInput = {
   domains?: Prisma.TenantDomainCreateNestedManyWithoutTenantInput
   config?: Prisma.TenantConfigCreateNestedOneWithoutTenantInput
   features?: Prisma.TenantFeatureCreateNestedOneWithoutTenantInput
+  uiConfig?: Prisma.TenantUIConfigCreateNestedOneWithoutTenantInput
   users?: Prisma.UserCreateNestedManyWithoutTenantInput
   products?: Prisma.ProductCreateNestedManyWithoutTenantInput
   categories?: Prisma.CategoryCreateNestedManyWithoutTenantInput
@@ -4601,6 +4875,7 @@ export type TenantUncheckedCreateWithoutInvoicesInput = {
   domains?: Prisma.TenantDomainUncheckedCreateNestedManyWithoutTenantInput
   config?: Prisma.TenantConfigUncheckedCreateNestedOneWithoutTenantInput
   features?: Prisma.TenantFeatureUncheckedCreateNestedOneWithoutTenantInput
+  uiConfig?: Prisma.TenantUIConfigUncheckedCreateNestedOneWithoutTenantInput
   users?: Prisma.UserUncheckedCreateNestedManyWithoutTenantInput
   products?: Prisma.ProductUncheckedCreateNestedManyWithoutTenantInput
   categories?: Prisma.CategoryUncheckedCreateNestedManyWithoutTenantInput
@@ -4652,6 +4927,7 @@ export type TenantUpdateWithoutInvoicesInput = {
   domains?: Prisma.TenantDomainUpdateManyWithoutTenantNestedInput
   config?: Prisma.TenantConfigUpdateOneWithoutTenantNestedInput
   features?: Prisma.TenantFeatureUpdateOneWithoutTenantNestedInput
+  uiConfig?: Prisma.TenantUIConfigUpdateOneWithoutTenantNestedInput
   users?: Prisma.UserUpdateManyWithoutTenantNestedInput
   products?: Prisma.ProductUpdateManyWithoutTenantNestedInput
   categories?: Prisma.CategoryUpdateManyWithoutTenantNestedInput
@@ -4687,6 +4963,7 @@ export type TenantUncheckedUpdateWithoutInvoicesInput = {
   domains?: Prisma.TenantDomainUncheckedUpdateManyWithoutTenantNestedInput
   config?: Prisma.TenantConfigUncheckedUpdateOneWithoutTenantNestedInput
   features?: Prisma.TenantFeatureUncheckedUpdateOneWithoutTenantNestedInput
+  uiConfig?: Prisma.TenantUIConfigUncheckedUpdateOneWithoutTenantNestedInput
   users?: Prisma.UserUncheckedUpdateManyWithoutTenantNestedInput
   products?: Prisma.ProductUncheckedUpdateManyWithoutTenantNestedInput
   categories?: Prisma.CategoryUncheckedUpdateManyWithoutTenantNestedInput
@@ -4933,6 +5210,7 @@ export type TenantSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   domains?: boolean | Prisma.Tenant$domainsArgs<ExtArgs>
   config?: boolean | Prisma.Tenant$configArgs<ExtArgs>
   features?: boolean | Prisma.Tenant$featuresArgs<ExtArgs>
+  uiConfig?: boolean | Prisma.Tenant$uiConfigArgs<ExtArgs>
   users?: boolean | Prisma.Tenant$usersArgs<ExtArgs>
   products?: boolean | Prisma.Tenant$productsArgs<ExtArgs>
   categories?: boolean | Prisma.Tenant$categoriesArgs<ExtArgs>
@@ -4998,6 +5276,7 @@ export type TenantInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   domains?: boolean | Prisma.Tenant$domainsArgs<ExtArgs>
   config?: boolean | Prisma.Tenant$configArgs<ExtArgs>
   features?: boolean | Prisma.Tenant$featuresArgs<ExtArgs>
+  uiConfig?: boolean | Prisma.Tenant$uiConfigArgs<ExtArgs>
   users?: boolean | Prisma.Tenant$usersArgs<ExtArgs>
   products?: boolean | Prisma.Tenant$productsArgs<ExtArgs>
   categories?: boolean | Prisma.Tenant$categoriesArgs<ExtArgs>
@@ -5030,6 +5309,7 @@ export type $TenantPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     domains: Prisma.$TenantDomainPayload<ExtArgs>[]
     config: Prisma.$TenantConfigPayload<ExtArgs> | null
     features: Prisma.$TenantFeaturePayload<ExtArgs> | null
+    uiConfig: Prisma.$TenantUIConfigPayload<ExtArgs> | null
     users: Prisma.$UserPayload<ExtArgs>[]
     products: Prisma.$ProductPayload<ExtArgs>[]
     categories: Prisma.$CategoryPayload<ExtArgs>[]
@@ -5459,6 +5739,7 @@ export interface Prisma__TenantClient<T, Null = never, ExtArgs extends runtime.T
   domains<T extends Prisma.Tenant$domainsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Tenant$domainsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TenantDomainPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   config<T extends Prisma.Tenant$configArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Tenant$configArgs<ExtArgs>>): Prisma.Prisma__TenantConfigClient<runtime.Types.Result.GetResult<Prisma.$TenantConfigPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   features<T extends Prisma.Tenant$featuresArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Tenant$featuresArgs<ExtArgs>>): Prisma.Prisma__TenantFeatureClient<runtime.Types.Result.GetResult<Prisma.$TenantFeaturePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  uiConfig<T extends Prisma.Tenant$uiConfigArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Tenant$uiConfigArgs<ExtArgs>>): Prisma.Prisma__TenantUIConfigClient<runtime.Types.Result.GetResult<Prisma.$TenantUIConfigPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   users<T extends Prisma.Tenant$usersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Tenant$usersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   products<T extends Prisma.Tenant$productsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Tenant$productsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   categories<T extends Prisma.Tenant$categoriesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Tenant$categoriesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -5965,6 +6246,25 @@ export type Tenant$featuresArgs<ExtArgs extends runtime.Types.Extensions.Interna
    */
   include?: Prisma.TenantFeatureInclude<ExtArgs> | null
   where?: Prisma.TenantFeatureWhereInput
+}
+
+/**
+ * Tenant.uiConfig
+ */
+export type Tenant$uiConfigArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the TenantUIConfig
+   */
+  select?: Prisma.TenantUIConfigSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the TenantUIConfig
+   */
+  omit?: Prisma.TenantUIConfigOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TenantUIConfigInclude<ExtArgs> | null
+  where?: Prisma.TenantUIConfigWhereInput
 }
 
 /**

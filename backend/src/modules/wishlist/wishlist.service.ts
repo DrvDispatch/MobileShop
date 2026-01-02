@@ -26,8 +26,9 @@ export class WishlistService {
 
     /**
      * Get user's wishlist with product details
+     * Products are implicitly tenant-scoped via user's tenantId
      */
-    async getWishlist(userId: string) {
+    async getWishlist(tenantId: string, userId: string) {
         const wishlist = await this.prisma.wishlist.findUnique({
             where: { userId },
             include: {
@@ -48,8 +49,13 @@ export class WishlistService {
             return { items: [], totalItems: 0 };
         }
 
+        // Filter items to only include products from the current tenant
+        const tenantItems = wishlist.items.filter(item =>
+            item.product.tenantId === tenantId
+        );
+
         // Calculate price drops
-        const itemsWithPriceInfo = wishlist.items.map(item => ({
+        const itemsWithPriceInfo = tenantItems.map(item => ({
             id: item.id,
             productId: item.productId,
             addedAt: item.createdAt,
@@ -77,11 +83,12 @@ export class WishlistService {
 
     /**
      * Add product to wishlist
+     * Product must belong to the same tenant
      */
-    async addToWishlist(userId: string, productId: string) {
-        // Check product exists
-        const product = await this.prisma.product.findUnique({
-            where: { id: productId },
+    async addToWishlist(tenantId: string, userId: string, productId: string) {
+        // Check product exists AND belongs to the tenant
+        const product = await this.prisma.product.findFirst({
+            where: { id: productId, tenantId },
         });
         if (!product) {
             throw new NotFoundException('Product not found');
@@ -117,7 +124,7 @@ export class WishlistService {
     /**
      * Remove product from wishlist
      */
-    async removeFromWishlist(userId: string, productId: string) {
+    async removeFromWishlist(tenantId: string, userId: string, productId: string) {
         const wishlist = await this.prisma.wishlist.findUnique({
             where: { userId },
         });
@@ -133,9 +140,17 @@ export class WishlistService {
                     productId,
                 },
             },
+            include: {
+                product: { select: { tenantId: true } },
+            },
         });
 
         if (!item) {
+            throw new NotFoundException('Product not in wishlist');
+        }
+
+        // Verify product belongs to tenant
+        if (item.product.tenantId !== tenantId) {
             throw new NotFoundException('Product not in wishlist');
         }
 
@@ -149,7 +164,7 @@ export class WishlistService {
     /**
      * Check if product is in wishlist
      */
-    async isInWishlist(userId: string, productId: string): Promise<boolean> {
+    async isInWishlist(tenantId: string, userId: string, productId: string): Promise<boolean> {
         const wishlist = await this.prisma.wishlist.findUnique({
             where: { userId },
         });
@@ -163,38 +178,65 @@ export class WishlistService {
                     productId,
                 },
             },
+            include: {
+                product: { select: { tenantId: true } },
+            },
         });
 
-        return !!item;
+        // Only return true if product belongs to the tenant
+        return !!item && item.product.tenantId === tenantId;
     }
 
     /**
-     * Get wishlist count
+     * Get wishlist count (for current tenant's products only)
      */
-    async getWishlistCount(userId: string): Promise<number> {
+    async getWishlistCount(tenantId: string, userId: string): Promise<number> {
         const wishlist = await this.prisma.wishlist.findUnique({
             where: { userId },
-            include: { _count: { select: { items: true } } },
+            include: {
+                items: {
+                    include: {
+                        product: { select: { tenantId: true } },
+                    },
+                },
+            },
         });
 
-        return wishlist?._count.items || 0;
+        if (!wishlist) return 0;
+
+        // Count only items for products belonging to this tenant
+        return wishlist.items.filter(item => item.product.tenantId === tenantId).length;
     }
 
     /**
-     * Clear entire wishlist
+     * Clear entire wishlist (only for current tenant's products)
      */
-    async clearWishlist(userId: string) {
+    async clearWishlist(tenantId: string, userId: string) {
         const wishlist = await this.prisma.wishlist.findUnique({
             where: { userId },
+            include: {
+                items: {
+                    include: {
+                        product: { select: { id: true, tenantId: true } },
+                    },
+                },
+            },
         });
 
         if (!wishlist) {
             return { success: true, message: 'Wishlist already empty' };
         }
 
-        await this.prisma.wishlistItem.deleteMany({
-            where: { wishlistId: wishlist.id },
-        });
+        // Only delete items for products belonging to this tenant
+        const tenantItemIds = wishlist.items
+            .filter(item => item.product.tenantId === tenantId)
+            .map(item => item.id);
+
+        if (tenantItemIds.length > 0) {
+            await this.prisma.wishlistItem.deleteMany({
+                where: { id: { in: tenantItemIds } },
+            });
+        }
 
         return { success: true, message: 'Wishlist cleared' };
     }

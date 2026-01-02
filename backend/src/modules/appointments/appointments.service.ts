@@ -3,34 +3,56 @@ import { PrismaService } from '../../prisma/prisma.service';
 import { EmailService } from '../email/email.service';
 import { FeedbackService } from '../feedback/feedback.service';
 import { SmsService } from '../sms/sms.service';
+import { AppointmentEmailService } from './appointment-email.service';
 import { CreateAppointmentDto, UpdateAppointmentDto, AppointmentStatus } from './dto';
+import { getTenantBranding } from '../../utils/tenant-branding';
 
 @Injectable()
 export class AppointmentsService {
     private readonly logger = new Logger(AppointmentsService.name);
 
-    // Business hours configuration
-    private readonly TIME_SLOTS = ['09:00', '10:00', '11:00', '14:00', '15:00', '16:00', '17:00'];
-    private readonly CLOSED_DAYS = [0]; // Sunday
+    // Default fallbacks if not configured in TenantConfig
+    private readonly DEFAULT_TIME_SLOTS = ['09:00', '10:00', '11:00', '14:00', '15:00', '16:00', '17:00'];
+    private readonly DEFAULT_CLOSED_DAYS = [0]; // Sunday
 
     constructor(
         private prisma: PrismaService,
         private emailService: EmailService,
         private feedbackService: FeedbackService,
         private smsService: SmsService,
+        private appointmentEmailService: AppointmentEmailService,
     ) { }
 
-    async create(tenantId: string, dto: CreateAppointmentDto) {
+    /**
+     * Fetch business hours config from TenantConfig
+     * Falls back to defaults if not configured
+     */
+    private async getBusinessConfig(tenantId: string): Promise<{ timeSlots: string[]; closedDays: number[] }> {
+        const config = await this.prisma.tenantConfig.findUnique({
+            where: { tenantId },
+            select: { timeSlots: true, closedDays: true },
+        });
+
+        return {
+            timeSlots: (config?.timeSlots as string[]) || this.DEFAULT_TIME_SLOTS,
+            closedDays: config?.closedDays || this.DEFAULT_CLOSED_DAYS,
+        };
+    }
+
+    async create(tenantId: string, dto: CreateAppointmentDto, bookerInfo?: { bookerEmail?: string; bookerName?: string }) {
+        // Fetch tenant-specific business config
+        const { timeSlots, closedDays } = await this.getBusinessConfig(tenantId);
+
         // Parse the date
         const appointmentDate = new Date(dto.appointmentDate);
 
         // Check if the day is not a closed day
-        if (this.CLOSED_DAYS.includes(appointmentDate.getDay())) {
+        if (closedDays.includes(appointmentDate.getDay())) {
             throw new ConflictException('We are closed on this day');
         }
 
         // Check if slot is valid
-        if (!this.TIME_SLOTS.includes(dto.timeSlot)) {
+        if (!timeSlots.includes(dto.timeSlot)) {
             throw new ConflictException('Invalid time slot');
         }
 
@@ -48,13 +70,20 @@ export class AppointmentsService {
             throw new ConflictException('This time slot is already booked');
         }
 
-        // Create the appointment (with tenantId)
+        // Check if booker is different from customer
+        const isDifferentBooker = bookerInfo?.bookerEmail &&
+            bookerInfo.bookerEmail.toLowerCase() !== dto.customerEmail.toLowerCase();
+
+        // Create the appointment (with tenantId and optional booker info)
         const appointment = await this.prisma.appointment.create({
             data: {
                 tenantId,
                 customerName: dto.customerName,
                 customerEmail: dto.customerEmail,
                 customerPhone: dto.customerPhone,
+                // Only store booker info if different from customer
+                bookedByEmail: isDifferentBooker ? bookerInfo.bookerEmail : undefined,
+                bookedByName: isDifferentBooker ? bookerInfo.bookerName : undefined,
                 deviceBrand: dto.deviceBrand,
                 deviceModel: dto.deviceModel,
                 repairType: dto.repairType,
@@ -66,14 +95,32 @@ export class AppointmentsService {
             },
         });
 
-        // Send confirmation email
+        // Fetch tenant branding for emails
+        const branding = await getTenantBranding(this.prisma, tenantId);
+
+        // Send confirmation email(s)
         try {
+            // Always send to customer
             await this.emailService.sendEmail({
                 to: dto.customerEmail,
-                subject: 'Afspraak Bevestigd - SmartphoneService',
-                html: this.getConfirmationEmailHtml(appointment),
+                subject: `Afspraak Bevestigd - ${branding.shopName}`,
+                html: this.appointmentEmailService.getConfirmationEmailHtml(
+                    appointment,
+                    branding,
+                    isDifferentBooker ? bookerInfo.bookerName : undefined
+                ),
             });
             this.logger.log(`Confirmation email sent to ${dto.customerEmail}`);
+
+            // If booked by someone else, also send to booker
+            if (isDifferentBooker && bookerInfo.bookerEmail) {
+                await this.emailService.sendEmail({
+                    to: bookerInfo.bookerEmail,
+                    subject: `Afspraak Bevestigd - ${branding.shopName}`,
+                    html: this.appointmentEmailService.getBookerConfirmationEmailHtml(appointment, branding),
+                });
+                this.logger.log(`Booker confirmation email sent to ${bookerInfo.bookerEmail}`);
+            }
         } catch (error) {
             this.logger.error(`Failed to send confirmation email: ${error.message}`);
         }
@@ -82,7 +129,7 @@ export class AppointmentsService {
     }
 
     async findAll(tenantId: string, params?: { status?: AppointmentStatus; startDate?: Date; endDate?: Date }) {
-        const where: any = { tenantId };
+        const where: { tenantId: string; status?: AppointmentStatus; appointmentDate?: { gte?: Date; lte?: Date } } = { tenantId };
 
         if (params?.status) {
             where.status = params.status;
@@ -107,11 +154,17 @@ export class AppointmentsService {
         });
     }
 
+    /**
+     * Find appointments where user is either the customer OR the booker
+     */
     async findByUserEmail(tenantId: string, email: string) {
         return this.prisma.appointment.findMany({
             where: {
                 tenantId,
-                customerEmail: email,
+                OR: [
+                    { customerEmail: email },
+                    { bookedByEmail: email },
+                ],
             },
             orderBy: [
                 { appointmentDate: 'desc' },
@@ -160,15 +213,18 @@ export class AppointmentsService {
         }
 
         // Prepare update data
-        const updateData: any = { ...dto };
-        if (dto.appointmentDate) {
-            updateData.appointmentDate = new Date(dto.appointmentDate);
-        }
+        const updateData = {
+            ...dto,
+            ...(dto.appointmentDate ? { appointmentDate: new Date(dto.appointmentDate) } : {}),
+        };
 
         const updated = await this.prisma.appointment.update({
             where: { id },
             data: updateData,
         });
+
+        // Fetch tenant branding for email templates
+        const branding = await getTenantBranding(this.prisma, tenantId);
 
         // Helper function to format date
         const formatDate = (date: Date) => date.toLocaleDateString('nl-BE', {
@@ -196,8 +252,8 @@ export class AppointmentsService {
             try {
                 await this.emailService.sendEmail({
                     to: appointment.customerEmail,
-                    subject: 'Afspraak Geannuleerd - SmartphoneService',
-                    html: this.getCancellationEmailHtml(appointment),
+                    subject: `Afspraak Geannuleerd - ${branding.shopName}`,
+                    html: this.appointmentEmailService.getCancellationEmailHtml(appointment, branding),
                 });
                 this.logger.log(`Cancellation email sent to ${appointment.customerEmail}`);
             } catch (error) {
@@ -208,6 +264,7 @@ export class AppointmentsService {
             try {
                 await this.smsService.sendAppointmentCancellation({
                     to: appointment.customerPhone,
+                    branding,
                     customerName: appointment.customerName,
                     date: formatDate(appointment.appointmentDate),
                     time: appointment.timeSlot,
@@ -224,8 +281,8 @@ export class AppointmentsService {
             try {
                 await this.emailService.sendEmail({
                     to: appointment.customerEmail,
-                    subject: 'Afspraak Verplaatst - SmartphoneService',
-                    html: this.getRescheduleEmailHtml(appointment, updated),
+                    subject: `Afspraak Verplaatst - ${branding.shopName}`,
+                    html: this.appointmentEmailService.getRescheduleEmailHtml(appointment, updated, branding),
                 });
                 this.logger.log(`Reschedule email sent to ${appointment.customerEmail}`);
             } catch (error) {
@@ -236,6 +293,7 @@ export class AppointmentsService {
             try {
                 await this.smsService.sendAppointmentReschedule({
                     to: appointment.customerPhone,
+                    branding,
                     customerName: appointment.customerName,
                     oldDate: formatDate(appointment.appointmentDate),
                     oldTime: appointment.timeSlot,
@@ -261,10 +319,13 @@ export class AppointmentsService {
     }
 
     async getAvailableSlots(tenantId: string, dateStr: string) {
+        // Fetch tenant-specific business config
+        const { timeSlots, closedDays } = await this.getBusinessConfig(tenantId);
+
         const date = new Date(dateStr);
 
         // Check if closed day
-        if (this.CLOSED_DAYS.includes(date.getDay())) {
+        if (closedDays.includes(date.getDay())) {
             return { date: dateStr, slots: [], closed: true };
         }
 
@@ -279,7 +340,7 @@ export class AppointmentsService {
         });
 
         const bookedSlots = bookedAppointments.map((a: { timeSlot: string }) => a.timeSlot);
-        const availableSlots = this.TIME_SLOTS.filter(slot => !bookedSlots.includes(slot));
+        const availableSlots = timeSlots.filter(slot => !bookedSlots.includes(slot));
 
         return {
             date: dateStr,
@@ -287,210 +348,4 @@ export class AppointmentsService {
             closed: false,
         };
     }
-
-    private getConfirmationEmailHtml(appointment: any): string {
-        const dateFormatted = new Date(appointment.appointmentDate).toLocaleDateString('nl-BE', {
-            weekday: 'long',
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-        });
-
-        return `
-<!DOCTYPE html>
-<html>
-<head>
-    <style>
-        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-        .header { background: #18181b; color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; }
-        .content { background: #f4f4f5; padding: 20px; border-radius: 0 0 8px 8px; }
-        .detail { margin: 10px 0; padding: 10px; background: white; border-radius: 4px; }
-        .label { font-weight: bold; color: #71717a; font-size: 12px; text-transform: uppercase; }
-        .value { font-size: 16px; color: #18181b; }
-        .footer { text-align: center; margin-top: 20px; color: #71717a; font-size: 12px; }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>Afspraak Bevestigd ✓</h1>
-        </div>
-        <div class="content">
-            <p>Beste ${appointment.customerName},</p>
-            <p>Uw afspraak is bevestigd. Hier zijn de details:</p>
-            
-            <div class="detail">
-                <div class="label">Datum & Tijd</div>
-                <div class="value">${dateFormatted} om ${appointment.timeSlot}</div>
-            </div>
-            
-            <div class="detail">
-                <div class="label">Toestel</div>
-                <div class="value">${appointment.deviceBrand} ${appointment.deviceModel}</div>
-            </div>
-            
-            <div class="detail">
-                <div class="label">Reparatie Type</div>
-                <div class="value">${appointment.repairType}</div>
-            </div>
-            
-            ${appointment.problemDescription ? `
-            <div class="detail">
-                <div class="label">Beschrijving</div>
-                <div class="value">${appointment.problemDescription}</div>
-            </div>
-            ` : ''}
-            
-            <p><strong>Locatie:</strong> SmartphoneService, Antwerpen</p>
-            
-            <p>Heeft u vragen? Neem contact met ons op via WhatsApp: <a href="https://wa.me/32465638106">+32 465 638 106</a></p>
-        </div>
-        <div class="footer">
-            <p>SmartphoneService - Premium Mobile Technology</p>
-        </div>
-    </div>
-</body>
-</html>
-        `;
-    }
-
-    private getCancellationEmailHtml(appointment: any): string {
-        const dateFormatted = new Date(appointment.appointmentDate).toLocaleDateString('nl-BE', {
-            weekday: 'long',
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-        });
-
-        return `
-<!DOCTYPE html>
-<html>
-<head>
-    <style>
-        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-        .header { background: #dc2626; color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; }
-        .content { background: #f4f4f5; padding: 20px; border-radius: 0 0 8px 8px; }
-        .detail { margin: 10px 0; padding: 10px; background: white; border-radius: 4px; }
-        .label { font-weight: bold; color: #71717a; font-size: 12px; text-transform: uppercase; }
-        .value { font-size: 16px; color: #18181b; }
-        .footer { text-align: center; margin-top: 20px; color: #71717a; font-size: 12px; }
-        .cta-button { display: inline-block; background: #18181b; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; margin-top: 16px; }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>Afspraak Geannuleerd ✕</h1>
-        </div>
-        <div class="content">
-            <p>Beste ${appointment.customerName},</p>
-            <p>Helaas moeten wij u mededelen dat uw afspraak is geannuleerd.</p>
-            
-            <div class="detail">
-                <div class="label">Oorspronkelijke Datum & Tijd</div>
-                <div class="value">${dateFormatted} om ${appointment.timeSlot}</div>
-            </div>
-            
-            <div class="detail">
-                <div class="label">Toestel</div>
-                <div class="value">${appointment.deviceBrand} ${appointment.deviceModel}</div>
-            </div>
-            
-            <div class="detail">
-                <div class="label">Reparatie Type</div>
-                <div class="value">${appointment.repairType}</div>
-            </div>
-            
-            <p>Wilt u een nieuwe afspraak maken? Neem gerust contact met ons op:</p>
-            <ul>
-                <li>WhatsApp: <a href="https://wa.me/32465638106">+32 465 638 106</a></li>
-                <li>Website: <a href="https://smartphoneservice.be/repair">smartphoneservice.be/repair</a></li>
-            </ul>
-            
-            <p>Onze excuses voor het ongemak.</p>
-        </div>
-        <div class="footer">
-            <p>SmartphoneService - Premium Mobile Technology</p>
-        </div>
-    </div>
-</body>
-</html>
-        `;
-    }
-
-    private getRescheduleEmailHtml(oldAppointment: any, newAppointment: any): string {
-        const oldDateFormatted = new Date(oldAppointment.appointmentDate).toLocaleDateString('nl-BE', {
-            weekday: 'long',
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-        });
-        const newDateFormatted = new Date(newAppointment.appointmentDate).toLocaleDateString('nl-BE', {
-            weekday: 'long',
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-        });
-
-        return `
-<!DOCTYPE html>
-<html>
-<head>
-    <style>
-        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-        .header { background: #2563eb; color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; }
-        .content { background: #f4f4f5; padding: 20px; border-radius: 0 0 8px 8px; }
-        .detail { margin: 10px 0; padding: 10px; background: white; border-radius: 4px; }
-        .label { font-weight: bold; color: #71717a; font-size: 12px; text-transform: uppercase; }
-        .value { font-size: 16px; color: #18181b; }
-        .old { text-decoration: line-through; color: #dc2626; }
-        .new { color: #16a34a; font-weight: bold; }
-        .footer { text-align: center; margin-top: 20px; color: #71717a; font-size: 12px; }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>Afspraak Verplaatst 📅</h1>
-        </div>
-        <div class="content">
-            <p>Beste ${oldAppointment.customerName},</p>
-            <p>Uw afspraak is verplaatst naar een nieuw tijdstip.</p>
-            
-            <div class="detail">
-                <div class="label">Oude Datum & Tijd</div>
-                <div class="value old">${oldDateFormatted} om ${oldAppointment.timeSlot}</div>
-            </div>
-            
-            <div class="detail">
-                <div class="label">Nieuwe Datum & Tijd</div>
-                <div class="value new">${newDateFormatted} om ${newAppointment.timeSlot}</div>
-            </div>
-            
-            <div class="detail">
-                <div class="label">Toestel</div>
-                <div class="value">${oldAppointment.deviceBrand} ${oldAppointment.deviceModel}</div>
-            </div>
-            
-            <div class="detail">
-                <div class="label">Reparatie Type</div>
-                <div class="value">${oldAppointment.repairType}</div>
-            </div>
-            
-            <p><strong>Locatie:</strong> SmartphoneService, Antwerpen</p>
-            
-            <p>Heeft u vragen? Neem contact met ons op via WhatsApp: <a href="https://wa.me/32465638106">+32 465 638 106</a></p>
-        </div>
-        <div class="footer">
-            <p>SmartphoneService - Premium Mobile Technology</p>
-        </div>
-    </div>
-</body>
-</html>
-        `;
-    }
 }
-

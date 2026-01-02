@@ -66,7 +66,7 @@ export function RepairsSection() {
                                 className="p-6 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all"
                             >
                                 <h3 className="font-semibold text-lg mb-1">{service.name}</h3>
-                                <p className="text-xs text-zinc-400 mb-2 italic">"{service.slogan}"</p>
+                                <p className="text-xs text-zinc-400 mb-2 italic">{`"${service.slogan}"`}</p>
                                 <p className="text-violet-400 font-medium">{service.price}</p>
                             </div>
                         ))}

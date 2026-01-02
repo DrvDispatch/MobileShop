@@ -1,4 +1,6 @@
 /**
+ * @core-only
+ * 
  * Booking Flow Hook - Core state machine for repair booking
  * 
  * BUSINESS LOGIC LAYER - UI Agnostic
@@ -10,8 +12,11 @@
  * - Data fetching coordination
  * - Form submission
  * 
- * The hook is completely UI-agnostic. Any theme can use this hook
+ * The hook is completely UI-agnostic. Any skin can use this hook
  * and render their own UI on top of the state it provides.
+ * 
+ * Skins must NOT import this directly. Route adapters call this hook
+ * and pass the view-model as props to the active skin's booking page.
  */
 
 import { useState, useEffect, useCallback } from 'react';

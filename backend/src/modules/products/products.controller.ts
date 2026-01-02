@@ -2,6 +2,7 @@ import { Controller, Get, Post, Put, Delete, Body, Param, Query, UseGuards } fro
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { ProductsService } from './products.service';
+import { ProductImportService } from './product-import.service';
 import { CreateProductDto, UpdateProductDto, ProductQueryDto } from './dto';
 import { Roles } from '../auth/decorators';
 import { RolesGuard } from '../auth/guards';
@@ -11,7 +12,10 @@ import { TenantId } from '../tenant/tenant.decorator';
 @ApiTags('Products')
 @Controller('products')
 export class ProductsController {
-    constructor(private readonly productsService: ProductsService) { }
+    constructor(
+        private readonly productsService: ProductsService,
+        private readonly productImportService: ProductImportService,
+    ) { }
 
     @Get()
     @ApiOperation({ summary: 'Get all products with filters' })
@@ -24,8 +28,8 @@ export class ProductsController {
     @ApiOperation({ summary: 'Get featured products' })
     @ApiResponse({ status: 200, description: 'List of featured products' })
     @ApiQuery({ name: 'limit', required: false, type: Number })
-    async findFeatured(@TenantId() tenantId: string, @Query('limit') limit?: number) {
-        return this.productsService.findFeatured(tenantId, limit);
+    async findFeatured(@TenantId() tenantId: string, @Query('limit') limit?: string) {
+        return this.productsService.findFeatured(tenantId, limit ? parseInt(limit, 10) : undefined);
     }
 
     @Get('brands')
@@ -106,7 +110,7 @@ export class ProductsController {
     @ApiOperation({ summary: 'Export all products to CSV (Admin/Staff only)' })
     @ApiResponse({ status: 200, description: 'CSV data returned' })
     async exportCsv(@TenantId() tenantId: string) {
-        const csv = await this.productsService.exportToCsv(tenantId);
+        const csv = await this.productImportService.exportToCsv(tenantId);
         return { csv, filename: `products_${new Date().toISOString().split('T')[0]}.csv` };
     }
 
@@ -117,7 +121,7 @@ export class ProductsController {
     @ApiOperation({ summary: 'Import products from CSV (Admin only)' })
     @ApiResponse({ status: 200, description: 'Import results' })
     async importCsv(@TenantId() tenantId: string, @Body() body: { csv: string }) {
-        return this.productsService.importFromCsv(tenantId, body.csv);
+        return this.productImportService.importFromCsv(tenantId, body.csv);
     }
 }
 

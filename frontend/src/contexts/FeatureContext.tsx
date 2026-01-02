@@ -1,5 +1,12 @@
 'use client';
 
+/**
+ * @core-only
+ * 
+ * Feature flags context provider. Skins must NOT call useFeatures() directly.
+ * Feature flags are passed as boolean props to skin components by route adapters.
+ */
+
 import { createContext, useContext, ReactNode } from 'react';
 import useSWR from 'swr';
 

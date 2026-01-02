@@ -54,8 +54,9 @@ function RatingContent() {
                         setSelectedRating(rating);
                     }
                 }
-            } catch (err: any) {
-                setError(err.message || "Er is iets misgegaan");
+            } catch (err) {
+                const message = err instanceof Error ? err.message : "Er is iets misgegaan";
+                setError(message);
             } finally {
                 setLoading(false);
             }
@@ -83,8 +84,9 @@ function RatingContent() {
             if (!res.ok) throw new Error("Verzenden mislukt");
 
             setSubmitted(true);
-        } catch (err: any) {
-            setError(err.message || "Er is iets misgegaan");
+        } catch (err) {
+            const message = err instanceof Error ? err.message : "Er is iets misgegaan";
+            setError(message);
         } finally {
             setSubmitting(false);
         }

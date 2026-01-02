@@ -1,11 +1,24 @@
 "use client";
 
-import { useState, useEffect } from "react";
+/**
+ * Repair Booking Page - UI Layer
+ * 
+ * This page is now a THIN UI LAYER that:
+ * - Consumes the useBookingFlow hook for all business logic
+ * - Renders the current step
+ * - Applies styling and layout
+ * - Uses UIConfig for ALL user-facing text
+ * 
+ * All state management, API calls, and flow control are in the hook.
+ * This component only handles presentation.
+ */
+
 import Link from "next/link";
 import { Navbar, Footer } from "@/components/landing";
 import { Button } from "@/components/ui/button";
-import { api } from "@/lib/api";
 import { getImageUrl } from "@/lib/image-utils";
+import { useBookingFlow, BookingStep } from "@/lib/booking";
+import { useUIConfig, interpolate } from "@/lib/useUIConfig";
 import {
     ChevronLeft,
     Smartphone,
@@ -18,332 +31,61 @@ import {
     CheckCircle,
     Loader2,
     AlertCircle,
-    ArrowRight,
     Search,
     Wrench,
 } from "lucide-react";
 
-// Types
-interface DeviceType {
-    id: string;
-    name: string;
-    slug: string;
-    icon?: string;
-}
-
-interface Brand {
-    id: string;
-    name: string;
-    slug: string;
-    logo?: string;
-}
-
-interface Device {
-    id: string;
-    name: string;
-    slug: string;
-    image?: string;
-}
-
-interface RepairService {
-    id: string;
-    deviceId: string;
-    serviceId: string;
-    price?: number;
-    priceText?: string;
-    duration?: string;
-    service: {
-        id: string;
-        name: string;
-        slug: string;
-        icon?: string;
-    };
-}
-
-const TIME_SLOTS = ["09:00", "10:00", "11:00", "14:00", "15:00", "16:00", "17:00"];
-
 export default function BookRepairPage() {
-    // Step state
-    const [step, setStep] = useState(0);
+    // All business logic from the hook
+    const booking = useBookingFlow();
 
-    // Selection state
-    const [selectedDeviceType, setSelectedDeviceType] = useState<DeviceType | null>(null);
-    const [selectedBrand, setSelectedBrand] = useState<Brand | null>(null);
-    const [selectedDevice, setSelectedDevice] = useState<Device | null>(null);
-    const [selectedRepair, setSelectedRepair] = useState<RepairService | null>(null);
+    // UI Config for labels and formatting
+    const { uiConfig } = useUIConfig();
+    const { labels, formatting } = uiConfig;
+    const { booking: bookingLabels } = labels;
 
-    // Data state
-    const [deviceTypes, setDeviceTypes] = useState<DeviceType[]>([]);
-    const [brands, setBrands] = useState<Brand[]>([]);
-    const [devices, setDevices] = useState<Device[]>([]);
-    const [repairs, setRepairs] = useState<RepairService[]>([]);
+    // Destructure for convenience
+    const {
+        step,
+        selections,
+        customerData,
+        setCustomerData,
+        deviceTypes,
+        brands,
+        devices: _devices,
+        repairs,
+        availableSlots,
+        availableDates,
+        selectDeviceType,
+        selectBrand,
+        selectDevice,
+        selectRepair,
+        selectDate,
+        selectTimeSlot,
+        navigateToStep,
+        searchQuery,
+        setSearchQuery,
+        filteredDevices,
+        isLoading,
+        isSubmitting,
+        isSuccess,
+        error,
+        submit,
+        goBack,
+    } = booking;
 
-    // Booking state
-    const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-    const [selectedSlot, setSelectedSlot] = useState("");
-    const [customerName, setCustomerName] = useState("");
-    const [customerEmail, setCustomerEmail] = useState("");
-    const [customerPhone, setCustomerPhone] = useState("");
-    const [problemDescription, setProblemDescription] = useState("");
+    const { deviceType, brand, device, repair, date: selectedDate, timeSlot: selectedSlot } = selections;
 
-    // UI state
-    const [isLoading, setIsLoading] = useState(false);
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-    const [isSuccess, setIsSuccess] = useState(false);
-    const [availableSlots, setAvailableSlots] = useState<string[]>(TIME_SLOTS);
-    const [searchQuery, setSearchQuery] = useState("");
-
-    // Fetch device types on mount
-    useEffect(() => {
-        fetchDeviceTypes();
-    }, []);
-
-    // Fetch brands when device type changes
-    useEffect(() => {
-        if (selectedDeviceType) {
-            fetchBrands(selectedDeviceType.slug);
-        }
-    }, [selectedDeviceType]);
-
-    // Fetch devices when brand changes
-    useEffect(() => {
-        if (selectedBrand) {
-            fetchDevices(selectedBrand.slug);
-        }
-    }, [selectedBrand]);
-
-    // Fetch repairs when device changes
-    useEffect(() => {
-        if (selectedDevice) {
-            fetchRepairs(selectedDevice.slug);
-        }
-    }, [selectedDevice]);
-
-    // Fetch available slots when date changes
-    useEffect(() => {
-        if (selectedDate) {
-            fetchAvailableSlots(selectedDate);
-        }
-    }, [selectedDate]);
-
-    const fetchDeviceTypes = async () => {
-        setIsLoading(true);
-        try {
-            const response = await fetch('/api/repairs/device-types');
-            const data = await response.json();
-            setDeviceTypes(data || []);
-        } catch (err) {
-            console.error("Failed to fetch device types:", err);
-            // Fallback
-            setDeviceTypes([
-                { id: "1", name: "Smartphone", slug: "smartphone" },
-                { id: "2", name: "Tablet", slug: "tablet" },
-            ]);
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    const fetchBrands = async (deviceTypeSlug: string) => {
-        setIsLoading(true);
-        try {
-            const response = await fetch(`/api/repairs/brands?deviceType=${deviceTypeSlug}`);
-            const data = await response.json();
-            setBrands(data || []);
-        } catch (err) {
-            console.error("Failed to fetch brands:", err);
-            setBrands([]);
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    const fetchDevices = async (brandSlug: string) => {
-        setIsLoading(true);
-        try {
-            const response = await fetch(`/api/repairs/devices?brand=${brandSlug}`);
-            const data = await response.json();
-            setDevices(data || []);
-        } catch (err) {
-            console.error("Failed to fetch devices:", err);
-            setDevices([]);
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    const fetchRepairs = async (deviceSlug: string) => {
-        setIsLoading(true);
-        try {
-            const response = await fetch(`/api/repairs/services/${deviceSlug}`);
-            const data = await response.json();
-            setRepairs(data || []);
-        } catch (err) {
-            console.error("Failed to fetch repairs:", err);
-            setRepairs([]);
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    const fetchAvailableSlots = async (date: Date) => {
-        try {
-            const dateStr = date.toISOString().split("T")[0];
-            const response = await fetch(`/api/appointments/available-slots?date=${dateStr}`);
-            const data = await response.json();
-            setAvailableSlots(data.slots || TIME_SLOTS);
-        } catch {
-            setAvailableSlots(TIME_SLOTS);
-        }
-    };
-
+    // Step titles from config
     const getStepTitle = () => {
         switch (step) {
-            case 0: return "Wat wilt u laten repareren?";
-            case 1: return "Selecteer uw merk";
-            case 2: return "Selecteer uw toestel";
-            case 3: return "Selecteer reparatie";
-            case 4: return "Kies datum & tijd";
-            case 5: return "Uw gegevens";
+            case BookingStep.DEVICE_TYPE: return bookingLabels.stepTitles.deviceType;
+            case BookingStep.BRAND: return bookingLabels.stepTitles.brand;
+            case BookingStep.DEVICE: return bookingLabels.stepTitles.device;
+            case BookingStep.REPAIR: return bookingLabels.stepTitles.repair;
+            case BookingStep.DATE_TIME: return bookingLabels.stepTitles.datetime;
+            case BookingStep.CONTACT: return bookingLabels.stepTitles.contact;
             default: return "";
-        }
-    };
-
-    const getAvailableDates = () => {
-        const dates: Date[] = [];
-        const today = new Date();
-        for (let i = 1; i <= 14; i++) {
-            const date = new Date(today);
-            date.setDate(today.getDate() + i);
-            if (date.getDay() !== 0) dates.push(date); // Skip Sundays
-        }
-        return dates;
-    };
-
-    const handleSelectDeviceType = (dt: DeviceType) => {
-        setSelectedDeviceType(dt);
-        setSelectedBrand(null);
-        setSelectedDevice(null);
-        setSelectedRepair(null);
-        setBrands([]);
-        setDevices([]);
-        setRepairs([]);
-        setStep(1);
-        // Directly fetch brands to ensure data loads even if useEffect doesn't trigger
-        fetchBrands(dt.slug);
-    };
-
-    const handleSelectBrand = (brand: Brand) => {
-        setSelectedBrand(brand);
-        setSelectedDevice(null);
-        setSelectedRepair(null);
-        setDevices([]);
-        setRepairs([]);
-        setStep(2);
-        // Directly fetch devices to ensure data loads even if useEffect doesn't trigger
-        fetchDevices(brand.slug);
-    };
-
-    const handleSelectDevice = (device: Device) => {
-        setSelectedDevice(device);
-        setSelectedRepair(null);
-        setRepairs([]);
-        setStep(3);
-        // Directly fetch repairs to ensure data loads even if useEffect doesn't trigger
-        fetchRepairs(device.slug);
-    };
-
-    const handleSelectRepair = (repair: RepairService) => {
-        setSelectedRepair(repair);
-        setStep(4);
-    };
-
-    // Breadcrumb navigation handlers - properly refetch data when navigating back
-    const navigateToDeviceType = () => {
-        setStep(0);
-        setSearchQuery("");
-        // Reset selections so useEffect triggers correctly on re-selection
-        setSelectedDeviceType(null);
-        setSelectedBrand(null);
-        setSelectedDevice(null);
-        setSelectedRepair(null);
-        setBrands([]);
-        setDevices([]);
-        setRepairs([]);
-    };
-
-    const navigateToBrand = () => {
-        if (selectedDeviceType) {
-            setSelectedDevice(null);
-            setSelectedRepair(null);
-            setDevices([]);
-            setRepairs([]);
-            setSearchQuery("");
-            fetchBrands(selectedDeviceType.slug);
-            setStep(1);
-        }
-    };
-
-    const navigateToDevice = () => {
-        if (selectedBrand) {
-            setSelectedRepair(null);
-            setRepairs([]);
-            setSearchQuery("");
-            fetchDevices(selectedBrand.slug);
-            setStep(2);
-        }
-    };
-
-    const navigateToRepair = () => {
-        if (selectedDevice) {
-            fetchRepairs(selectedDevice.slug);
-            setStep(3);
-        }
-    };
-
-    // Filter devices by search query
-    const filteredDevices = devices.filter(device =>
-        device.name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-
-    const handleSubmit = async () => {
-        if (!customerName || !customerEmail || !customerPhone || !selectedDevice || !selectedRepair || !selectedDate || !selectedSlot) {
-            setError("Vul alle verplichte velden in");
-            return;
-        }
-
-        setIsSubmitting(true);
-        setError(null);
-
-        try {
-            const response = await fetch('/api/appointments', {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    customerName,
-                    customerEmail,
-                    customerPhone,
-                    deviceBrand: selectedBrand?.name || "",
-                    deviceModel: selectedDevice?.name || "",
-                    repairType: "OTHER",
-                    problemDescription: `${selectedRepair?.service?.name}: ${problemDescription}`,
-                    appointmentDate: selectedDate.toISOString().split("T")[0],
-                    timeSlot: selectedSlot,
-                }),
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json().catch(() => ({}));
-                throw new Error(errorData.message || "Kon afspraak niet maken");
-            }
-
-            setIsSuccess(true);
-        } catch (err: unknown) {
-            const message = err instanceof Error ? err.message : "Er is iets misgegaan";
-            setError(message);
-        } finally {
-            setIsSubmitting(false);
         }
     };
 
@@ -356,20 +98,20 @@ export default function BookRepairPage() {
                     <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
                         <CheckCircle className="w-10 h-10 text-green-600" />
                     </div>
-                    <h1 className="text-3xl font-bold text-zinc-900 mb-4">Afspraak Bevestigd!</h1>
-                    <p className="text-lg text-zinc-600 mb-2">Bedankt {customerName}!</p>
-                    <p className="text-zinc-600 mb-8">U ontvangt een bevestiging per email op <strong>{customerEmail}</strong></p>
+                    <h1 className="text-3xl font-bold text-zinc-900 mb-4">{bookingLabels.success.title}</h1>
+                    <p className="text-lg text-zinc-600 mb-2">{interpolate(bookingLabels.success.thanks, { name: customerData.name })}</p>
+                    <p className="text-zinc-600 mb-8">{interpolate(bookingLabels.success.confirmationText, { email: customerData.email })}</p>
                     <div className="bg-zinc-50 rounded-xl p-6 mb-8 text-left">
                         <h3 className="font-semibold text-zinc-900 mb-3">Details:</h3>
                         <div className="space-y-2 text-sm text-zinc-600">
-                            <p><strong>Toestel:</strong> {selectedBrand?.name} {selectedDevice?.name}</p>
-                            <p><strong>Reparatie:</strong> {selectedRepair?.service?.name}</p>
-                            <p><strong>Prijs:</strong> {selectedRepair?.priceText || "Op aanvraag"}</p>
-                            <p><strong>Datum:</strong> {selectedDate?.toLocaleDateString("nl-BE", { weekday: "long", day: "numeric", month: "long" })}</p>
-                            <p><strong>Tijd:</strong> {selectedSlot}</p>
+                            <p><strong>{bookingLabels.success.deviceLabel}</strong> {brand?.name} {device?.name}</p>
+                            <p><strong>{bookingLabels.success.repairLabel}</strong> {repair?.service?.name}</p>
+                            <p><strong>{bookingLabels.success.priceLabel}</strong> {repair?.priceText || bookingLabels.success.priceOnRequest}</p>
+                            <p><strong>{bookingLabels.success.dateLabel}</strong> {selectedDate?.toLocaleDateString(formatting.dateLocale, { weekday: "long", day: "numeric", month: "long" })}</p>
+                            <p><strong>{bookingLabels.success.timeLabel}</strong> {selectedSlot}</p>
                         </div>
                     </div>
-                    <Link href="/"><Button>Terug naar Home</Button></Link>
+                    <Link href="/"><Button>{bookingLabels.success.backToHome}</Button></Link>
                 </div>
                 <Footer />
             </main>
@@ -385,24 +127,24 @@ export default function BookRepairPage() {
                 <div className="mb-8">
                     <Link href="/repair" className="inline-flex items-center text-sm text-zinc-500 hover:text-zinc-900 mb-4">
                         <ChevronLeft className="w-4 h-4 mr-1" />
-                        Terug
+                        {bookingLabels.navigation.previous}
                     </Link>
                     <h1 className="text-3xl font-bold text-zinc-900">{getStepTitle()}</h1>
 
                     {/* Breadcrumb */}
                     {step > 0 && (
                         <div className="flex items-center gap-2 mt-3 text-sm text-zinc-500 flex-wrap">
-                            {selectedDeviceType && (
-                                <button onClick={navigateToDeviceType} className="hover:text-zinc-900 hover:underline">{selectedDeviceType.name}</button>
+                            {deviceType && (
+                                <button onClick={() => navigateToStep(BookingStep.DEVICE_TYPE)} className="hover:text-zinc-900 hover:underline">{deviceType.name}</button>
                             )}
-                            {selectedBrand && (
-                                <><span>/</span><button onClick={navigateToBrand} className="hover:text-zinc-900 hover:underline">{selectedBrand.name}</button></>
+                            {brand && (
+                                <><span>/</span><button onClick={() => navigateToStep(BookingStep.BRAND)} className="hover:text-zinc-900 hover:underline">{brand.name}</button></>
                             )}
-                            {selectedDevice && (
-                                <><span>/</span><button onClick={navigateToDevice} className="hover:text-zinc-900 hover:underline">{selectedDevice.name}</button></>
+                            {device && (
+                                <><span>/</span><button onClick={() => navigateToStep(BookingStep.DEVICE)} className="hover:text-zinc-900 hover:underline">{device.name}</button></>
                             )}
-                            {selectedRepair && step > 3 && (
-                                <><span>/</span><button onClick={navigateToRepair} className="hover:text-zinc-900 hover:underline">{selectedRepair.service?.name}</button></>
+                            {repair && step > BookingStep.REPAIR && (
+                                <><span>/</span><button onClick={() => navigateToStep(BookingStep.REPAIR)} className="hover:text-zinc-900 hover:underline">{repair.service?.name}</button></>
                             )}
                         </div>
                     )}
@@ -422,12 +164,12 @@ export default function BookRepairPage() {
                 )}
 
                 {/* Step 0: Device Type */}
-                {step === 0 && !isLoading && (
+                {step === BookingStep.DEVICE_TYPE && !isLoading && (
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                         {deviceTypes.map((dt) => (
                             <button
                                 key={dt.id}
-                                onClick={() => handleSelectDeviceType(dt)}
+                                onClick={() => selectDeviceType(dt)}
                                 className="bg-white rounded-xl border-2 border-zinc-200 p-6 text-center hover:border-zinc-400 hover:shadow-md transition-all"
                             >
                                 <div className="w-16 h-16 mx-auto mb-4 flex items-center justify-center">
@@ -448,25 +190,25 @@ export default function BookRepairPage() {
                 )}
 
                 {/* Step 1: Brand Selection */}
-                {step === 1 && !isLoading && (
+                {step === BookingStep.BRAND && !isLoading && (
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
                         {brands.length === 0 ? (
-                            <p className="col-span-full text-center text-zinc-500 py-8">Geen merken gevonden. Probeer opnieuw.</p>
+                            <p className="col-span-full text-center text-zinc-500 py-8">{bookingLabels.emptyStates.noBrands}</p>
                         ) : (
-                            brands.map((brand) => (
+                            brands.map((b) => (
                                 <button
-                                    key={brand.id}
-                                    onClick={() => handleSelectBrand(brand)}
+                                    key={b.id}
+                                    onClick={() => selectBrand(b)}
                                     className="bg-white rounded-xl border-2 border-zinc-200 p-4 hover:border-zinc-400 hover:shadow-md transition-all"
                                 >
                                     <div className="aspect-[3/2] flex items-center justify-center mb-2">
-                                        {brand.logo ? (
-                                            <img src={getImageUrl(brand.logo)} alt={brand.name} className="max-h-12 object-contain" />
+                                        {b.logo ? (
+                                            <img src={getImageUrl(b.logo)} alt={b.name} className="max-h-12 object-contain" />
                                         ) : (
-                                            <span className="text-xl font-bold text-zinc-600">{brand.name}</span>
+                                            <span className="text-xl font-bold text-zinc-600">{b.name}</span>
                                         )}
                                     </div>
-                                    <p className="text-sm font-medium text-zinc-700 text-center">{brand.name}</p>
+                                    <p className="text-sm font-medium text-zinc-700 text-center">{b.name}</p>
                                 </button>
                             ))
                         )}
@@ -474,14 +216,14 @@ export default function BookRepairPage() {
                 )}
 
                 {/* Step 2: Device Selection */}
-                {step === 2 && !isLoading && (
+                {step === BookingStep.DEVICE && !isLoading && (
                     <div className="space-y-4">
                         {/* Search Input */}
                         <div className="relative max-w-md">
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-400" />
                             <input
                                 type="text"
-                                placeholder="Zoek uw toestel..."
+                                placeholder={bookingLabels.search.placeholder}
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 className="w-full pl-10 pr-4 py-3 rounded-lg border border-zinc-300 focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500 transition-colors"
@@ -490,25 +232,27 @@ export default function BookRepairPage() {
 
                         {/* Device Grid */}
                         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                            {devices.length === 0 ? (
-                                <p className="col-span-full text-center text-zinc-500 py-8">Geen toestellen gevonden.</p>
-                            ) : filteredDevices.length === 0 ? (
-                                <p className="col-span-full text-center text-zinc-500 py-8">Geen toestellen gevonden voor "{searchQuery}"</p>
+                            {filteredDevices.length === 0 ? (
+                                <p className="col-span-full text-center text-zinc-500 py-8">
+                                    {searchQuery
+                                        ? interpolate(bookingLabels.emptyStates.noDevicesSearch, { query: searchQuery })
+                                        : bookingLabels.emptyStates.noDevices}
+                                </p>
                             ) : (
-                                filteredDevices.map((device) => (
+                                filteredDevices.map((d) => (
                                     <button
-                                        key={device.id}
-                                        onClick={() => handleSelectDevice(device)}
+                                        key={d.id}
+                                        onClick={() => selectDevice(d)}
                                         className="bg-white rounded-xl border-2 border-zinc-200 p-4 hover:border-zinc-400 hover:shadow-md transition-all text-center"
                                     >
                                         <div className="aspect-square flex items-center justify-center mb-2 bg-zinc-50 rounded-lg">
-                                            {device.image ? (
-                                                <img src={getImageUrl(device.image)} alt={device.name} className="max-h-24 object-contain" />
+                                            {d.image ? (
+                                                <img src={getImageUrl(d.image)} alt={d.name} className="max-h-24 object-contain" />
                                             ) : (
                                                 <Smartphone className="w-12 h-12 text-zinc-300" />
                                             )}
                                         </div>
-                                        <p className="text-sm font-medium text-zinc-900">{device.name}</p>
+                                        <p className="text-sm font-medium text-zinc-900">{d.name}</p>
                                     </button>
                                 ))
                             )}
@@ -516,31 +260,25 @@ export default function BookRepairPage() {
                     </div>
                 )}
 
-                {/* Step 3: Repair Selection - Grid Layout */}
-                {step === 3 && !isLoading && (
+                {/* Step 3: Repair Selection */}
+                {step === BookingStep.REPAIR && !isLoading && (
                     <div className="space-y-6">
                         {/* Device Header with Image */}
                         <div className="bg-white rounded-xl border border-zinc-200 p-6">
                             <div className="flex items-center gap-6">
-                                {/* Device Image */}
                                 <div className="w-24 h-24 sm:w-32 sm:h-32 bg-zinc-50 rounded-xl flex items-center justify-center flex-shrink-0">
-                                    {selectedDevice?.image ? (
-                                        <img
-                                            src={getImageUrl(selectedDevice.image)}
-                                            alt={selectedDevice.name}
-                                            className="max-w-full max-h-full object-contain"
-                                        />
+                                    {device?.image ? (
+                                        <img src={getImageUrl(device.image)} alt={device.name} className="max-w-full max-h-full object-contain" />
                                     ) : (
                                         <Smartphone className="w-12 h-12 text-zinc-300" />
                                     )}
                                 </div>
-                                {/* Device Info */}
                                 <div>
                                     <h2 className="text-xl sm:text-2xl font-bold text-zinc-900">
-                                        {selectedBrand?.name} {selectedDevice?.name} reparatie
+                                        {interpolate(bookingLabels.repairSection.repairTitle, { brand: brand?.name || '', device: device?.name || '' })}
                                     </h2>
                                     <p className="text-zinc-500 mt-2">
-                                        Klik op jouw type schade en <strong className="text-zinc-700">plan je afspraak</strong>.
+                                        {bookingLabels.repairSection.selectDamage}
                                     </p>
                                 </div>
                             </div>
@@ -549,32 +287,24 @@ export default function BookRepairPage() {
                         {/* Repair Options Grid */}
                         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
                             {repairs.length === 0 ? (
-                                <p className="col-span-full text-center text-zinc-500 py-8">Geen reparaties gevonden voor dit toestel.</p>
+                                <p className="col-span-full text-center text-zinc-500 py-8">{bookingLabels.emptyStates.noRepairs}</p>
                             ) : (
-                                repairs.map((repair) => (
+                                repairs.map((r) => (
                                     <button
-                                        key={repair.id}
-                                        onClick={() => handleSelectRepair(repair)}
+                                        key={r.id}
+                                        onClick={() => selectRepair(r)}
                                         className="bg-white rounded-xl border-2 border-zinc-200 p-5 hover:border-zinc-400 hover:shadow-md transition-all text-center group"
                                     >
-                                        {/* Icon */}
                                         <div className="w-14 h-14 mx-auto mb-3 bg-zinc-100 rounded-xl flex items-center justify-center group-hover:bg-zinc-200 transition-colors">
-                                            {repair.service?.icon ? (
-                                                <img src={getImageUrl(repair.service.icon)} alt="" className="w-8 h-8 object-contain" />
+                                            {r.service?.icon ? (
+                                                <img src={getImageUrl(r.service.icon)} alt="" className="w-8 h-8 object-contain" />
                                             ) : (
                                                 <Smartphone className="w-7 h-7 text-zinc-600" />
                                             )}
                                         </div>
-                                        {/* Service Name */}
-                                        <p className="font-semibold text-zinc-900 mb-1">{repair.service?.name}</p>
-                                        {/* Duration */}
-                                        {repair.duration && (
-                                            <p className="text-xs text-zinc-500 mb-2">{repair.duration}</p>
-                                        )}
-                                        {/* Price */}
-                                        <p className="font-bold text-green-600">
-                                            {repair.priceText || "op aanvraag"}
-                                        </p>
+                                        <p className="font-semibold text-zinc-900 mb-1">{r.service?.name}</p>
+                                        {r.duration && <p className="text-xs text-zinc-500 mb-2">{r.duration}</p>}
+                                        <p className="font-bold text-green-600">{r.priceText || bookingLabels.repairSection.onRequest}</p>
                                     </button>
                                 ))
                             )}
@@ -583,66 +313,35 @@ export default function BookRepairPage() {
                 )}
 
                 {/* Step 4: Date & Time */}
-                {step === 4 && (
+                {step === BookingStep.DATE_TIME && (
                     <div className="space-y-6">
                         {/* Device & Repair Header */}
-                        <div className="bg-white rounded-xl border border-zinc-200 p-6">
-                            <div className="flex items-center gap-6">
-                                {/* Device Image */}
-                                <div className="w-20 h-20 sm:w-24 sm:h-24 bg-zinc-50 rounded-xl flex items-center justify-center flex-shrink-0">
-                                    {selectedDevice?.image ? (
-                                        <img
-                                            src={getImageUrl(selectedDevice.image)}
-                                            alt={selectedDevice.name}
-                                            className="max-w-full max-h-full object-contain"
-                                        />
-                                    ) : (
-                                        <Smartphone className="w-10 h-10 text-zinc-300" />
-                                    )}
-                                </div>
-                                {/* Device & Repair Info */}
-                                <div className="flex-1 min-w-0">
-                                    <h2 className="text-lg sm:text-xl font-bold text-zinc-900">
-                                        {selectedBrand?.name} {selectedDevice?.name}
-                                    </h2>
-                                    <div className="flex items-center gap-2 mt-1">
-                                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-700">
-                                            {selectedRepair?.service?.icon ? (
-                                                <img src={getImageUrl(selectedRepair.service.icon)} alt="" className="w-4 h-4" />
-                                            ) : (
-                                                <Wrench className="w-3.5 h-3.5" />
-                                            )}
-                                            {selectedRepair?.service?.name}
-                                        </span>
-                                        {selectedRepair?.priceText && (
-                                            <span className="text-sm font-semibold text-green-600">
-                                                {selectedRepair.priceText}
-                                            </span>
-                                        )}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <DeviceRepairHeader
+                            brand={brand}
+                            device={device}
+                            repair={repair}
+                            labels={bookingLabels}
+                            formatting={formatting}
+                        />
 
-                        {/* Date & Time Selection */}
                         <div className="bg-white rounded-xl border border-zinc-200 p-6 space-y-6">
                             <div>
                                 <label className="block text-sm font-medium text-zinc-700 mb-3">
-                                    <Calendar className="inline w-4 h-4 mr-1" /> Kies een datum
+                                    <Calendar className="inline w-4 h-4 mr-1" /> {bookingLabels.datetime.selectDate}
                                 </label>
                                 <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2">
-                                    {getAvailableDates().map((date) => (
+                                    {availableDates.map((date) => (
                                         <button
                                             key={date.toISOString()}
-                                            onClick={() => setSelectedDate(date)}
+                                            onClick={() => selectDate(date)}
                                             className={`p-3 rounded-lg border-2 text-center transition-colors ${selectedDate?.toDateString() === date.toDateString()
                                                 ? "border-zinc-900 bg-zinc-900 text-white"
                                                 : "border-zinc-200 hover:border-zinc-400"
                                                 }`}
                                         >
-                                            <p className="text-xs uppercase">{date.toLocaleDateString("nl-BE", { weekday: "short" })}</p>
+                                            <p className="text-xs uppercase">{date.toLocaleDateString(formatting.dateLocale, { weekday: "short" })}</p>
                                             <p className="text-lg font-bold">{date.getDate()}</p>
-                                            <p className="text-xs">{date.toLocaleDateString("nl-BE", { month: "short" })}</p>
+                                            <p className="text-xs">{date.toLocaleDateString(formatting.dateLocale, { month: "short" })}</p>
                                         </button>
                                     ))}
                                 </div>
@@ -651,13 +350,13 @@ export default function BookRepairPage() {
                             {selectedDate && (
                                 <div>
                                     <label className="block text-sm font-medium text-zinc-700 mb-3">
-                                        <Clock className="inline w-4 h-4 mr-1" /> Kies een tijdstip
+                                        <Clock className="inline w-4 h-4 mr-1" /> {bookingLabels.datetime.selectTime}
                                     </label>
                                     <div className="grid grid-cols-4 gap-2">
                                         {availableSlots.map((slot) => (
                                             <button
                                                 key={slot}
-                                                onClick={() => setSelectedSlot(slot)}
+                                                onClick={() => selectTimeSlot(slot)}
                                                 className={`p-3 rounded-lg border-2 font-medium transition-colors ${selectedSlot === slot
                                                     ? "border-zinc-900 bg-zinc-900 text-white"
                                                     : "border-zinc-200 hover:border-zinc-400"
@@ -671,9 +370,9 @@ export default function BookRepairPage() {
                             )}
 
                             <div className="flex gap-4">
-                                <Button variant="outline" onClick={() => setStep(3)} className="flex-1">Terug</Button>
-                                <Button onClick={() => setStep(5)} disabled={!selectedDate || !selectedSlot} className="flex-1">
-                                    Volgende
+                                <Button variant="outline" onClick={goBack} className="flex-1">{bookingLabels.navigation.previous}</Button>
+                                <Button onClick={() => booking.setStep(BookingStep.CONTACT)} disabled={!selectedDate || !selectedSlot} className="flex-1">
+                                    {bookingLabels.navigation.next}
                                 </Button>
                             </div>
                         </div>
@@ -681,74 +380,43 @@ export default function BookRepairPage() {
                 )}
 
                 {/* Step 5: Contact Info */}
-                {step === 5 && (
+                {step === BookingStep.CONTACT && (
                     <div className="space-y-6">
-                        {/* Device & Repair Header */}
-                        <div className="bg-white rounded-xl border border-zinc-200 p-6">
-                            <div className="flex items-center gap-6">
-                                {/* Device Image */}
-                                <div className="w-20 h-20 sm:w-24 sm:h-24 bg-zinc-50 rounded-xl flex items-center justify-center flex-shrink-0">
-                                    {selectedDevice?.image ? (
-                                        <img
-                                            src={getImageUrl(selectedDevice.image)}
-                                            alt={selectedDevice.name}
-                                            className="max-w-full max-h-full object-contain"
-                                        />
-                                    ) : (
-                                        <Smartphone className="w-10 h-10 text-zinc-300" />
-                                    )}
-                                </div>
-                                {/* Device & Repair Info */}
-                                <div className="flex-1 min-w-0">
-                                    <h2 className="text-lg sm:text-xl font-bold text-zinc-900">
-                                        {selectedBrand?.name} {selectedDevice?.name}
-                                    </h2>
-                                    <div className="flex flex-wrap items-center gap-2 mt-1">
-                                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-700">
-                                            {selectedRepair?.service?.icon ? (
-                                                <img src={getImageUrl(selectedRepair.service.icon)} alt="" className="w-4 h-4" />
-                                            ) : (
-                                                <Wrench className="w-3.5 h-3.5" />
-                                            )}
-                                            {selectedRepair?.service?.name}
-                                        </span>
-                                        {selectedRepair?.priceText && (
-                                            <span className="text-sm font-semibold text-green-600">
-                                                {selectedRepair.priceText}
-                                            </span>
-                                        )}
-                                    </div>
-                                    <p className="text-sm text-zinc-500 mt-1">
-                                        {selectedDate?.toLocaleDateString("nl-BE", { weekday: "long", day: "numeric", month: "long" })} om {selectedSlot}
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
+                        {/* Device & Repair Header with date */}
+                        <DeviceRepairHeader
+                            brand={brand}
+                            device={device}
+                            repair={repair}
+                            date={selectedDate}
+                            time={selectedSlot}
+                            labels={bookingLabels}
+                            formatting={formatting}
+                        />
 
                         {/* Contact Form */}
                         <div className="bg-white rounded-xl border border-zinc-200 p-6 space-y-6">
                             <div className="grid sm:grid-cols-2 gap-4">
                                 <div>
                                     <label className="block text-sm font-medium text-zinc-700 mb-2">
-                                        <User className="inline w-4 h-4 mr-1" /> Volledige naam *
+                                        <User className="inline w-4 h-4 mr-1" /> {bookingLabels.form.nameLabel} *
                                     </label>
                                     <input
                                         type="text"
-                                        value={customerName}
-                                        onChange={(e) => setCustomerName(e.target.value)}
-                                        placeholder="Jan Janssen"
+                                        value={customerData.name}
+                                        onChange={(e) => setCustomerData(prev => ({ ...prev, name: e.target.value }))}
+                                        placeholder={bookingLabels.form.namePlaceholder}
                                         className="w-full px-4 py-2 border border-zinc-300 rounded-lg focus:ring-2 focus:ring-zinc-500"
                                     />
                                 </div>
                                 <div>
                                     <label className="block text-sm font-medium text-zinc-700 mb-2">
-                                        <Phone className="inline w-4 h-4 mr-1" /> Telefoonnummer *
+                                        <Phone className="inline w-4 h-4 mr-1" /> {bookingLabels.form.phoneLabel} *
                                     </label>
                                     <input
                                         type="tel"
-                                        value={customerPhone}
-                                        onChange={(e) => setCustomerPhone(e.target.value)}
-                                        placeholder="+32 4XX XX XX XX"
+                                        value={customerData.phone}
+                                        onChange={(e) => setCustomerData(prev => ({ ...prev, phone: e.target.value }))}
+                                        placeholder={bookingLabels.form.phonePlaceholder}
                                         className="w-full px-4 py-2 border border-zinc-300 rounded-lg focus:ring-2 focus:ring-zinc-500"
                                     />
                                 </div>
@@ -756,36 +424,36 @@ export default function BookRepairPage() {
 
                             <div>
                                 <label className="block text-sm font-medium text-zinc-700 mb-2">
-                                    <Mail className="inline w-4 h-4 mr-1" /> E-mailadres *
+                                    <Mail className="inline w-4 h-4 mr-1" /> {bookingLabels.form.emailLabel} *
                                 </label>
                                 <input
                                     type="email"
-                                    value={customerEmail}
-                                    onChange={(e) => setCustomerEmail(e.target.value)}
-                                    placeholder="jan@voorbeeld.be"
+                                    value={customerData.email}
+                                    onChange={(e) => setCustomerData(prev => ({ ...prev, email: e.target.value }))}
+                                    placeholder={bookingLabels.form.emailPlaceholder}
                                     className="w-full px-4 py-2 border border-zinc-300 rounded-lg focus:ring-2 focus:ring-zinc-500"
                                 />
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-zinc-700 mb-2">Opmerkingen (optioneel)</label>
+                                <label className="block text-sm font-medium text-zinc-700 mb-2">{bookingLabels.form.notesLabel}</label>
                                 <textarea
-                                    value={problemDescription}
-                                    onChange={(e) => setProblemDescription(e.target.value)}
+                                    value={customerData.notes}
+                                    onChange={(e) => setCustomerData(prev => ({ ...prev, notes: e.target.value }))}
                                     rows={3}
-                                    placeholder="Extra informatie over het probleem..."
+                                    placeholder={bookingLabels.form.notesPlaceholder}
                                     className="w-full px-4 py-2 border border-zinc-300 rounded-lg focus:ring-2 focus:ring-zinc-500"
                                 />
                             </div>
 
                             <div className="flex gap-4">
-                                <Button variant="outline" onClick={() => setStep(4)} className="flex-1">Terug</Button>
+                                <Button variant="outline" onClick={goBack} className="flex-1">{bookingLabels.navigation.previous}</Button>
                                 <Button
-                                    onClick={handleSubmit}
-                                    disabled={isSubmitting || !customerName || !customerEmail || !customerPhone}
+                                    onClick={submit}
+                                    disabled={isSubmitting || !customerData.name || !customerData.email || !customerData.phone}
                                     className="flex-1"
                                 >
-                                    {isSubmitting ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Bevestigen...</> : "Afspraak Bevestigen"}
+                                    {isSubmitting ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> {bookingLabels.navigation.confirm}...</> : bookingLabels.navigation.confirm}
                                 </Button>
                             </div>
                         </div>
@@ -795,5 +463,61 @@ export default function BookRepairPage() {
 
             <Footer />
         </main>
+    );
+}
+
+// Helper component for device/repair header (extracted for reuse)
+interface DeviceRepairHeaderProps {
+    brand: { name: string } | null;
+    device: { name: string; image?: string } | null;
+    repair: { service?: { name: string; icon?: string }; priceText?: string } | null;
+    date?: Date | null;
+    time?: string;
+    labels: {
+        repairSection: {
+            onRequest: string;
+        };
+    };
+    formatting: {
+        dateLocale: string;
+    };
+}
+
+function DeviceRepairHeader({ brand, device, repair, date, time, labels, formatting }: DeviceRepairHeaderProps) {
+    return (
+        <div className="bg-white rounded-xl border border-zinc-200 p-6">
+            <div className="flex items-center gap-6">
+                <div className="w-20 h-20 sm:w-24 sm:h-24 bg-zinc-50 rounded-xl flex items-center justify-center flex-shrink-0">
+                    {device?.image ? (
+                        <img src={getImageUrl(device.image)} alt={device.name} className="max-w-full max-h-full object-contain" />
+                    ) : (
+                        <Smartphone className="w-10 h-10 text-zinc-300" />
+                    )}
+                </div>
+                <div className="flex-1 min-w-0">
+                    <h2 className="text-lg sm:text-xl font-bold text-zinc-900">
+                        {brand?.name} {device?.name}
+                    </h2>
+                    <div className="flex flex-wrap items-center gap-2 mt-1">
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-700">
+                            {repair?.service?.icon ? (
+                                <img src={getImageUrl(repair.service.icon)} alt="" className="w-4 h-4" />
+                            ) : (
+                                <Wrench className="w-3.5 h-3.5" />
+                            )}
+                            {repair?.service?.name}
+                        </span>
+                        {repair?.priceText && (
+                            <span className="text-sm font-semibold text-green-600">{repair.priceText}</span>
+                        )}
+                    </div>
+                    {date && time && (
+                        <p className="text-sm text-zinc-500 mt-1">
+                            {date.toLocaleDateString(formatting.dateLocale, { weekday: "long", day: "numeric", month: "long" })} om {time}
+                        </p>
+                    )}
+                </div>
+            </div>
+        </div>
     );
 }

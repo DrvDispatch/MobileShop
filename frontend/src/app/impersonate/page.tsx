@@ -23,6 +23,7 @@ export default function ImpersonatePage() {
         const code = searchParams.get("code");
 
         if (!code) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect -- Intentional early return state update
             setStatus("error");
             setMessage("No impersonation code provided");
             return;

@@ -43,18 +43,19 @@ export interface PublicSettings {
 }
 
 // Default values (fallback if API fails)
+// These are generic placeholders - actual values come from backend API
 const DEFAULT_SETTINGS: PublicSettings = {
     store: {
-        name: 'Smartphone Service',
-        phone: '+32 465 63 81 06',
-        email: 'info@smartphoneservice.be',
+        name: 'Store',
+        phone: '',
+        email: '',
         address: {
-            line1: 'Korte Koepoortstraat 7',
-            city: 'Antwerpen',
-            postalCode: '2000',
+            line1: '',
+            city: '',
+            postalCode: '',
             country: 'BE',
         },
-        vatNumber: 'BE 1015.249.213',
+        vatNumber: '',
     },
     checkout: {
         defaultCountry: 'BE',

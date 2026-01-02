@@ -14,12 +14,12 @@ export class RefundsService {
     }
 
     /**
-     * Create a new refund request (does not process yet)
+     * Create a new refund request (does not process yet) - tenant-scoped via order
      */
-    async createRefund(dto: CreateRefundDto, adminId?: string) {
-        // Get the order
-        const order = await this.prisma.order.findUnique({
-            where: { id: dto.orderId },
+    async createRefund(tenantId: string, dto: CreateRefundDto, adminId?: string) {
+        // Get the order (tenant-scoped)
+        const order = await this.prisma.order.findFirst({
+            where: { tenantId, id: dto.orderId },
             include: { refunds: true },
         });
 
@@ -69,11 +69,11 @@ export class RefundsService {
     }
 
     /**
-     * Process a pending refund via Stripe
+     * Process a pending refund via Stripe (tenant-scoped via order)
      */
-    async processRefund(refundId: string) {
-        const refund = await this.prisma.refund.findUnique({
-            where: { id: refundId },
+    async processRefund(tenantId: string, refundId: string) {
+        const refund = await this.prisma.refund.findFirst({
+            where: { id: refundId, order: { tenantId } },
             include: { order: true },
         });
 
@@ -151,11 +151,11 @@ export class RefundsService {
     }
 
     /**
-     * Cancel a pending refund
+     * Cancel a pending refund (tenant-scoped via order)
      */
-    async cancelRefund(refundId: string) {
-        const refund = await this.prisma.refund.findUnique({
-            where: { id: refundId },
+    async cancelRefund(tenantId: string, refundId: string) {
+        const refund = await this.prisma.refund.findFirst({
+            where: { id: refundId, order: { tenantId } },
         });
 
         if (!refund) {
@@ -178,11 +178,11 @@ export class RefundsService {
     }
 
     /**
-     * Update refund (notes, return status)
+     * Update refund (notes, return status) - tenant-scoped via order
      */
-    async updateRefund(refundId: string, dto: UpdateRefundDto) {
-        const refund = await this.prisma.refund.findUnique({
-            where: { id: refundId },
+    async updateRefund(tenantId: string, refundId: string, dto: UpdateRefundDto) {
+        const refund = await this.prisma.refund.findFirst({
+            where: { id: refundId, order: { tenantId } },
         });
 
         if (!refund) {
@@ -205,11 +205,11 @@ export class RefundsService {
     }
 
     /**
-     * Get refund by ID
+     * Get refund by ID (tenant-scoped via order)
      */
-    async getRefund(refundId: string) {
-        const refund = await this.prisma.refund.findUnique({
-            where: { id: refundId },
+    async getRefund(tenantId: string, refundId: string) {
+        const refund = await this.prisma.refund.findFirst({
+            where: { id: refundId, order: { tenantId } },
             include: {
                 order: {
                     select: {
@@ -230,23 +230,25 @@ export class RefundsService {
     }
 
     /**
-     * Get refunds for an order
+     * Get refunds for an order (tenant-scoped via order)
      */
-    async getRefundsByOrder(orderId: string) {
+    async getRefundsByOrder(tenantId: string, orderId: string) {
         return this.prisma.refund.findMany({
-            where: { orderId },
+            where: { orderId, order: { tenantId } },
             orderBy: { createdAt: 'desc' },
         });
     }
 
     /**
-     * Get all refunds with filters
+     * Get all refunds with filters (tenant-scoped via order)
      */
-    async getAllRefunds(query: RefundListQueryDto) {
+    async getAllRefunds(tenantId: string, query: RefundListQueryDto) {
         const { status, orderId, page = 1, limit = 20 } = query;
         const skip = (page - 1) * limit;
 
-        const where: Prisma.RefundWhereInput = {};
+        const where: Prisma.RefundWhereInput = {
+            order: { tenantId },
+        };
         if (status) where.status = status;
         if (orderId) where.orderId = orderId;
 
@@ -279,18 +281,20 @@ export class RefundsService {
     }
 
     /**
-     * Get refund statistics
+     * Get refund statistics (tenant-scoped via order)
      */
-    async getRefundStats() {
+    async getRefundStats(tenantId: string) {
+        const tenantFilter = { order: { tenantId } };
+
         const [pending, processing, succeeded, failed] = await Promise.all([
-            this.prisma.refund.count({ where: { status: 'PENDING' } }),
-            this.prisma.refund.count({ where: { status: 'PROCESSING' } }),
-            this.prisma.refund.count({ where: { status: 'SUCCEEDED' } }),
-            this.prisma.refund.count({ where: { status: 'FAILED' } }),
+            this.prisma.refund.count({ where: { ...tenantFilter, status: 'PENDING' } }),
+            this.prisma.refund.count({ where: { ...tenantFilter, status: 'PROCESSING' } }),
+            this.prisma.refund.count({ where: { ...tenantFilter, status: 'SUCCEEDED' } }),
+            this.prisma.refund.count({ where: { ...tenantFilter, status: 'FAILED' } }),
         ]);
 
         const totalRefunded = await this.prisma.refund.aggregate({
-            where: { status: 'SUCCEEDED' },
+            where: { ...tenantFilter, status: 'SUCCEEDED' },
             _sum: { amount: true },
         });
 

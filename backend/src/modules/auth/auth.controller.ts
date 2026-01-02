@@ -61,12 +61,12 @@ export class AuthController {
     @Post('admin-login')
     @Throttle({ default: { limit: 3, ttl: 900000 } }) // 3 attempts per 15 minutes
     @HttpCode(HttpStatus.OK)
-    @ApiOperation({ summary: 'Admin login with username and password' })
+    @ApiOperation({ summary: 'Admin login with email and password' })
     @ApiResponse({ status: 200, description: 'Admin login successful', type: AuthResponseDto })
     @ApiResponse({ status: 401, description: 'Invalid admin credentials' })
-    async adminLogin(@Body() body: { username: string; password: string }): Promise<AuthResponseDto> {
-        // Super admin login is platform-level, uses tenantId: null in token
-        return this.authService.adminLogin(body.username, body.password);
+    async adminLogin(@Body() body: { email: string; password: string }): Promise<AuthResponseDto> {
+        // Admin login authenticates database users with ADMIN/OWNER role and tenantId=null
+        return this.authService.adminLogin(body.email, body.password);
     }
 
     @Post('owner-login')

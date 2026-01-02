@@ -17,6 +17,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- Intentional hydration pattern for SSR
         setMounted(true);
     }, []);
 

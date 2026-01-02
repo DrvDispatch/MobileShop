@@ -2,6 +2,7 @@ import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards, Req } from 
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import type { Request } from 'express';
 import { TenantService } from './tenant.service';
+import { UIConfigService } from './ui-config.service';
 import { TenantFeaturesService } from '../owner/tenant-features.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
@@ -13,6 +14,7 @@ import { CurrentTenant, TenantId } from './tenant.decorator';
 export class TenantController {
     constructor(
         private readonly tenantService: TenantService,
+        private readonly uiConfigService: UIConfigService,
         private readonly featuresService: TenantFeaturesService,
     ) { }
 
@@ -56,6 +58,20 @@ export class TenantController {
             };
         }
         return this.featuresService.getFeatures(req.tenantId);
+    }
+
+    /**
+     * Get UI configuration for current tenant (public - from Host header)
+     * Returns labels, marquee content, formatting config
+     */
+    @Get('ui-config')
+    @ApiOperation({ summary: 'Get current tenant UI configuration' })
+    async getUIConfig(@Req() req: Request) {
+        if (!req.tenantId) {
+            // Return defaults if no tenant context
+            return this.uiConfigService.getVerticalDefaults('REPAIR_SHOP');
+        }
+        return this.uiConfigService.getPublicUIConfig(req.tenantId);
     }
 
     // ============================================

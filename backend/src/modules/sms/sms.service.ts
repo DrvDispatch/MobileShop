@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { TenantBranding, formatAddress, truncateForSmsSender } from '../../utils/tenant-branding';
 
 interface SendSmsOptions {
     to: string;
@@ -24,7 +25,8 @@ export class SmsService {
     constructor(private configService: ConfigService) {
         this.username = this.configService.get<string>('CLICKSEND_USERNAME') || '';
         this.apiKey = this.configService.get<string>('CLICKSEND_API_KEY') || '';
-        this.defaultSender = this.configService.get<string>('CLICKSEND_SENDER_ID') || 'SmartphoneSvc';
+        // Platform default sender - tenant-specific sender is passed per message
+        this.defaultSender = this.configService.get<string>('CLICKSEND_SENDER_ID') || 'ServicePulse';
     }
 
     private getAuthHeader(): string {
@@ -54,7 +56,7 @@ export class SmsService {
         const payload = {
             messages: [
                 {
-                    source: 'smartphoneservice',
+                    source: 'servicepulse',  // Platform identifier, not tenant
                     to: phoneNumber,
                     body: options.message,
                     from: options.from || this.defaultSender,
@@ -99,16 +101,22 @@ export class SmsService {
 
     /**
      * Send appointment confirmation SMS
+     * Uses TenantBranding for shop name, phone, and location
      */
     async sendAppointmentConfirmation(options: {
         to: string;
+        branding: TenantBranding;
         customerName: string;
         date: string;
         time: string;
         device: string;
         repairType?: string;
     }): Promise<SmsResult> {
-        const message = `BEVESTIGD - SmartphoneService
+        const { branding } = options;
+        const location = formatAddress(branding.address) || branding.city;
+        const phone = branding.phone || branding.whatsappNumber;
+
+        const message = `BEVESTIGD - ${branding.shopName}
 
 Beste ${options.customerName},
 
@@ -116,10 +124,13 @@ Datum: ${options.date}
 Tijd: ${options.time}
 Toestel: ${options.device}
 Reparatie: ${options.repairType || 'Reparatie'}
+${location ? `\nLocatie: ${location}` : ''}${phone ? `\nTel: ${phone}` : ''}`;
 
-Locatie: Antwerpen
-Tel: 0465 638 106`;
-        return this.sendSms({ to: options.to, message });
+        return this.sendSms({
+            to: options.to,
+            message,
+            from: truncateForSmsSender(branding.shopName),
+        });
     }
 
     /**
@@ -127,6 +138,7 @@ Tel: 0465 638 106`;
      */
     async sendAppointmentReschedule(options: {
         to: string;
+        branding: TenantBranding;
         customerName: string;
         oldDate: string;
         oldTime: string;
@@ -134,7 +146,10 @@ Tel: 0465 638 106`;
         newTime: string;
         device?: string;
     }): Promise<SmsResult> {
-        const message = `VERPLAATST - SmartphoneService
+        const { branding } = options;
+        const phone = branding.phone || branding.whatsappNumber;
+
+        const message = `VERPLAATST - ${branding.shopName}
 
 Beste ${options.customerName},
 
@@ -143,10 +158,13 @@ Uw afspraak is verplaatst.
 Was: ${options.oldDate} om ${options.oldTime}
 Nieuw: ${options.newDate} om ${options.newTime}${options.device ? `
 Toestel: ${options.device}` : ''}
+${phone ? `\nVragen? ${phone}` : ''}`;
 
-Locatie: Antwerpen
-Vragen? 0465 638 106`;
-        return this.sendSms({ to: options.to, message });
+        return this.sendSms({
+            to: options.to,
+            message,
+            from: truncateForSmsSender(branding.shopName),
+        });
     }
 
     /**
@@ -154,12 +172,17 @@ Vragen? 0465 638 106`;
      */
     async sendAppointmentCancellation(options: {
         to: string;
+        branding: TenantBranding;
         customerName: string;
         date: string;
         time: string;
         device?: string;
     }): Promise<SmsResult> {
-        const message = `GEANNULEERD - SmartphoneService
+        const { branding } = options;
+        const phone = branding.phone || branding.whatsappNumber;
+        const website = branding.website;
+
+        const message = `GEANNULEERD - ${branding.shopName}
 
 Beste ${options.customerName},
 
@@ -168,10 +191,13 @@ Uw afspraak is geannuleerd.
 Datum: ${options.date}
 Tijd: ${options.time}${options.device ? `
 Toestel: ${options.device}` : ''}
+${phone ? `\nNieuwe afspraak? ${phone}` : ''}${website ? `\n${website}` : ''}`;
 
-Nieuwe afspraak? 0465 638 106
-www.smartphoneservice.be`;
-        return this.sendSms({ to: options.to, message });
+        return this.sendSms({
+            to: options.to,
+            message,
+            from: truncateForSmsSender(branding.shopName),
+        });
     }
 
     /**
@@ -179,14 +205,22 @@ www.smartphoneservice.be`;
      */
     async sendAppointmentCompleted(options: {
         to: string;
+        branding: TenantBranding;
         customerName: string;
         feedbackUrl?: string;
     }): Promise<SmsResult> {
-        let message = `Beste ${options.customerName}, uw reparatie is voltooid! Uw toestel is klaar voor afhaling bij SmartphoneService.`;
+        const { branding } = options;
+
+        let message = `Beste ${options.customerName}, uw reparatie is voltooid! Uw toestel is klaar voor afhaling bij ${branding.shopName}.`;
         if (options.feedbackUrl) {
             message += ` Laat een beoordeling achter: ${options.feedbackUrl}`;
         }
-        return this.sendSms({ to: options.to, message });
+
+        return this.sendSms({
+            to: options.to,
+            message,
+            from: truncateForSmsSender(branding.shopName),
+        });
     }
 
     /**
@@ -194,15 +228,23 @@ www.smartphoneservice.be`;
      */
     async sendOrderStatusUpdate(options: {
         to: string;
+        branding: TenantBranding;
         customerName: string;
         orderNumber: string;
         status: string;
         trackingUrl?: string;
     }): Promise<SmsResult> {
+        const { branding } = options;
+
         let message = `Beste ${options.customerName}, uw bestelling ${options.orderNumber} is nu: ${options.status}.`;
         if (options.trackingUrl) {
             message += ` Track: ${options.trackingUrl}`;
         }
-        return this.sendSms({ to: options.to, message });
+
+        return this.sendSms({
+            to: options.to,
+            message,
+            from: truncateForSmsSender(branding.shopName),
+        });
     }
 }

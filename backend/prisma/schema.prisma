@@ -38,6 +38,7 @@ model Tenant {
   domains   TenantDomain[]
   config    TenantConfig?
   features  TenantFeature?  // Feature flags for this tenant
+  uiConfig  TenantUIConfig? // UI content configuration
   users     User[]
   products  Product[]
   categories Category[]
@@ -144,6 +145,7 @@ model TenantConfig {
   bankName       String?
   invoicePrefix  String  @default("INV")
   invoiceFooter  String?
+  website        String?
   
   // Third-party IDs (sensitive, should be encrypted in production)
   googleAnalyticsId  String?
@@ -207,6 +209,60 @@ model TenantFeature {
   updatedAt DateTime @updatedAt
 
   tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  
+  @@index([tenantId])
+}
+
+// ============================================
+// TENANT UI CONFIGURATION
+// Controls UI copy, labels, and content display
+// Defaults are handled in UIConfigService per vertical
+// ============================================
+
+enum TenantVertical {
+  REPAIR_SHOP
+  BARBER
+  CAR_WASH
+  BIKE_REPAIR
+  GENERAL_SERVICE
+}
+
+model TenantUIConfig {
+  id              String          @id @default(uuid())
+  tenantId        String          @unique
+  
+  // Vertical identifier - determines default labels
+  vertical        TenantVertical  @default(REPAIR_SHOP)
+  
+  // Navbar marquee items - Array of {icon, text}
+  marqueeItems    Json?
+  
+  // Footer content
+  footerTagline       String?
+  newsletterTitle     String?
+  newsletterSubtitle  String?
+  googleReviewUrl     String?
+  googleReviewRating  String?
+  
+  // Date/Time formatting
+  dateLocale      String          @default("nl-BE")
+  dateFormat      String          @default("dd MMMM yyyy")
+  
+  // UI Labels - stored as JSON objects
+  checkoutLabels  Json?           // Checkout page labels
+  bookingLabels   Json?           // Booking flow labels
+  reviewLabels    Json?           // Product review labels
+  navLabels       Json?           // Navigation labels
+  authLabels      Json?           // Auth-related labels
+  footerLabels    Json?           // Footer section labels
+  
+  // Support page config
+  supportFaqItems Json?           // FAQ items array
+  
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  tenant          Tenant          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   
   @@index([tenantId])
 }
@@ -862,10 +918,14 @@ model Appointment {
   id                 String            @id @default(uuid())
   tenantId           String?           // nullable during migration
   
-  // Customer info
+  // Customer info (the person FOR WHOM the appointment is)
   customerName       String
   customerEmail      String
   customerPhone      String
+  
+  // Booker info (the person WHO MADE the appointment - if different from customer)
+  bookedByEmail      String?           // Email of authenticated user who booked
+  bookedByName       String?           // Name of authenticated user who booked
   
   // Device info
   deviceBrand        String
@@ -895,6 +955,7 @@ model Appointment {
   @@index([appointmentDate])
   @@index([status])
   @@index([customerEmail])
+  @@index([bookedByEmail])
 }
 
 // ============================================

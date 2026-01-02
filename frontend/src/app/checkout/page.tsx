@@ -1,172 +1,68 @@
 "use client";
 
+/**
+ * Checkout Page - UI Layer
+ * 
+ * This page is now a THIN UI LAYER that:
+ * - Consumes the useCheckout hook for all business logic
+ * - Renders the checkout form and order summary
+ * - Applies styling and layout
+ * 
+ * All state management, API calls, coupon validation, 
+ * and checkout submission are in the hook.
+ */
+
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Navbar, Footer } from "@/components/landing";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useCartStore } from "@/lib/store";
-import { api, getToken } from "@/lib/api";
+import { useCheckout } from "@/lib/checkout";
 import { getImageUrl } from "@/lib/image-utils";
+import { useUIConfig } from "@/lib/useUIConfig";
 import { ShoppingBag, ChevronLeft, Truck, MapPin, CreditCard, AlertCircle, Tag, Check, X, Loader2 } from "lucide-react";
 
-const API_URL = '';
-
-// Country phone prefixes
-const COUNTRY_CODES = [
-    { code: "BE", prefix: "+32", name: "Belgium" },
-    { code: "NL", prefix: "+31", name: "Netherlands" },
-    { code: "DE", prefix: "+49", name: "Germany" },
-    { code: "FR", prefix: "+33", name: "France" },
-    { code: "LU", prefix: "+352", name: "Luxembourg" },
-    { code: "GB", prefix: "+44", name: "United Kingdom" },
-    { code: "US", prefix: "+1", name: "United States" },
-];
-
-interface DiscountValidation {
-    valid: boolean;
-    discountId?: string;
-    code?: string;
-    type?: "PERCENTAGE" | "FIXED";
-    discountAmount?: number;
-    message?: string;
-}
-
 export default function CheckoutPage() {
-    const { items, getTotal } = useCartStore();
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
     const [mounted, setMounted] = useState(false);
-    const [phonePrefix, setPhonePrefix] = useState("+32");
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const { uiConfig } = useUIConfig();
 
-    // Coupon state
-    const [couponCode, setCouponCode] = useState("");
-    const [couponLoading, setCouponLoading] = useState(false);
-    const [appliedDiscount, setAppliedDiscount] = useState<DiscountValidation | null>(null);
-    const [couponError, setCouponError] = useState<string | null>(null);
+    // All business logic from the hook
+    const checkout = useCheckout();
 
-    const [formData, setFormData] = useState({
-        email: "",
-        name: "",
-        phone: "",
-        line1: "",
-        line2: "",
-        city: "",
-        state: "",
-        postalCode: "",
-        country: "BE",
-    });
+    const {
+        items,
+        isEmpty,
+        formData,
+        setFormData,
+        phonePrefix,
+        setPhonePrefix,
+        isLoggedIn,
+        couponCode,
+        setCouponCode,
+        appliedDiscount,
+        couponError,
+        couponLoading,
+        validateCouponCode,
+        removeCoupon,
+        subtotal,
+        shipping,
+        discount,
+        total,
+        isLoading,
+        error,
+        submit,
+        countryCodes,
+    } = checkout;
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- Intentional hydration pattern for SSR
         setMounted(true);
-        // Pre-fill from logged in user
-        const loadUser = async () => {
-            const token = getToken();
-            if (token) {
-                try {
-                    const user = await api.getMe();
-                    setFormData((prev) => ({
-                        ...prev,
-                        email: user.email,
-                        name: user.name,
-                    }));
-                    setIsLoggedIn(true);
-                } catch {
-                    // Not logged in, ignore
-                    setIsLoggedIn(false);
-                }
-            }
-        };
-        loadUser();
     }, []);
-
-    const validateCoupon = async () => {
-        if (!couponCode.trim()) return;
-
-        setCouponLoading(true);
-        setCouponError(null);
-
-        try {
-            const subtotal = getTotal();
-            const res = await fetch(`${API_URL}/api/discounts/validate`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    code: couponCode.toUpperCase(),
-                    subtotal,
-                    customerEmail: formData.email || undefined,
-                    productIds: items.map(item => item.id),
-                }),
-            });
-
-            const result: DiscountValidation = await res.json();
-
-            if (result.valid) {
-                setAppliedDiscount(result);
-                setCouponError(null);
-            } else {
-                setCouponError(result.message || "Ongeldige kortingscode");
-                setAppliedDiscount(null);
-            }
-        } catch (err) {
-            setCouponError("Kon kortingscode niet controleren");
-            setAppliedDiscount(null);
-        } finally {
-            setCouponLoading(false);
-        }
-    };
-
-    const removeCoupon = () => {
-        setAppliedDiscount(null);
-        setCouponCode("");
-        setCouponError(null);
-    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setIsLoading(true);
-        setError(null);
-
-        try {
-            const fullPhone = formData.phone ? `${phonePrefix} ${formData.phone}` : undefined;
-
-            const checkoutData = {
-                items: items.map((item) => ({
-                    productId: item.id,
-                    name: item.name,
-                    price: item.price,
-                    quantity: item.quantity,
-                    image: item.image,
-                })),
-                customerEmail: formData.email,
-                customerName: formData.name,
-                customerPhone: fullPhone,
-                fulfillmentType: "SHIPPING" as const,
-                shippingAddress: {
-                    line1: formData.line1,
-                    line2: formData.line2 || undefined,
-                    city: formData.city,
-                    state: formData.state || undefined,
-                    postalCode: formData.postalCode,
-                    country: formData.country,
-                },
-                // Include discount code if applied
-                ...(appliedDiscount?.discountId ? { discountCodeId: appliedDiscount.discountId } : {}),
-            };
-
-            const response = await api.createCheckout(checkoutData);
-
-            // Redirect to Stripe Checkout
-            if (response.checkoutUrl) {
-                window.location.href = response.checkoutUrl;
-            }
-        } catch (err: unknown) {
-            const message = err instanceof Error ? err.message : "Checkout failed. Please try again.";
-            setError(message);
-            setIsLoading(false);
-        }
+        await submit();
     };
 
     if (!mounted) {
@@ -184,7 +80,7 @@ export default function CheckoutPage() {
         );
     }
 
-    if (items.length === 0) {
+    if (isEmpty) {
         return (
             <main className="min-h-screen bg-white">
                 <Navbar />
@@ -200,13 +96,6 @@ export default function CheckoutPage() {
             </main>
         );
     }
-
-    // Belgium: 21% VAT included in price
-    const subtotal = getTotal();
-    const discount = appliedDiscount?.discountAmount || 0;
-    const shipping = formData.country === "BE" ? 5.95 : 9.95;  // Lower shipping for Belgium
-    // VAT is already included in prices (Belgian standard)
-    const total = subtotal - discount + shipping;
 
     return (
         <main className="min-h-screen bg-zinc-50">
@@ -253,7 +142,7 @@ export default function CheckoutPage() {
                                         />
                                         {isLoggedIn && (
                                             <p className="text-xs text-zinc-500 mt-1">
-                                                Bestellingsbevestiging wordt verzonden naar uw account e-mail
+                                                {uiConfig.labels.checkout.confirmationNote}
                                             </p>
                                         )}
                                     </div>
@@ -275,7 +164,7 @@ export default function CheckoutPage() {
                                                 onChange={(e) => setPhonePrefix(e.target.value)}
                                                 className="h-12 px-3 rounded-xl border-2 border-zinc-200 bg-white text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-500/20 focus:border-zinc-500"
                                             >
-                                                {COUNTRY_CODES.map((c) => (
+                                                {countryCodes.map((c) => (
                                                     <option key={c.code} value={c.prefix}>
                                                         {c.prefix}
                                                     </option>
@@ -424,7 +313,7 @@ export default function CheckoutPage() {
                                 <div className="border-t border-zinc-200 pt-4 mb-4">
                                     <div className="flex items-center gap-2 mb-2">
                                         <Tag className="w-4 h-4 text-zinc-400" />
-                                        <span className="text-sm font-medium text-zinc-700">Kortingscode</span>
+                                        <span className="text-sm font-medium text-zinc-700">{uiConfig.labels.checkout.couponCode}</span>
                                     </div>
                                     {appliedDiscount ? (
                                         <div className="flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-lg">
@@ -450,17 +339,17 @@ export default function CheckoutPage() {
                                             <Input
                                                 value={couponCode}
                                                 onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
-                                                placeholder="KORTINGSCODE"
+                                                placeholder={uiConfig.labels.checkout.couponPlaceholder}
                                                 className="uppercase"
-                                                onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), validateCoupon())}
+                                                onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), validateCouponCode())}
                                             />
                                             <Button
                                                 type="button"
                                                 variant="outline"
-                                                onClick={validateCoupon}
+                                                onClick={validateCouponCode}
                                                 disabled={couponLoading || !couponCode.trim()}
                                             >
-                                                {couponLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Toepassen"}
+                                                {couponLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : uiConfig.labels.checkout.apply}
                                             </Button>
                                         </div>
                                     )}
@@ -477,7 +366,7 @@ export default function CheckoutPage() {
                                     </div>
                                     {discount > 0 && (
                                         <div className="flex justify-between text-sm">
-                                            <span className="text-green-600">Korting</span>
+                                            <span className="text-green-600">{uiConfig.labels.checkout.discount}</span>
                                             <span className="text-green-600">-€{discount.toFixed(2)}</span>
                                         </div>
                                     )}

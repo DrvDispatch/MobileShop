@@ -51,8 +51,9 @@ export default function ProductDetailPage() {
         try {
             const data = await api.getProduct(slug);
             setProduct(data);
-        } catch (err: any) {
-            setError(err.message || "Product not found");
+        } catch (err) {
+            const message = err instanceof Error ? err.message : "Product not found";
+            setError(message);
         } finally {
             setIsLoading(false);
         }

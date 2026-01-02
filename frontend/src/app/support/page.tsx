@@ -1,5 +1,8 @@
+"use client";
+
 import { Navbar, Footer } from "@/components/landing";
 import { Mail, Phone, MapPin, Clock, ChevronDown } from "lucide-react";
+import { useTenant } from "@/lib/TenantProvider";
 
 const faqs = [
     {
@@ -33,6 +36,37 @@ const faqs = [
 ];
 
 export default function SupportPage() {
+    const tenant = useTenant();
+    const { contact, branding, business } = tenant;
+
+    // Format address from tenant config
+    const formatAddress = () => {
+        if (!contact.address) return null;
+        const addr = contact.address as { line1?: string; city?: string; postalCode?: string };
+        if (addr.line1 && addr.city && addr.postalCode) {
+            return `${addr.line1}, ${addr.postalCode} ${addr.city}`;
+        }
+        return null;
+    };
+
+    // Format opening hours from tenant config
+    const formatHoursForCard = () => {
+        const hours = business.openingHours as Record<string, { open: string; close: string } | null> | null;
+        if (!hours) return 'Mon-Sat, 9:00-18:00'; // Fallback
+
+        // Check if there's at least one open day to build a summary
+        const openDays = Object.entries(hours).filter(([, v]) => v !== null);
+        if (openDays.length === 0) return 'Contact for hours';
+
+        // Simple summary: use first open day's hours
+        const firstOpen = openDays[0][1] as { open: string; close: string };
+        return `${firstOpen.open} - ${firstOpen.close}`;
+    };
+
+    const formattedAddress = formatAddress();
+    const shopPhone = contact.phone || contact.whatsappNumber;
+    const shopEmail = contact.email;
+
     return (
         <main className="min-h-screen bg-white">
             <Navbar />
@@ -48,38 +82,44 @@ export default function SupportPage() {
 
                 {/* Contact Cards */}
                 <div className="grid md:grid-cols-3 gap-6 mb-16">
-                    <div className="bg-zinc-50 rounded-xl p-6 text-center">
-                        <div className="w-12 h-12 bg-zinc-900 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <Phone className="w-6 h-6 text-white" />
+                    {shopPhone && (
+                        <div className="bg-zinc-50 rounded-xl p-6 text-center">
+                            <div className="w-12 h-12 bg-zinc-900 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <Phone className="w-6 h-6 text-white" />
+                            </div>
+                            <h3 className="font-semibold text-zinc-900 mb-2">Call Us</h3>
+                            <p className="text-zinc-600 text-sm mb-3">{formatHoursForCard()}</p>
+                            <a href={`tel:${shopPhone.replace(/\s/g, '')}`} className="text-zinc-900 font-medium hover:underline">
+                                {shopPhone}
+                            </a>
                         </div>
-                        <h3 className="font-semibold text-zinc-900 mb-2">Call Us</h3>
-                        <p className="text-zinc-600 text-sm mb-3">Mon-Sat, 9:00-18:00</p>
-                        <a href="tel:+32465638106" className="text-zinc-900 font-medium hover:underline">
-                            +32 465 63 81 06
-                        </a>
-                    </div>
+                    )}
 
-                    <div className="bg-zinc-50 rounded-xl p-6 text-center">
-                        <div className="w-12 h-12 bg-zinc-900 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <Mail className="w-6 h-6 text-white" />
+                    {shopEmail && (
+                        <div className="bg-zinc-50 rounded-xl p-6 text-center">
+                            <div className="w-12 h-12 bg-zinc-900 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <Mail className="w-6 h-6 text-white" />
+                            </div>
+                            <h3 className="font-semibold text-zinc-900 mb-2">Email Us</h3>
+                            <p className="text-zinc-600 text-sm mb-3">We reply within 24 hours</p>
+                            <a href={`mailto:${shopEmail}`} className="text-zinc-900 font-medium hover:underline">
+                                {shopEmail}
+                            </a>
                         </div>
-                        <h3 className="font-semibold text-zinc-900 mb-2">Email Us</h3>
-                        <p className="text-zinc-600 text-sm mb-3">We reply within 24 hours</p>
-                        <a href="mailto:support@smartphoneservice.be" className="text-zinc-900 font-medium hover:underline">
-                            support@smartphoneservice.be
-                        </a>
-                    </div>
+                    )}
 
-                    <div className="bg-zinc-50 rounded-xl p-6 text-center">
-                        <div className="w-12 h-12 bg-zinc-900 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <MapPin className="w-6 h-6 text-white" />
+                    {formattedAddress && (
+                        <div className="bg-zinc-50 rounded-xl p-6 text-center">
+                            <div className="w-12 h-12 bg-zinc-900 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <MapPin className="w-6 h-6 text-white" />
+                            </div>
+                            <h3 className="font-semibold text-zinc-900 mb-2">Visit Us</h3>
+                            <p className="text-zinc-600 text-sm mb-3">Walk-ins welcome</p>
+                            <address className="text-zinc-900 font-medium not-italic">
+                                {formattedAddress}
+                            </address>
                         </div>
-                        <h3 className="font-semibold text-zinc-900 mb-2">Visit Us</h3>
-                        <p className="text-zinc-600 text-sm mb-3">Walk-ins welcome</p>
-                        <address className="text-zinc-900 font-medium not-italic">
-                            Korte Koepoortstraat 7, 2000 Antwerpen
-                        </address>
-                    </div>
+                    )}
                 </div>
 
                 {/* FAQ Section */}
@@ -110,19 +150,28 @@ export default function SupportPage() {
                 <div className="mt-16 bg-zinc-900 rounded-2xl p-8 text-center text-white">
                     <Clock className="w-8 h-8 mx-auto mb-4 opacity-80" />
                     <h3 className="text-xl font-semibold mb-4">Store Hours</h3>
-                    <div className="grid sm:grid-cols-2 gap-4 max-w-md mx-auto text-sm">
-                        <div>
-                            <p className="opacity-60">Monday - Friday</p>
-                            <p className="font-medium">9:00 - 18:00</p>
-                        </div>
-                        <div>
-                            <p className="opacity-60">Saturday</p>
-                            <p className="font-medium">10:00 - 17:00</p>
-                        </div>
-                        <div className="sm:col-span-2">
-                            <p className="opacity-60">Sunday</p>
-                            <p className="font-medium">Closed</p>
-                        </div>
+                    <div className="space-y-2 max-w-md mx-auto text-sm">
+                        {(() => {
+                            const hours = business.openingHours as Record<string, { open: string; close: string } | null> | null;
+                            const dayNames: Record<string, string> = {
+                                monday: 'Monday', tuesday: 'Tuesday', wednesday: 'Wednesday',
+                                thursday: 'Thursday', friday: 'Friday', saturday: 'Saturday', sunday: 'Sunday'
+                            };
+                            if (!hours) {
+                                return <p className="opacity-60">Contact us for hours</p>;
+                            }
+                            return Object.entries(dayNames).map(([key, name]) => {
+                                const dayHours = hours[key];
+                                return (
+                                    <div key={key} className="flex justify-between">
+                                        <span className="opacity-60">{name}</span>
+                                        <span className={`font-medium ${!dayHours ? 'text-red-400' : ''}`}>
+                                            {dayHours ? `${dayHours.open} - ${dayHours.close}` : 'Closed'}
+                                        </span>
+                                    </div>
+                                );
+                            });
+                        })()}
                     </div>
                 </div>
             </div>

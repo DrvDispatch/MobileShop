@@ -1,13 +1,13 @@
 /**
  * Smart image URL utility that works with both production and localhost
  * 
- * In production: uses path-based routing (smartphoneservice.be/storage)
+ * In production: uses path-based routing via NEXT_PUBLIC_MINIO_URL
  * In development: falls back to localhost MinIO when production URL fails
  */
 
 const PRODUCTION_STORAGE_PATH = '/storage';
 const LOCAL_MINIO_URL = 'http://localhost:9000';  // MinIO local port
-const PRODUCTION_MINIO_URL = process.env.NEXT_PUBLIC_MINIO_URL || 'https://smartphoneservice.be/storage';
+const PRODUCTION_MINIO_URL = process.env.NEXT_PUBLIC_MINIO_URL || '/storage';
 
 /**
  * Convert a production image URL to localhost MinIO URL
@@ -23,8 +23,8 @@ export function getLocalImageUrl(productionUrl: string): string {
             return `${LOCAL_MINIO_URL}${url.pathname}`;
         }
 
-        // Handle both old subdomain and new path-based routing
-        if (url.hostname.includes('smartphoneservice')) {
+        // Handle production storage URLs (detect by /storage path)
+        if (url.pathname.includes('/storage') || (PRODUCTION_MINIO_URL && url.href.startsWith(PRODUCTION_MINIO_URL.replace('/storage', '')))) {
             // Extract path - remove /storage prefix if present (path-based routing)
             let imagePath = url.pathname;
             if (imagePath.startsWith('/storage')) {
@@ -47,7 +47,7 @@ export function getProductionImageUrl(localUrl: string): string {
 
     try {
         // If already a full production URL with /storage, return as-is
-        if (localUrl.includes('smartphoneservice.be/storage')) {
+        if (PRODUCTION_MINIO_URL && localUrl.startsWith(PRODUCTION_MINIO_URL)) {
             return localUrl;
         }
 
@@ -56,10 +56,11 @@ export function getProductionImageUrl(localUrl: string): string {
             const url = new URL(localUrl);
             return `${PRODUCTION_MINIO_URL}${url.pathname}`;
         }
-        // Handle old subdomain URLs - convert to new path-based
-        if (localUrl.includes('images.smartphoneservice.be')) {
+        // Handle old subdomain URLs - convert to new path-based (via production URL)
+        // Legacy subdomain handling - skip if no production URL configured
+        if (localUrl.includes('images.') && PRODUCTION_MINIO_URL) {
             const url = new URL(localUrl);
-            return `https://smartphoneservice.be/storage${url.pathname}`;
+            return `${PRODUCTION_MINIO_URL}${url.pathname}`;
         }
     } catch {
         // If URL parsing fails, return original

@@ -40,6 +40,8 @@ export type AppointmentMinAggregateOutputType = {
   customerName: string | null
   customerEmail: string | null
   customerPhone: string | null
+  bookedByEmail: string | null
+  bookedByName: string | null
   deviceBrand: string | null
   deviceModel: string | null
   repairType: $Enums.RepairType | null
@@ -61,6 +63,8 @@ export type AppointmentMaxAggregateOutputType = {
   customerName: string | null
   customerEmail: string | null
   customerPhone: string | null
+  bookedByEmail: string | null
+  bookedByName: string | null
   deviceBrand: string | null
   deviceModel: string | null
   repairType: $Enums.RepairType | null
@@ -82,6 +86,8 @@ export type AppointmentCountAggregateOutputType = {
   customerName: number
   customerEmail: number
   customerPhone: number
+  bookedByEmail: number
+  bookedByName: number
   deviceBrand: number
   deviceModel: number
   repairType: number
@@ -113,6 +119,8 @@ export type AppointmentMinAggregateInputType = {
   customerName?: true
   customerEmail?: true
   customerPhone?: true
+  bookedByEmail?: true
+  bookedByName?: true
   deviceBrand?: true
   deviceModel?: true
   repairType?: true
@@ -134,6 +142,8 @@ export type AppointmentMaxAggregateInputType = {
   customerName?: true
   customerEmail?: true
   customerPhone?: true
+  bookedByEmail?: true
+  bookedByName?: true
   deviceBrand?: true
   deviceModel?: true
   repairType?: true
@@ -155,6 +165,8 @@ export type AppointmentCountAggregateInputType = {
   customerName?: true
   customerEmail?: true
   customerPhone?: true
+  bookedByEmail?: true
+  bookedByName?: true
   deviceBrand?: true
   deviceModel?: true
   repairType?: true
@@ -263,6 +275,8 @@ export type AppointmentGroupByOutputType = {
   customerName: string
   customerEmail: string
   customerPhone: string
+  bookedByEmail: string | null
+  bookedByName: string | null
   deviceBrand: string
   deviceModel: string
   repairType: $Enums.RepairType
@@ -307,6 +321,8 @@ export type AppointmentWhereInput = {
   customerName?: Prisma.StringFilter<"Appointment"> | string
   customerEmail?: Prisma.StringFilter<"Appointment"> | string
   customerPhone?: Prisma.StringFilter<"Appointment"> | string
+  bookedByEmail?: Prisma.StringNullableFilter<"Appointment"> | string | null
+  bookedByName?: Prisma.StringNullableFilter<"Appointment"> | string | null
   deviceBrand?: Prisma.StringFilter<"Appointment"> | string
   deviceModel?: Prisma.StringFilter<"Appointment"> | string
   repairType?: Prisma.EnumRepairTypeFilter<"Appointment"> | $Enums.RepairType
@@ -329,6 +345,8 @@ export type AppointmentOrderByWithRelationInput = {
   customerName?: Prisma.SortOrder
   customerEmail?: Prisma.SortOrder
   customerPhone?: Prisma.SortOrder
+  bookedByEmail?: Prisma.SortOrderInput | Prisma.SortOrder
+  bookedByName?: Prisma.SortOrderInput | Prisma.SortOrder
   deviceBrand?: Prisma.SortOrder
   deviceModel?: Prisma.SortOrder
   repairType?: Prisma.SortOrder
@@ -355,6 +373,8 @@ export type AppointmentWhereUniqueInput = Prisma.AtLeast<{
   customerName?: Prisma.StringFilter<"Appointment"> | string
   customerEmail?: Prisma.StringFilter<"Appointment"> | string
   customerPhone?: Prisma.StringFilter<"Appointment"> | string
+  bookedByEmail?: Prisma.StringNullableFilter<"Appointment"> | string | null
+  bookedByName?: Prisma.StringNullableFilter<"Appointment"> | string | null
   deviceBrand?: Prisma.StringFilter<"Appointment"> | string
   deviceModel?: Prisma.StringFilter<"Appointment"> | string
   repairType?: Prisma.EnumRepairTypeFilter<"Appointment"> | $Enums.RepairType
@@ -377,6 +397,8 @@ export type AppointmentOrderByWithAggregationInput = {
   customerName?: Prisma.SortOrder
   customerEmail?: Prisma.SortOrder
   customerPhone?: Prisma.SortOrder
+  bookedByEmail?: Prisma.SortOrderInput | Prisma.SortOrder
+  bookedByName?: Prisma.SortOrderInput | Prisma.SortOrder
   deviceBrand?: Prisma.SortOrder
   deviceModel?: Prisma.SortOrder
   repairType?: Prisma.SortOrder
@@ -406,6 +428,8 @@ export type AppointmentScalarWhereWithAggregatesInput = {
   customerName?: Prisma.StringWithAggregatesFilter<"Appointment"> | string
   customerEmail?: Prisma.StringWithAggregatesFilter<"Appointment"> | string
   customerPhone?: Prisma.StringWithAggregatesFilter<"Appointment"> | string
+  bookedByEmail?: Prisma.StringNullableWithAggregatesFilter<"Appointment"> | string | null
+  bookedByName?: Prisma.StringNullableWithAggregatesFilter<"Appointment"> | string | null
   deviceBrand?: Prisma.StringWithAggregatesFilter<"Appointment"> | string
   deviceModel?: Prisma.StringWithAggregatesFilter<"Appointment"> | string
   repairType?: Prisma.EnumRepairTypeWithAggregatesFilter<"Appointment"> | $Enums.RepairType
@@ -426,6 +450,8 @@ export type AppointmentCreateInput = {
   customerName: string
   customerEmail: string
   customerPhone: string
+  bookedByEmail?: string | null
+  bookedByName?: string | null
   deviceBrand: string
   deviceModel: string
   repairType: $Enums.RepairType
@@ -448,6 +474,8 @@ export type AppointmentUncheckedCreateInput = {
   customerName: string
   customerEmail: string
   customerPhone: string
+  bookedByEmail?: string | null
+  bookedByName?: string | null
   deviceBrand: string
   deviceModel: string
   repairType: $Enums.RepairType
@@ -468,6 +496,8 @@ export type AppointmentUpdateInput = {
   customerName?: Prisma.StringFieldUpdateOperationsInput | string
   customerEmail?: Prisma.StringFieldUpdateOperationsInput | string
   customerPhone?: Prisma.StringFieldUpdateOperationsInput | string
+  bookedByEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bookedByName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deviceBrand?: Prisma.StringFieldUpdateOperationsInput | string
   deviceModel?: Prisma.StringFieldUpdateOperationsInput | string
   repairType?: Prisma.EnumRepairTypeFieldUpdateOperationsInput | $Enums.RepairType
@@ -490,6 +520,8 @@ export type AppointmentUncheckedUpdateInput = {
   customerName?: Prisma.StringFieldUpdateOperationsInput | string
   customerEmail?: Prisma.StringFieldUpdateOperationsInput | string
   customerPhone?: Prisma.StringFieldUpdateOperationsInput | string
+  bookedByEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bookedByName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deviceBrand?: Prisma.StringFieldUpdateOperationsInput | string
   deviceModel?: Prisma.StringFieldUpdateOperationsInput | string
   repairType?: Prisma.EnumRepairTypeFieldUpdateOperationsInput | $Enums.RepairType
@@ -511,6 +543,8 @@ export type AppointmentCreateManyInput = {
   customerName: string
   customerEmail: string
   customerPhone: string
+  bookedByEmail?: string | null
+  bookedByName?: string | null
   deviceBrand: string
   deviceModel: string
   repairType: $Enums.RepairType
@@ -531,6 +565,8 @@ export type AppointmentUpdateManyMutationInput = {
   customerName?: Prisma.StringFieldUpdateOperationsInput | string
   customerEmail?: Prisma.StringFieldUpdateOperationsInput | string
   customerPhone?: Prisma.StringFieldUpdateOperationsInput | string
+  bookedByEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bookedByName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deviceBrand?: Prisma.StringFieldUpdateOperationsInput | string
   deviceModel?: Prisma.StringFieldUpdateOperationsInput | string
   repairType?: Prisma.EnumRepairTypeFieldUpdateOperationsInput | $Enums.RepairType
@@ -552,6 +588,8 @@ export type AppointmentUncheckedUpdateManyInput = {
   customerName?: Prisma.StringFieldUpdateOperationsInput | string
   customerEmail?: Prisma.StringFieldUpdateOperationsInput | string
   customerPhone?: Prisma.StringFieldUpdateOperationsInput | string
+  bookedByEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bookedByName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deviceBrand?: Prisma.StringFieldUpdateOperationsInput | string
   deviceModel?: Prisma.StringFieldUpdateOperationsInput | string
   repairType?: Prisma.EnumRepairTypeFieldUpdateOperationsInput | $Enums.RepairType
@@ -589,6 +627,8 @@ export type AppointmentCountOrderByAggregateInput = {
   customerName?: Prisma.SortOrder
   customerEmail?: Prisma.SortOrder
   customerPhone?: Prisma.SortOrder
+  bookedByEmail?: Prisma.SortOrder
+  bookedByName?: Prisma.SortOrder
   deviceBrand?: Prisma.SortOrder
   deviceModel?: Prisma.SortOrder
   repairType?: Prisma.SortOrder
@@ -614,6 +654,8 @@ export type AppointmentMaxOrderByAggregateInput = {
   customerName?: Prisma.SortOrder
   customerEmail?: Prisma.SortOrder
   customerPhone?: Prisma.SortOrder
+  bookedByEmail?: Prisma.SortOrder
+  bookedByName?: Prisma.SortOrder
   deviceBrand?: Prisma.SortOrder
   deviceModel?: Prisma.SortOrder
   repairType?: Prisma.SortOrder
@@ -635,6 +677,8 @@ export type AppointmentMinOrderByAggregateInput = {
   customerName?: Prisma.SortOrder
   customerEmail?: Prisma.SortOrder
   customerPhone?: Prisma.SortOrder
+  bookedByEmail?: Prisma.SortOrder
+  bookedByName?: Prisma.SortOrder
   deviceBrand?: Prisma.SortOrder
   deviceModel?: Prisma.SortOrder
   repairType?: Prisma.SortOrder
@@ -713,6 +757,8 @@ export type AppointmentCreateWithoutTenantInput = {
   customerName: string
   customerEmail: string
   customerPhone: string
+  bookedByEmail?: string | null
+  bookedByName?: string | null
   deviceBrand: string
   deviceModel: string
   repairType: $Enums.RepairType
@@ -733,6 +779,8 @@ export type AppointmentUncheckedCreateWithoutTenantInput = {
   customerName: string
   customerEmail: string
   customerPhone: string
+  bookedByEmail?: string | null
+  bookedByName?: string | null
   deviceBrand: string
   deviceModel: string
   repairType: $Enums.RepairType
@@ -783,6 +831,8 @@ export type AppointmentScalarWhereInput = {
   customerName?: Prisma.StringFilter<"Appointment"> | string
   customerEmail?: Prisma.StringFilter<"Appointment"> | string
   customerPhone?: Prisma.StringFilter<"Appointment"> | string
+  bookedByEmail?: Prisma.StringNullableFilter<"Appointment"> | string | null
+  bookedByName?: Prisma.StringNullableFilter<"Appointment"> | string | null
   deviceBrand?: Prisma.StringFilter<"Appointment"> | string
   deviceModel?: Prisma.StringFilter<"Appointment"> | string
   repairType?: Prisma.EnumRepairTypeFilter<"Appointment"> | $Enums.RepairType
@@ -803,6 +853,8 @@ export type AppointmentCreateManyTenantInput = {
   customerName: string
   customerEmail: string
   customerPhone: string
+  bookedByEmail?: string | null
+  bookedByName?: string | null
   deviceBrand: string
   deviceModel: string
   repairType: $Enums.RepairType
@@ -823,6 +875,8 @@ export type AppointmentUpdateWithoutTenantInput = {
   customerName?: Prisma.StringFieldUpdateOperationsInput | string
   customerEmail?: Prisma.StringFieldUpdateOperationsInput | string
   customerPhone?: Prisma.StringFieldUpdateOperationsInput | string
+  bookedByEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bookedByName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deviceBrand?: Prisma.StringFieldUpdateOperationsInput | string
   deviceModel?: Prisma.StringFieldUpdateOperationsInput | string
   repairType?: Prisma.EnumRepairTypeFieldUpdateOperationsInput | $Enums.RepairType
@@ -843,6 +897,8 @@ export type AppointmentUncheckedUpdateWithoutTenantInput = {
   customerName?: Prisma.StringFieldUpdateOperationsInput | string
   customerEmail?: Prisma.StringFieldUpdateOperationsInput | string
   customerPhone?: Prisma.StringFieldUpdateOperationsInput | string
+  bookedByEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bookedByName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deviceBrand?: Prisma.StringFieldUpdateOperationsInput | string
   deviceModel?: Prisma.StringFieldUpdateOperationsInput | string
   repairType?: Prisma.EnumRepairTypeFieldUpdateOperationsInput | $Enums.RepairType
@@ -863,6 +919,8 @@ export type AppointmentUncheckedUpdateManyWithoutTenantInput = {
   customerName?: Prisma.StringFieldUpdateOperationsInput | string
   customerEmail?: Prisma.StringFieldUpdateOperationsInput | string
   customerPhone?: Prisma.StringFieldUpdateOperationsInput | string
+  bookedByEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bookedByName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deviceBrand?: Prisma.StringFieldUpdateOperationsInput | string
   deviceModel?: Prisma.StringFieldUpdateOperationsInput | string
   repairType?: Prisma.EnumRepairTypeFieldUpdateOperationsInput | $Enums.RepairType
@@ -886,6 +944,8 @@ export type AppointmentSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   customerName?: boolean
   customerEmail?: boolean
   customerPhone?: boolean
+  bookedByEmail?: boolean
+  bookedByName?: boolean
   deviceBrand?: boolean
   deviceModel?: boolean
   repairType?: boolean
@@ -908,6 +968,8 @@ export type AppointmentSelectCreateManyAndReturn<ExtArgs extends runtime.Types.E
   customerName?: boolean
   customerEmail?: boolean
   customerPhone?: boolean
+  bookedByEmail?: boolean
+  bookedByName?: boolean
   deviceBrand?: boolean
   deviceModel?: boolean
   repairType?: boolean
@@ -930,6 +992,8 @@ export type AppointmentSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.E
   customerName?: boolean
   customerEmail?: boolean
   customerPhone?: boolean
+  bookedByEmail?: boolean
+  bookedByName?: boolean
   deviceBrand?: boolean
   deviceModel?: boolean
   repairType?: boolean
@@ -952,6 +1016,8 @@ export type AppointmentSelectScalar = {
   customerName?: boolean
   customerEmail?: boolean
   customerPhone?: boolean
+  bookedByEmail?: boolean
+  bookedByName?: boolean
   deviceBrand?: boolean
   deviceModel?: boolean
   repairType?: boolean
@@ -967,7 +1033,7 @@ export type AppointmentSelectScalar = {
   updatedAt?: boolean
 }
 
-export type AppointmentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "tenantId" | "customerName" | "customerEmail" | "customerPhone" | "deviceBrand" | "deviceModel" | "repairType" | "problemDescription" | "damageImageUrl" | "appointmentDate" | "timeSlot" | "status" | "priority" | "adminNotes" | "repairDuration" | "createdAt" | "updatedAt", ExtArgs["result"]["appointment"]>
+export type AppointmentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "tenantId" | "customerName" | "customerEmail" | "customerPhone" | "bookedByEmail" | "bookedByName" | "deviceBrand" | "deviceModel" | "repairType" | "problemDescription" | "damageImageUrl" | "appointmentDate" | "timeSlot" | "status" | "priority" | "adminNotes" | "repairDuration" | "createdAt" | "updatedAt", ExtArgs["result"]["appointment"]>
 export type AppointmentInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   tenant?: boolean | Prisma.Appointment$tenantArgs<ExtArgs>
 }
@@ -989,6 +1055,8 @@ export type $AppointmentPayload<ExtArgs extends runtime.Types.Extensions.Interna
     customerName: string
     customerEmail: string
     customerPhone: string
+    bookedByEmail: string | null
+    bookedByName: string | null
     deviceBrand: string
     deviceModel: string
     repairType: $Enums.RepairType
@@ -1431,6 +1499,8 @@ export interface AppointmentFieldRefs {
   readonly customerName: Prisma.FieldRef<"Appointment", 'String'>
   readonly customerEmail: Prisma.FieldRef<"Appointment", 'String'>
   readonly customerPhone: Prisma.FieldRef<"Appointment", 'String'>
+  readonly bookedByEmail: Prisma.FieldRef<"Appointment", 'String'>
+  readonly bookedByName: Prisma.FieldRef<"Appointment", 'String'>
   readonly deviceBrand: Prisma.FieldRef<"Appointment", 'String'>
   readonly deviceModel: Prisma.FieldRef<"Appointment", 'String'>
   readonly repairType: Prisma.FieldRef<"Appointment", 'RepairType'>

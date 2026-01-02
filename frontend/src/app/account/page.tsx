@@ -1,94 +1,57 @@
 "use client";
 
-import { useEffect, useState } from "react";
+/**
+ * Account Page - UI Layer
+ * 
+ * This page is now a THIN UI LAYER that:
+ * - Consumes the useAccountData hook for all data fetching
+ * - Renders user profile, orders, and UI components
+ * - Uses shared status config utilities
+ * 
+ * All data fetching and business logic are in the hook.
+ * This component only handles presentation.
+ */
+
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
 import { Navbar, Footer } from "@/components/landing";
 import { Button } from "@/components/ui/button";
 import { SmartImage } from "@/components/ui/smart-image";
-import { api, AuthResponse, removeToken } from "@/lib/api";
+import {
+    useAccountData,
+    ORDER_STATUS_CONFIG,
+    getStatusConfig,
+    downloadInvoice,
+    Order,
+} from "@/lib/account";
 import {
     User, Package, Clock, Settings, LogOut, ChevronRight, Lock, Truck,
     ChevronDown, ChevronUp, ShoppingBag, Calendar, CreditCard, Star,
     Gift, Heart, Bell, Shield, FileDown
 } from "lucide-react";
 
-interface OrderItem {
-    productName: string;
-    productImage?: string | null;
-    quantity: number;
-    unitPrice?: number;
-    totalPrice?: number;
-}
-
-interface Order {
-    id: string;
-    orderNumber: string;
-    status: string;
-    total: number;
-    createdAt: string;
-    items: OrderItem[];
-}
-
-const STATUS_CONFIG: Record<string, { bg: string; text: string; label: string }> = {
-    PENDING: { bg: "bg-yellow-100", text: "text-yellow-700", label: "In afwachting" },
-    PAID: { bg: "bg-blue-100", text: "text-blue-700", label: "Betaald" },
-    PROCESSING: { bg: "bg-blue-100", text: "text-blue-700", label: "In behandeling" },
-    SHIPPED: { bg: "bg-purple-100", text: "text-purple-700", label: "Verzonden" },
-    DELIVERED: { bg: "bg-green-100", text: "text-green-700", label: "Afgeleverd" },
-    CANCELLED: { bg: "bg-red-100", text: "text-red-700", label: "Geannuleerd" },
-    REFUNDED: { bg: "bg-orange-100", text: "text-orange-700", label: "Terugbetaald" },
-};
-
 export default function AccountPage() {
     const router = useRouter();
-    const [user, setUser] = useState<AuthResponse["user"] | null>(null);
-    const [orders, setOrders] = useState<Order[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [needsLogin, setNeedsLogin] = useState(false);
+
+    // All data fetching from the hook
+    const { user, orders, isLoading, needsLogin, logout } = useAccountData();
+
+    // UI-only state
     const [showAllOrders, setShowAllOrders] = useState(false);
 
-    useEffect(() => {
-        const loadData = async () => {
-            const token = localStorage.getItem('accessToken');
-            if (!token) {
-                setNeedsLogin(true);
-                setIsLoading(false);
-                return;
-            }
-
-            try {
-                const userData = await api.getMe();
-                setUser(userData);
-
-                // Load orders
-                try {
-                    const ordersData = await api.getMyOrders(userData.email);
-                    setOrders(ordersData);
-                } catch {
-                    console.error('Failed to load orders');
-                }
-            } catch (error) {
-                console.error('Failed to load user:', error);
-                localStorage.removeItem('accessToken');
-                setNeedsLogin(true);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-        loadData();
-    }, []);
-
     const handleLogout = () => {
-        removeToken();
+        logout();
         router.push("/");
     };
 
-    const getStatusConfig = (status: string) => {
-        return STATUS_CONFIG[status] || { bg: "bg-zinc-100", text: "text-zinc-700", label: status };
+    const handleDownloadInvoice = async (e: React.MouseEvent, order: Order) => {
+        e.preventDefault();
+        e.stopPropagation();
+        await downloadInvoice(order.id, order.orderNumber);
     };
 
+    // Loading state
     if (isLoading) {
         return (
             <main className="min-h-screen bg-zinc-50">
@@ -105,6 +68,7 @@ export default function AccountPage() {
         );
     }
 
+    // Login required state
     if (needsLogin) {
         return (
             <main className="min-h-screen bg-zinc-50">
@@ -249,7 +213,7 @@ export default function AccountPage() {
                             ) : (
                                 <div className="divide-y divide-zinc-100">
                                     {displayedOrders.map((order) => {
-                                        const statusConfig = getStatusConfig(order.status);
+                                        const statusConfig = getStatusConfig(order.status, ORDER_STATUS_CONFIG);
                                         return (
                                             <Link
                                                 key={order.id}
@@ -326,26 +290,7 @@ export default function AccountPage() {
                                                     </div>
                                                     <div className="flex items-center gap-2 flex-shrink-0">
                                                         <button
-                                                            onClick={(e) => {
-                                                                e.preventDefault();
-                                                                e.stopPropagation();
-                                                                // Download invoice
-                                                                const token = localStorage.getItem('accessToken');
-                                                                if (token) {
-                                                                    fetch(`/api/invoice/my/${order.id}`, {
-                                                                        headers: { 'Authorization': `Bearer ${token}` }
-                                                                    })
-                                                                        .then(res => res.blob())
-                                                                        .then(blob => {
-                                                                            const url = window.URL.createObjectURL(blob);
-                                                                            const a = document.createElement('a');
-                                                                            a.href = url;
-                                                                            a.download = `factuur-${order.orderNumber}.pdf`;
-                                                                            a.click();
-                                                                            window.URL.revokeObjectURL(url);
-                                                                        });
-                                                                }
-                                                            }}
+                                                            onClick={(e) => handleDownloadInvoice(e, order)}
                                                             className="p-2 rounded-lg hover:bg-zinc-100 transition-colors"
                                                             title="Download factuur"
                                                         >
@@ -401,6 +346,6 @@ export default function AccountPage() {
             </div>
 
             <Footer />
-        </main >
+        </main>
     );
 }

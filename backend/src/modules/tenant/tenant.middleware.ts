@@ -124,11 +124,16 @@ export class TenantMiddleware implements NestMiddleware {
         // Check for owner routes - handles both /owner/* and /api/owner/* patterns
         // Also skip logout to allow cleanup for suspended tenants
         // Skip Google OAuth routes (platform-level, not tenant-specific)
+        // Skip Stripe checkout redirects (platform-level, resolves tenant and redirects)
         const skipPaths = [
             '/owner', '/api/owner',
             '/auth/owner-login', '/api/auth/owner-login',
             '/auth/logout', '/api/auth/logout',
             '/auth/google', '/api/auth/google',  // OAuth initiation + callback
+            '/orders/webhook', '/api/orders/webhook',  // Stripe webhooks
+            '/orders/checkout-success', '/api/orders/checkout-success',  // Stripe success redirect
+            '/orders/checkout-cancel', '/api/orders/checkout-cancel',    // Stripe cancel redirect
+            '/orders/resolve-session', '/api/orders/resolve-session',    // Session resolver
         ];
 
         if (skipPaths.some(p => path.startsWith(p) || path === p)) {

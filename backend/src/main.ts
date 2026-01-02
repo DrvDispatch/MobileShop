@@ -1,12 +1,23 @@
 import { NestFactory } from '@nestjs/core';
-import { ValidationPipe } from '@nestjs/common';
+import { ValidationPipe, Logger } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
 import * as express from 'express';
 import type { Request, Response } from 'express';
 import { AppModule } from './app.module';
 
+// Import shared utilities
+import {
+  HttpExceptionFilter,
+  PrismaExceptionFilter,
+  AllExceptionsFilter,
+  TimingInterceptor,
+  CustomValidationPipe,
+} from './common';
+
 async function bootstrap() {
+  const logger = new Logger('Bootstrap');
+
   // Enable rawBody for Stripe webhook signature verification
   const app = await NestFactory.create(AppModule, {
     rawBody: true,
@@ -43,17 +54,30 @@ async function bootstrap() {
   // Global prefix
   app.setGlobalPrefix('api');
 
-  // Validation pipe
-  app.useGlobalPipes(
-    new ValidationPipe({
-      whitelist: true,
-      forbidNonWhitelisted: true,
-      transform: true,
-      transformOptions: {
-        enableImplicitConversion: true,
-      },
-    }),
+  // ============================================
+  // GLOBAL EXCEPTION FILTERS (order matters: most specific first)
+  // ============================================
+  app.useGlobalFilters(
+    new AllExceptionsFilter(),       // Fallback for unhandled exceptions
+    new PrismaExceptionFilter(),     // Database errors with Dutch messages
+    new HttpExceptionFilter(),       // HTTP exceptions with consistent format
   );
+
+  // ============================================
+  // GLOBAL INTERCEPTORS
+  // ============================================
+  const isDev = configService.get<string>('NODE_ENV') !== 'production';
+  if (isDev) {
+    app.useGlobalInterceptors(new TimingInterceptor());
+    logger.log('⏱️ Request timing interceptor enabled (dev mode)');
+  }
+
+  // ============================================
+  // GLOBAL VALIDATION PIPE (with Dutch error messages)
+  // ============================================
+  app.useGlobalPipes(new CustomValidationPipe());
+  logger.log('✅ Custom validation pipe with Dutch messages enabled');
+
 
   // CORS - supports multiple origins separated by comma
   const corsOriginEnv = configService.get<string>('CORS_ORIGIN', 'http://localhost:3000');

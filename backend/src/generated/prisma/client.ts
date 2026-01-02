@@ -58,6 +58,11 @@ export type TenantConfig = Prisma.TenantConfigModel
  */
 export type TenantFeature = Prisma.TenantFeatureModel
 /**
+ * Model TenantUIConfig
+ * 
+ */
+export type TenantUIConfig = Prisma.TenantUIConfigModel
+/**
  * Model TenantHomepage
  * 
  */

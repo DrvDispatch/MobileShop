@@ -8,6 +8,9 @@ import { removeToken } from "@/lib/api";
 import { useCartStore } from "@/lib/store";
 import { CartDrawer } from "@/components/storefront";
 import { useFeatures } from "@/contexts/FeatureContext";
+import { useTenant } from "@/lib/TenantProvider";
+import { useUIConfig } from "@/lib/useUIConfig";
+import type { MarqueeIcon } from "@/lib/ui-config-types";
 import {
     Menu,
     X,
@@ -23,33 +26,29 @@ import {
     Package
 } from "lucide-react";
 
-// Marquee content component for the scrolling ticker
-const MarqueeContent = () => (
+// Icon mapping for marquee items
+const MarqueeIconComponent = ({ icon }: { icon: MarqueeIcon }) => {
+    const iconProps = { className: "w-3.5 h-3.5" };
+    switch (icon) {
+        case 'location': return <MapPin {...iconProps} />;
+        case 'star': return <Star {...iconProps} />;
+        case 'wrench': return <Wrench {...iconProps} />;
+        case 'clock': return <Clock {...iconProps} />;
+        case 'shield': return <Shield {...iconProps} />;
+        case 'package': return <Package {...iconProps} />;
+        default: return null;
+    }
+};
+
+// Marquee content component - now config-driven
+const MarqueeContent = ({ items }: { items: { icon: MarqueeIcon; text: string }[] }) => (
     <>
-        <span className="mx-8 text-sm font-medium flex items-center gap-2">
-            <MapPin className="w-3.5 h-3.5" />
-            Lokale smartphone-experts in Antwerpen
-        </span>
-        <span className="mx-8 text-sm font-medium flex items-center gap-2">
-            <Star className="w-3.5 h-3.5" />
-            4.7 klantbeoordeling
-        </span>
-        <span className="mx-8 text-sm font-medium flex items-center gap-2">
-            <Wrench className="w-3.5 h-3.5" />
-            5 jaar ervaring in smartphone reparaties
-        </span>
-        <span className="mx-8 text-sm font-medium flex items-center gap-2">
-            <Clock className="w-3.5 h-3.5" />
-            Vandaag gebracht = vandaag klaar
-        </span>
-        <span className="mx-8 text-sm font-medium flex items-center gap-2">
-            <Shield className="w-3.5 h-3.5" />
-            Tot 1 jaar garantie op reparaties
-        </span>
-        <span className="mx-8 text-sm font-medium flex items-center gap-2">
-            <Package className="w-3.5 h-3.5" />
-            Gratis verzending vanaf €75
-        </span>
+        {items.map((item, index) => (
+            <span key={index} className="mx-8 text-sm font-medium flex items-center gap-2">
+                <MarqueeIconComponent icon={item.icon} />
+                {item.text}
+            </span>
+        ))}
     </>
 );
 
@@ -66,10 +65,19 @@ export function Navbar() {
     // Feature flags from context
     const { ecommerceEnabled, repairsEnabled } = useFeatures();
 
+    // Tenant config for shop name
+    const tenant = useTenant();
+    const shopName = tenant.branding.shopName;
+
+    // UI config for labels and marquee
+    const { uiConfig } = useUIConfig();
+    const { marquee, labels } = uiConfig;
+
     // Get cart count from Zustand store
     const cartItemCount = useCartStore((state) => state.getItemCount());
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- Intentional hydration pattern for SSR
         setMounted(true);
         if (typeof window !== "undefined") {
             setIsLoggedIn(!!localStorage.getItem("accessToken"));
@@ -100,13 +108,13 @@ export function Navbar() {
     };
 
     // Build nav items based on enabled features
-    // Rule: If feature is OFF, nav item simply doesn't exist (no disabled states)
+    // Uses labels from UIConfig for display text
     const navItems = [
-        ecommerceEnabled && { href: "/phones", label: "Toestellen" },
-        ecommerceEnabled && { href: "/accessories", label: "Accessoires" },
-        repairsEnabled && { href: "/repair/book", label: "Reparaties" },
+        ecommerceEnabled && { href: "/phones", label: labels.nav.devices },
+        ecommerceEnabled && { href: "/accessories", label: labels.nav.accessories },
+        repairsEnabled && { href: "/repair/book", label: labels.nav.repairs },
         repairsEnabled && { href: "/track", label: "Track & Trace" },
-        { href: "/contact", label: "Contact" },
+        { href: "/contact", label: labels.nav.contact },
     ].filter(Boolean) as { href: string; label: string }[];
 
     return (
@@ -115,8 +123,8 @@ export function Navbar() {
                 {/* Scrolling Ticker Bar */}
                 <div className="bg-zinc-900 text-white overflow-hidden py-2">
                     <div className="animate-marquee whitespace-nowrap flex">
-                        <MarqueeContent />
-                        <MarqueeContent />
+                        <MarqueeContent items={marquee} />
+                        <MarqueeContent items={marquee} />
                     </div>
                 </div>
 
@@ -125,7 +133,7 @@ export function Navbar() {
                         {/* Logo */}
                         <Link href="/" className="flex items-center gap-2">
                             <Smartphone className="w-6 h-6 text-zinc-900" />
-                            <span className="font-semibold text-lg text-zinc-900 tracking-tight">SMARTPHONE SERVICE</span>
+                            <span className="font-semibold text-lg text-zinc-900 tracking-tight">{shopName.toUpperCase()}</span>
                         </Link>
 
                         {/* Desktop Navigation */}
@@ -196,7 +204,7 @@ export function Navbar() {
                                             <div className="w-8 h-8 bg-zinc-900 text-white rounded-full flex items-center justify-center text-sm font-semibold">
                                                 <User className="w-4 h-4" />
                                             </div>
-                                            <span className="hidden lg:inline">Mijn Account</span>
+                                            <span className="hidden lg:inline">{labels.auth.myAccount}</span>
                                         </Button>
                                     </Link>
                                     <Button
@@ -205,19 +213,19 @@ export function Navbar() {
                                         onClick={handleLogout}
                                         className="text-zinc-500 hover:text-zinc-700"
                                     >
-                                        Uitloggen
+                                        {labels.auth.logout}
                                     </Button>
                                 </div>
                             ) : (
                                 <div className="flex items-center gap-2">
                                     <Link href="/login">
                                         <Button variant="ghost" size="sm" className="text-zinc-700 hover:text-zinc-900">
-                                            Inloggen
+                                            {labels.auth.login}
                                         </Button>
                                     </Link>
                                     <Link href="/register">
                                         <Button size="sm" className="bg-zinc-900 text-white hover:bg-zinc-800">
-                                            Registreren
+                                            {labels.auth.register}
                                         </Button>
                                     </Link>
                                 </div>
@@ -284,20 +292,20 @@ export function Navbar() {
                                             <Link href="/account" className="flex-1" onClick={() => setIsMenuOpen(false)}>
                                                 <Button variant="outline" className="w-full gap-2" size="sm">
                                                     <User className="w-4 h-4" />
-                                                    Mijn Account
+                                                    {labels.auth.myAccount}
                                                 </Button>
                                             </Link>
                                             <Button variant="ghost" className="flex-1" size="sm" onClick={handleLogout}>
-                                                Uitloggen
+                                                {labels.auth.logout}
                                             </Button>
                                         </>
                                     ) : (
                                         <>
                                             <Link href="/login" className="flex-1" onClick={() => setIsMenuOpen(false)}>
-                                                <Button variant="outline" className="w-full" size="sm">Inloggen</Button>
+                                                <Button variant="outline" className="w-full" size="sm">{labels.auth.login}</Button>
                                             </Link>
                                             <Link href="/register" className="flex-1" onClick={() => setIsMenuOpen(false)}>
-                                                <Button className="w-full bg-zinc-900 text-white" size="sm">Registreren</Button>
+                                                <Button className="w-full bg-zinc-900 text-white" size="sm">{labels.auth.register}</Button>
                                             </Link>
                                         </>
                                     )}

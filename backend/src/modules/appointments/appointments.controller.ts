@@ -24,11 +24,26 @@ import { TenantId } from '../tenant/tenant.decorator';
 export class AppointmentsController {
     constructor(private readonly appointmentsService: AppointmentsService) { }
 
-    // Public endpoint - customers can book appointments
+    // Public endpoint - customers can book appointments (no booker tracking)
     @Post()
-    @ApiOperation({ summary: 'Book a new appointment (public)' })
+    @ApiOperation({ summary: 'Book a new appointment (public, anonymous)' })
     create(@TenantId() tenantId: string, @Body() dto: CreateAppointmentDto) {
         return this.appointmentsService.create(tenantId, dto);
+    }
+
+    // Authenticated endpoint - book with booker tracking
+    @Post('authenticated')
+    @UseGuards(AuthGuard('jwt'))
+    @ApiBearerAuth()
+    @ApiOperation({ summary: 'Book a new appointment (authenticated, with booker tracking)' })
+    createAuthenticated(
+        @TenantId() tenantId: string,
+        @Body() dto: CreateAppointmentDto,
+        @Request() req: any,
+    ) {
+        const bookerEmail = req.user?.email;
+        const bookerName = req.user?.name;
+        return this.appointmentsService.create(tenantId, dto, { bookerEmail, bookerName });
     }
 
     // Public endpoint - get available slots for a date

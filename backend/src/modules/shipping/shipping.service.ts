@@ -5,15 +5,16 @@ import { PrismaService } from '../../prisma/prisma.service';
 export class ShippingService {
     constructor(private prisma: PrismaService) { }
 
-    async getZones() {
+    async getZones(tenantId: string) {
         return this.prisma.shippingZone.findMany({
+            where: { tenantId },
             orderBy: [{ sortOrder: 'asc' }, { name: 'asc' }],
         });
     }
 
-    async getZone(id: string) {
-        const zone = await this.prisma.shippingZone.findUnique({
-            where: { id },
+    async getZone(tenantId: string, id: string) {
+        const zone = await this.prisma.shippingZone.findFirst({
+            where: { tenantId, id },
         });
         if (!zone) {
             throw new NotFoundException('Shipping zone not found');
@@ -21,7 +22,7 @@ export class ShippingService {
         return zone;
     }
 
-    async createZone(data: {
+    async createZone(tenantId: string, data: {
         name: string;
         countries: string[];
         rate: number;
@@ -33,6 +34,7 @@ export class ShippingService {
     }) {
         return this.prisma.shippingZone.create({
             data: {
+                tenantId,
                 name: data.name,
                 countries: data.countries,
                 rate: data.rate,
@@ -46,6 +48,7 @@ export class ShippingService {
     }
 
     async updateZone(
+        tenantId: string,
         id: string,
         data: {
             name?: string;
@@ -59,22 +62,28 @@ export class ShippingService {
             sortOrder?: number;
         },
     ) {
+        // Verify zone belongs to tenant
+        await this.getZone(tenantId, id);
+
         return this.prisma.shippingZone.update({
             where: { id },
             data,
         });
     }
 
-    async deleteZone(id: string) {
+    async deleteZone(tenantId: string, id: string) {
+        // Verify zone belongs to tenant
+        await this.getZone(tenantId, id);
+
         return this.prisma.shippingZone.delete({
             where: { id },
         });
     }
 
-    async calculateShipping(country: string, orderTotal: number) {
-        // Find zone that includes this country
+    async calculateShipping(tenantId: string, country: string, orderTotal: number) {
+        // Find zone that includes this country for this tenant
         const zones = await this.prisma.shippingZone.findMany({
-            where: { isActive: true },
+            where: { tenantId, isActive: true },
         });
 
         const zone = zones.find((z) =>
@@ -102,9 +111,9 @@ export class ShippingService {
         };
     }
 
-    async getActiveZonesCount() {
+    async getActiveZonesCount(tenantId: string) {
         return this.prisma.shippingZone.count({
-            where: { isActive: true },
+            where: { tenantId, isActive: true },
         });
     }
 }

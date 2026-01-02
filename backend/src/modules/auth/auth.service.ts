@@ -31,13 +31,13 @@ export class AuthService {
             const config = await this.tenantService.getPublicConfig(tenantId);
             return {
                 domainUrl,
-                shopName: config?.branding?.shopName || 'SmartphoneService',
+                shopName: config?.branding?.shopName || 'Your Shop',
             };
         } catch (error) {
             this.logger.warn(`Failed to get tenant info for ${tenantId}, using defaults`);
             return {
                 domainUrl: this.configService.get<string>('FRONTEND_URL') || 'http://localhost:3000',
-                shopName: 'SmartphoneService',
+                shopName: 'Your Shop',
             };
         }
     }
@@ -161,40 +161,57 @@ export class AuthService {
         };
     }
 
-    // Super Admin credentials (owner)
-    private readonly SUPER_ADMIN_CREDENTIALS = {
-        username: 'Naderi',
-        password: 'Naderi123!',
-    };
+    /**
+     * Admin login for tenant admin panel
+     * Authenticates ADMIN users who can be either:
+     * 1. Platform-level admins (tenantId = null) - can impersonate any tenant
+     * 2. Tenant-specific admins (tenantId = specific) - manage their own tenant
+     */
+    async adminLogin(email: string, password: string, tenantId?: string): Promise<AuthResponseDto> {
+        // Find admin user - either platform-level or tenant-specific
+        const whereClause = tenantId
+            ? { email, tenantId, role: { in: [UserRole.ADMIN, UserRole.STAFF] } }
+            : { email, tenantId: null, role: { in: [UserRole.ADMIN, UserRole.OWNER] } };
 
-    async adminLogin(username: string, password: string): Promise<AuthResponseDto> {
-        // Check super admin credentials
-        if (username !== this.SUPER_ADMIN_CREDENTIALS.username || password !== this.SUPER_ADMIN_CREDENTIALS.password) {
+        const user = await this.prisma.user.findFirst({
+            where: whereClause,
+        });
+
+        if (!user) {
             throw new UnauthorizedException('Invalid admin credentials');
         }
 
-        // Generate admin token with hardcoded super admin data
-        // tenantId = null indicates platform-level (OWNER) access
-        const adminPayload = {
-            sub: 'super-admin',
-            email: 'admin@smartphoneservice.be',
-            role: UserRole.ADMIN,
-            isSuperAdmin: true,
-            tenantId: null,  // Platform-level access
-        };
-        const accessToken = this.jwtService.sign(adminPayload);
+        if (!user.isActive) {
+            throw new UnauthorizedException('Account is deactivated');
+        }
+
+        if (!user.passwordHash) {
+            throw new UnauthorizedException('Invalid admin credentials');
+        }
+
+        // Verify password
+        const isPasswordValid = await bcrypt.compare(password, user.passwordHash);
+
+        if (!isPasswordValid) {
+            throw new UnauthorizedException('Invalid admin credentials');
+        }
+
+        // Generate token with appropriate tenantId
+        const accessToken = this.generateToken(user.id, user.email, user.role, user.tenantId);
 
         return {
             accessToken,
             user: {
-                id: 'super-admin',
-                email: 'admin@smartphoneservice.be',
-                name: 'Naderi',
-                role: UserRole.ADMIN,
-                emailVerified: true,
+                id: user.id,
+                email: user.email,
+                name: user.name,
+                role: user.role,
+                emailVerified: !!user.emailVerified,
+                avatar: user.avatar || undefined,
             },
         };
     }
+
 
     async ownerLogin(email: string, password: string): Promise<AuthResponseDto> {
         // Find OWNER user (tenantId should be null for platform owners)

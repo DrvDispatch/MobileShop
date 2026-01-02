@@ -39,8 +39,9 @@ function UnsubscribeContent() {
             }
 
             setUnsubscribed(true);
-        } catch (err: any) {
-            setError(err.message || "Er is iets misgegaan. Probeer het later opnieuw.");
+        } catch (err) {
+            const message = err instanceof Error ? err.message : "Er is iets misgegaan. Probeer het later opnieuw.";
+            setError(message);
         } finally {
             setUnsubscribing(false);
         }

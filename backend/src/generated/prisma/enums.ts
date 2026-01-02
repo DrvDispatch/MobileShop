@@ -39,6 +39,17 @@ export const DomainVerificationStatus = {
 export type DomainVerificationStatus = (typeof DomainVerificationStatus)[keyof typeof DomainVerificationStatus]
 
 
+export const TenantVertical = {
+  REPAIR_SHOP: 'REPAIR_SHOP',
+  BARBER: 'BARBER',
+  CAR_WASH: 'CAR_WASH',
+  BIKE_REPAIR: 'BIKE_REPAIR',
+  GENERAL_SERVICE: 'GENERAL_SERVICE'
+} as const
+
+export type TenantVertical = (typeof TenantVertical)[keyof typeof TenantVertical]
+
+
 export const CmsStatus = {
   DRAFT: 'DRAFT',
   PUBLISHED: 'PUBLISHED'

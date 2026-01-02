@@ -8,7 +8,7 @@ interface CmsPageData {
     id: string;
     slug: string;
     title: string;
-    content: unknown;
+    content: object | null;
     seoTitle?: string;
     seoDescription?: string;
 }

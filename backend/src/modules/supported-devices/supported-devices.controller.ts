@@ -64,13 +64,7 @@ export class SupportedDevicesController {
         return this.devicesService.delete(id);
     }
 
-    // Seed devices (admin only)
-    @Post('seed')
-    @UseGuards(AuthGuard('jwt'), RolesGuard)
-    @Roles(UserRole.ADMIN)
-    async seed() {
-        return this.devicesService.seedDevices();
-    }
+
 
     // Import devices from JSON (devices.json format)
     @Post('import')

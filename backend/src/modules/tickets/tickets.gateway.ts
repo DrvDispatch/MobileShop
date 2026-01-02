@@ -35,14 +35,31 @@ export class TicketsGateway implements OnGatewayConnection, OnGatewayDisconnect 
         try {
             // Secure Tenant Resolution via Handshake
             const hostHeader = client.handshake.headers.host;
-            if (!hostHeader) {
-                this.logger.warn(`Client ${client.id} rejected: No Host header`);
+
+            // Also support tenant domain via query param (for direct backend connections)
+            const queryDomain = client.handshake.query?.domain as string | undefined;
+
+            // Try host header first, then query param
+            let domain = hostHeader ? hostHeader.split(':')[0].toLowerCase() : null;
+
+            // If host header is a backend URL (localhost:3001, api.*, etc.), use query param instead
+            if (domain && (domain.includes('localhost') || domain.startsWith('api.') || domain === '127.0.0.1')) {
+                if (queryDomain) {
+                    domain = queryDomain.split(':')[0].toLowerCase();
+                    this.logger.log(`Using query domain: ${domain} (host was: ${hostHeader})`);
+                } else {
+                    this.logger.warn(`Client ${client.id} connected from ${hostHeader} without domain query param`);
+                    // Don't reject - allow connection but it won't be tenant-scoped
+                    client.data.tenantId = null;
+                    return;
+                }
+            }
+
+            if (!domain) {
+                this.logger.warn(`Client ${client.id} rejected: No domain available`);
                 client.disconnect();
                 return;
             }
-
-            // Normalize host (remove port if present)
-            const domain = hostHeader.split(':')[0].toLowerCase();
 
             // Resolve Tenant
             const tenantDomain = await this.prisma.tenantDomain.findUnique({

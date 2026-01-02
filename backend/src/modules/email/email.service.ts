@@ -11,7 +11,8 @@ export class EmailService {
 
     constructor(private configService: ConfigService) {
         this.resend = new Resend(this.configService.get<string>('RESEND_API_KEY'));
-        this.fromEmail = this.configService.get<string>('RESEND_FROM_EMAIL') || 'SmartphoneService <noreply@send.smartphoneservice.be>';
+        // Platform default - tenant-specific from addresses are passed per email
+        this.fromEmail = this.configService.get<string>('RESEND_FROM_EMAIL') || 'ServicesPulse <noreply@send.servicespulse.com>';
         this.frontendUrl = this.configService.get<string>('FRONTEND_URL') || 'http://localhost:3000';
     }
 
@@ -152,7 +153,8 @@ export class EmailService {
     ): Promise<boolean> {
         // Use tenant domain if provided, otherwise fallback to default
         const baseUrl = tenantDomainUrl || this.frontendUrl;
-        const brandName = shopName || 'SmartphoneService';
+        // NEUTRAL fallback - never use another tenant's name
+        const brandName = shopName || 'Your Shop';
         const verifyUrl = `${baseUrl}/verify-email?token=${token}`;
 
         const content = `
@@ -204,7 +206,8 @@ export class EmailService {
     ): Promise<boolean> {
         // Use tenant domain if provided, otherwise fallback to default
         const baseUrl = tenantDomainUrl || this.frontendUrl;
-        const brandName = shopName || 'SmartphoneService';
+        // NEUTRAL fallback - never use another tenant's name
+        const brandName = shopName || 'Your Shop';
         const resetUrl = `${baseUrl}/reset-password?token=${token}`;
 
         const content = `
@@ -253,9 +256,9 @@ export class EmailService {
                 Beste ${name},
             </p>
             <p style="color: #333; font-size: 15px; line-height: 1.6; margin: 0 0 24px;">
-                Uw email is geverifieerd en uw account is nu actief. Welkom bij SmartphoneService!
+                Uw email is geverifieerd en uw account is nu actief. Welkom!
             </p>
-            ${this.getDetailRow('WAT U KUNT DOEN', 'Bekijk onze refurbished smartphones, boek een reparatie afspraak, of volg uw bestellingen.')}
+            ${this.getDetailRow('WAT U KUNT DOEN', 'Bekijk onze producten, boek een afspraak, of volg uw bestellingen.')}
             <div style="text-align: center; margin: 32px 0;">
                 ${this.getButton('Begin met Shoppen', this.frontendUrl)}
             </div>
@@ -265,7 +268,7 @@ export class EmailService {
             const { data, error } = await this.resend.emails.send({
                 from: this.fromEmail,
                 to: email,
-                subject: 'Welkom bij SmartphoneService!',
+                subject: 'Welkom!',
                 html: this.getEmailTemplate({
                     title: 'Welkom',
                     showCheckmark: true,
@@ -308,7 +311,7 @@ export class EmailService {
                 Beste ${options.customerName},
             </p>
             <p style="color: #333; font-size: 15px; line-height: 1.6; margin: 0 0 24px;">
-                Bedankt voor uw bezoek aan SmartphoneService. We hopen dat u tevreden bent met onze ${sourceLabel}.
+                Bedankt voor uw bezoek. We hopen dat u tevreden bent met onze ${sourceLabel}.
             </p>
             ${this.getDetailRow('UW MENING', 'Hoe zou u uw ervaring beoordelen?')}
             
@@ -620,7 +623,7 @@ export class EmailService {
             const { data, error } = await this.resend.emails.send({
                 from: this.fromEmail,
                 to: options.to,
-                subject: `Bevestiging bestelling #${options.orderNumber} - SmartphoneService`,
+                subject: `Bevestiging bestelling #${options.orderNumber}`,
                 html: this.getEmailTemplate({
                     title: 'Bestelling Bevestigd ✓',
                     showCheckmark: false,

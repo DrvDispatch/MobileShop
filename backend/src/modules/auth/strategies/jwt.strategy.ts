@@ -33,7 +33,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
                     // Also extract from cookie for cookie-based auth
                     const token = request?.cookies?.auth_token;
                     if (token) {
-                        console.log('[JWT Strategy] Extracted token from cookie');
+                        console.log('[JWT Strategy] Extracted token from cookie, length:', token.length);
+                        // Log first/last chars to verify token format without exposing full token
+                        console.log('[JWT Strategy] Token format check:', token.substring(0, 10) + '...' + token.substring(token.length - 10));
                     } else {
                         console.log('[JWT Strategy] No token in cookie, cookies:', Object.keys(request?.cookies || {}));
                     }

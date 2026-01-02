@@ -55,6 +55,7 @@ export const ModelName = {
   TenantDomain: 'TenantDomain',
   TenantConfig: 'TenantConfig',
   TenantFeature: 'TenantFeature',
+  TenantUIConfig: 'TenantUIConfig',
   TenantHomepage: 'TenantHomepage',
   TenantPage: 'TenantPage',
   User: 'User',
@@ -175,6 +176,7 @@ export const TenantConfigScalarFieldEnum = {
   bankName: 'bankName',
   invoicePrefix: 'invoicePrefix',
   invoiceFooter: 'invoiceFooter',
+  website: 'website',
   googleAnalyticsId: 'googleAnalyticsId',
   cookiebotId: 'cookiebotId',
   seoTitle: 'seoTitle',
@@ -214,6 +216,32 @@ export const TenantFeatureScalarFieldEnum = {
 } as const
 
 export type TenantFeatureScalarFieldEnum = (typeof TenantFeatureScalarFieldEnum)[keyof typeof TenantFeatureScalarFieldEnum]
+
+
+export const TenantUIConfigScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  vertical: 'vertical',
+  marqueeItems: 'marqueeItems',
+  footerTagline: 'footerTagline',
+  newsletterTitle: 'newsletterTitle',
+  newsletterSubtitle: 'newsletterSubtitle',
+  googleReviewUrl: 'googleReviewUrl',
+  googleReviewRating: 'googleReviewRating',
+  dateLocale: 'dateLocale',
+  dateFormat: 'dateFormat',
+  checkoutLabels: 'checkoutLabels',
+  bookingLabels: 'bookingLabels',
+  reviewLabels: 'reviewLabels',
+  navLabels: 'navLabels',
+  authLabels: 'authLabels',
+  footerLabels: 'footerLabels',
+  supportFaqItems: 'supportFaqItems',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type TenantUIConfigScalarFieldEnum = (typeof TenantUIConfigScalarFieldEnum)[keyof typeof TenantUIConfigScalarFieldEnum]
 
 
 export const TenantHomepageScalarFieldEnum = {
@@ -560,6 +588,8 @@ export const AppointmentScalarFieldEnum = {
   customerName: 'customerName',
   customerEmail: 'customerEmail',
   customerPhone: 'customerPhone',
+  bookedByEmail: 'bookedByEmail',
+  bookedByName: 'bookedByName',
   deviceBrand: 'deviceBrand',
   deviceModel: 'deviceModel',
   repairType: 'repairType',

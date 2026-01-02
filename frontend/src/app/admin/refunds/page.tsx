@@ -1,180 +1,30 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
-import {
-    ArrowLeft, RefreshCcw, Check, X, AlertCircle, Clock, DollarSign,
-    Package, Search, ChevronDown, ChevronUp, ExternalLink
-} from "lucide-react";
+import { ArrowLeft, RefreshCcw, Check, X, AlertCircle, Clock, DollarSign, Package, Search, ChevronDown, ChevronUp, ExternalLink, Loader2 } from "lucide-react";
+import { useRefunds, REFUND_STATUS_CONFIGS, REFUND_REASON_LABELS, type RefundData } from "@/lib/admin/refunds";
 
-interface RefundData {
-    id: string;
-    orderId: string;
-    stripeRefundId?: string;
-    amount: number;
-    currency: string;
-    status: "PENDING" | "PROCESSING" | "SUCCEEDED" | "FAILED" | "CANCELLED";
-    reason: string;
-    reasonText?: string;
-    processedBy?: string;
-    adminNotes?: string;
-    returnRequired: boolean;
-    returnReceived: boolean;
-    returnTrackingNumber?: string;
-    createdAt: string;
-    processedAt?: string;
-    failedAt?: string;
-    failureReason?: string;
-    order: {
-        orderNumber: string;
-        customerName: string;
-        customerEmail: string;
-    };
-}
-
-interface RefundStats {
-    pending: number;
-    processing: number;
-    succeeded: number;
-    failed: number;
-    totalRefundedAmount: number;
-}
-
-const statusConfig: Record<string, { label: string; bg: string; text: string; icon: React.ReactNode }> = {
-    PENDING: { label: "In afwachting", bg: "bg-yellow-100", text: "text-yellow-700", icon: <Clock className="w-4 h-4" /> },
-    PROCESSING: { label: "Verwerken", bg: "bg-blue-100", text: "text-blue-700", icon: <RefreshCcw className="w-4 h-4 animate-spin" /> },
-    SUCCEEDED: { label: "Voltooid", bg: "bg-green-100", text: "text-green-700", icon: <Check className="w-4 h-4" /> },
-    FAILED: { label: "Mislukt", bg: "bg-red-100", text: "text-red-700", icon: <AlertCircle className="w-4 h-4" /> },
-    CANCELLED: { label: "Geannuleerd", bg: "bg-zinc-100", text: "text-zinc-600", icon: <X className="w-4 h-4" /> },
+// Status icons mapping
+const STATUS_ICONS: Record<string, React.ReactNode> = {
+    PENDING: <Clock className="w-4 h-4" />,
+    PROCESSING: <RefreshCcw className="w-4 h-4 animate-spin" />,
+    SUCCEEDED: <Check className="w-4 h-4" />,
+    FAILED: <AlertCircle className="w-4 h-4" />,
+    CANCELLED: <X className="w-4 h-4" />,
 };
-
-const reasonLabels: Record<string, string> = {
-    DUPLICATE: "Dubbele betaling",
-    FRAUDULENT: "Fraude",
-    REQUESTED_BY_CUSTOMER: "Klantverzoek",
-    DEFECTIVE_PRODUCT: "Defect product",
-    WRONG_PRODUCT: "Verkeerd product",
-    SHIPPING_DAMAGE: "Transportschade",
-    OTHER: "Anders",
-};
-
-// All API calls use relative paths to go through Next.js proxy for tenant resolution
 
 export default function AdminRefundsPage() {
-    const router = useRouter();
-    const [refunds, setRefunds] = useState<RefundData[]>([]);
-    const [stats, setStats] = useState<RefundStats | null>(null);
-    const [loading, setLoading] = useState(true);
-    const [statusFilter, setStatusFilter] = useState<string>("");
-    const [searchQuery, setSearchQuery] = useState("");
-    const [expandedId, setExpandedId] = useState<string | null>(null);
-    const [processing, setProcessing] = useState<string | null>(null);
+    const {
+        filteredRefunds, stats, isLoading, processingId,
+        searchQuery, setSearchQuery, statusFilter, setStatusFilter,
+        expandedId, toggleExpanded,
+        refresh, processRefund, cancelRefund, getStatusConfig, getReasonLabel,
+    } = useRefunds();
 
-    const fetchRefunds = useCallback(async () => {
-        try {
-            const token = localStorage.getItem("adminAccessToken");
-            if (!token) {
-                router.push("/admin/login");
-                return;
-            }
-
-            const params = new URLSearchParams();
-            if (statusFilter) params.append("status", statusFilter);
-
-            const [refundsRes, statsRes] = await Promise.all([
-                fetch(`/api/refunds?${params.toString()}`, {
-                    headers: { Authorization: `Bearer ${token}` },
-                }),
-                fetch(`/api/refunds/stats`, {
-                    headers: { Authorization: `Bearer ${token}` },
-                }),
-            ]);
-
-            if (refundsRes.ok) {
-                const refundsData = await refundsRes.json();
-                setRefunds(refundsData.data || refundsData);
-            }
-            if (statsRes.ok) {
-                const statsData = await statsRes.json();
-                setStats(statsData);
-            }
-        } catch (error) {
-            console.error("Failed to fetch refunds:", error);
-        } finally {
-            setLoading(false);
-        }
-    }, [statusFilter, router]);
-
-    useEffect(() => {
-        fetchRefunds();
-    }, [fetchRefunds]);
-
-    const handleProcess = async (refundId: string) => {
-        if (!confirm("Weet je zeker dat je deze terugbetaling wilt verwerken via Stripe?")) return;
-
-        setProcessing(refundId);
-        try {
-            const token = localStorage.getItem("adminAccessToken");
-            const response = await fetch(`/api/refunds/${refundId}/process`, {
-                method: "POST",
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    "Content-Type": "application/json"
-                },
-            });
-            if (!response.ok) {
-                const data = await response.json();
-                throw new Error(data.message || "Verwerken mislukt");
-            }
-            await fetchRefunds();
-        } catch (error: unknown) {
-            const errorMessage = error instanceof Error ? error.message : "Verwerken mislukt";
-            alert(errorMessage);
-        } finally {
-            setProcessing(null);
-        }
-    };
-
-    const handleCancel = async (refundId: string) => {
-        if (!confirm("Weet je zeker dat je deze terugbetaling wilt annuleren?")) return;
-
-        try {
-            const token = localStorage.getItem("adminAccessToken");
-            const response = await fetch(`/api/refunds/${refundId}/cancel`, {
-                method: "POST",
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    "Content-Type": "application/json"
-                },
-            });
-            if (!response.ok) {
-                const data = await response.json();
-                throw new Error(data.message || "Annuleren mislukt");
-            }
-            await fetchRefunds();
-        } catch (error: unknown) {
-            const errorMessage = error instanceof Error ? error.message : "Annuleren mislukt";
-            alert(errorMessage);
-        }
-    };
-
-    const filteredRefunds = refunds.filter(refund => {
-        if (searchQuery) {
-            const query = searchQuery.toLowerCase();
-            return (
-                refund.order.orderNumber.toLowerCase().includes(query) ||
-                refund.order.customerName.toLowerCase().includes(query) ||
-                refund.order.customerEmail.toLowerCase().includes(query)
-            );
-        }
-        return true;
-    });
-
-    if (loading) {
+    if (isLoading) {
         return (
             <div className="min-h-screen bg-zinc-50 flex items-center justify-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-violet-600"></div>
+                <Loader2 className="h-12 w-12 animate-spin text-violet-600" />
             </div>
         );
     }
@@ -186,10 +36,7 @@ export default function AdminRefundsPage() {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-4">
-                            <Link
-                                href="/admin"
-                                className="p-2 hover:bg-zinc-100 rounded-lg transition-colors"
-                            >
+                            <Link href="/admin" className="p-2 hover:bg-zinc-100 rounded-lg transition-colors">
                                 <ArrowLeft className="w-5 h-5" />
                             </Link>
                             <div>
@@ -197,12 +44,8 @@ export default function AdminRefundsPage() {
                                 <p className="text-sm text-zinc-500">Beheer refunds en retourzendingen</p>
                             </div>
                         </div>
-                        <button
-                            onClick={() => fetchRefunds()}
-                            className="flex items-center gap-2 px-4 py-2 bg-zinc-900 text-white rounded-lg hover:bg-zinc-800 transition-colors"
-                        >
-                            <RefreshCcw className="w-4 h-4" />
-                            Vernieuwen
+                        <button onClick={refresh} className="flex items-center gap-2 px-4 py-2 bg-zinc-900 text-white rounded-lg hover:bg-zinc-800 transition-colors">
+                            <RefreshCcw className="w-4 h-4" />Vernieuwen
                         </button>
                     </div>
                 </div>
@@ -212,43 +55,11 @@ export default function AdminRefundsPage() {
                 {/* Stats */}
                 {stats && (
                     <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
-                        <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4">
-                            <div className="flex items-center gap-2 text-yellow-700 mb-1">
-                                <Clock className="w-4 h-4" />
-                                <span className="text-sm font-medium">In afwachting</span>
-                            </div>
-                            <p className="text-2xl font-bold text-yellow-900">{stats.pending}</p>
-                        </div>
-                        <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
-                            <div className="flex items-center gap-2 text-blue-700 mb-1">
-                                <RefreshCcw className="w-4 h-4" />
-                                <span className="text-sm font-medium">Verwerken</span>
-                            </div>
-                            <p className="text-2xl font-bold text-blue-900">{stats.processing}</p>
-                        </div>
-                        <div className="bg-green-50 border border-green-200 rounded-xl p-4">
-                            <div className="flex items-center gap-2 text-green-700 mb-1">
-                                <Check className="w-4 h-4" />
-                                <span className="text-sm font-medium">Voltooid</span>
-                            </div>
-                            <p className="text-2xl font-bold text-green-900">{stats.succeeded}</p>
-                        </div>
-                        <div className="bg-red-50 border border-red-200 rounded-xl p-4">
-                            <div className="flex items-center gap-2 text-red-700 mb-1">
-                                <AlertCircle className="w-4 h-4" />
-                                <span className="text-sm font-medium">Mislukt</span>
-                            </div>
-                            <p className="text-2xl font-bold text-red-900">{stats.failed}</p>
-                        </div>
-                        <div className="bg-violet-50 border border-violet-200 rounded-xl p-4">
-                            <div className="flex items-center gap-2 text-violet-700 mb-1">
-                                <DollarSign className="w-4 h-4" />
-                                <span className="text-sm font-medium">Totaal terugbetaald</span>
-                            </div>
-                            <p className="text-2xl font-bold text-violet-900">
-                                €{stats.totalRefundedAmount.toFixed(2)}
-                            </p>
-                        </div>
+                        <StatCard icon={<Clock className="w-4 h-4" />} label="In afwachting" value={stats.pending} color="yellow" />
+                        <StatCard icon={<RefreshCcw className="w-4 h-4" />} label="Verwerken" value={stats.processing} color="blue" />
+                        <StatCard icon={<Check className="w-4 h-4" />} label="Voltooid" value={stats.succeeded} color="green" />
+                        <StatCard icon={<AlertCircle className="w-4 h-4" />} label="Mislukt" value={stats.failed} color="red" />
+                        <StatCard icon={<DollarSign className="w-4 h-4" />} label="Totaal terugbetaald" value={`€${stats.totalRefundedAmount.toFixed(2)}`} color="violet" />
                     </div>
                 )}
 
@@ -257,25 +68,15 @@ export default function AdminRefundsPage() {
                     <div className="flex flex-col sm:flex-row gap-4">
                         <div className="flex-1 relative">
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
-                            <input
-                                type="text"
-                                placeholder="Zoeken op bestelnummer, naam, email..."
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                                className="w-full pl-10 pr-4 py-2 border border-zinc-200 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-violet-500"
-                            />
+                            <input type="text" placeholder="Zoeken op bestelnummer, naam, email..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
+                                className="w-full pl-10 pr-4 py-2 border border-zinc-200 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-violet-500" />
                         </div>
-                        <select
-                            value={statusFilter}
-                            onChange={(e) => setStatusFilter(e.target.value)}
-                            className="px-4 py-2 border border-zinc-200 rounded-lg focus:ring-2 focus:ring-violet-500 bg-white"
-                        >
+                        <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}
+                            className="px-4 py-2 border border-zinc-200 rounded-lg focus:ring-2 focus:ring-violet-500 bg-white">
                             <option value="">Alle statussen</option>
-                            <option value="PENDING">In afwachting</option>
-                            <option value="PROCESSING">Verwerken</option>
-                            <option value="SUCCEEDED">Voltooid</option>
-                            <option value="FAILED">Mislukt</option>
-                            <option value="CANCELLED">Geannuleerd</option>
+                            {Object.entries(REFUND_STATUS_CONFIGS).map(([key, config]) => (
+                                <option key={key} value={key}>{config.label}</option>
+                            ))}
                         </select>
                     </div>
                 </div>
@@ -289,143 +90,133 @@ export default function AdminRefundsPage() {
                         </div>
                     ) : (
                         <div className="divide-y divide-zinc-100">
-                            {filteredRefunds.map((refund) => {
-                                const status = statusConfig[refund.status] || statusConfig.PENDING;
-                                const isExpanded = expandedId === refund.id;
-
-                                return (
-                                    <div key={refund.id} className="hover:bg-zinc-50 transition-colors">
-                                        <div
-                                            className="p-4 cursor-pointer"
-                                            onClick={() => setExpandedId(isExpanded ? null : refund.id)}
-                                        >
-                                            <div className="flex items-center justify-between">
-                                                <div className="flex items-center gap-4">
-                                                    <div className={`p-2 rounded-lg ${status.bg}`}>
-                                                        {status.icon}
-                                                    </div>
-                                                    <div>
-                                                        <div className="flex items-center gap-2">
-                                                            <span className="font-semibold text-zinc-900">
-                                                                €{Number(refund.amount).toFixed(2)}
-                                                            </span>
-                                                            <span className={`text-xs px-2 py-0.5 rounded-full ${status.bg} ${status.text}`}>
-                                                                {status.label}
-                                                            </span>
-                                                        </div>
-                                                        <p className="text-sm text-zinc-500">
-                                                            Order: {refund.order.orderNumber} • {refund.order.customerName}
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                                <div className="flex items-center gap-3">
-                                                    <span className="text-xs text-zinc-400">
-                                                        {new Date(refund.createdAt).toLocaleDateString("nl-BE")}
-                                                    </span>
-                                                    {isExpanded ? (
-                                                        <ChevronUp className="w-4 h-4 text-zinc-400" />
-                                                    ) : (
-                                                        <ChevronDown className="w-4 h-4 text-zinc-400" />
-                                                    )}
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        {/* Expanded details */}
-                                        {isExpanded && (
-                                            <div className="px-4 pb-4 border-t border-zinc-100 bg-zinc-50">
-                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 py-4">
-                                                    <div>
-                                                        <p className="text-xs text-zinc-500 mb-1">Reden</p>
-                                                        <p className="text-sm font-medium">{reasonLabels[refund.reason] || refund.reason}</p>
-                                                        {refund.reasonText && (
-                                                            <p className="text-sm text-zinc-600 mt-1">{refund.reasonText}</p>
-                                                        )}
-                                                    </div>
-                                                    <div>
-                                                        <p className="text-xs text-zinc-500 mb-1">Klant</p>
-                                                        <p className="text-sm">{refund.order.customerEmail}</p>
-                                                    </div>
-                                                    {refund.returnRequired && (
-                                                        <div>
-                                                            <p className="text-xs text-zinc-500 mb-1">Retourzending</p>
-                                                            <p className={`text-sm font-medium ${refund.returnReceived ? "text-green-600" : "text-yellow-600"}`}>
-                                                                {refund.returnReceived ? "✓ Ontvangen" : "⏳ In afwachting"}
-                                                            </p>
-                                                            {refund.returnTrackingNumber && (
-                                                                <p className="text-xs text-zinc-500 mt-1">Track: {refund.returnTrackingNumber}</p>
-                                                            )}
-                                                        </div>
-                                                    )}
-                                                    {refund.stripeRefundId && (
-                                                        <div>
-                                                            <p className="text-xs text-zinc-500 mb-1">Stripe Refund ID</p>
-                                                            <p className="text-sm font-mono text-xs">{refund.stripeRefundId}</p>
-                                                        </div>
-                                                    )}
-                                                    {refund.failureReason && (
-                                                        <div className="md:col-span-2">
-                                                            <p className="text-xs text-red-500 mb-1">Foutmelding</p>
-                                                            <p className="text-sm text-red-600">{refund.failureReason}</p>
-                                                        </div>
-                                                    )}
-                                                    {refund.adminNotes && (
-                                                        <div className="md:col-span-2">
-                                                            <p className="text-xs text-zinc-500 mb-1">Interne notities</p>
-                                                            <p className="text-sm text-zinc-600">{refund.adminNotes}</p>
-                                                        </div>
-                                                    )}
-                                                </div>
-
-                                                {/* Actions */}
-                                                <div className="flex items-center gap-3 pt-3 border-t border-zinc-200">
-                                                    <Link
-                                                        href={`/admin/orders/${refund.orderId}`}
-                                                        className="flex items-center gap-1 text-sm text-violet-600 hover:text-violet-700"
-                                                    >
-                                                        <ExternalLink className="w-3 h-3" />
-                                                        Bekijk order
-                                                    </Link>
-
-                                                    {refund.status === "PENDING" && (
-                                                        <>
-                                                            <button
-                                                                onClick={(e) => {
-                                                                    e.stopPropagation();
-                                                                    handleProcess(refund.id);
-                                                                }}
-                                                                disabled={processing === refund.id}
-                                                                className="flex items-center gap-1 px-3 py-1.5 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 disabled:opacity-50"
-                                                            >
-                                                                {processing === refund.id ? (
-                                                                    <RefreshCcw className="w-3 h-3 animate-spin" />
-                                                                ) : (
-                                                                    <Check className="w-3 h-3" />
-                                                                )}
-                                                                Verwerk via Stripe
-                                                            </button>
-                                                            <button
-                                                                onClick={(e) => {
-                                                                    e.stopPropagation();
-                                                                    handleCancel(refund.id);
-                                                                }}
-                                                                className="flex items-center gap-1 px-3 py-1.5 bg-zinc-200 text-zinc-700 text-sm rounded-lg hover:bg-zinc-300"
-                                                            >
-                                                                <X className="w-3 h-3" />
-                                                                Annuleren
-                                                            </button>
-                                                        </>
-                                                    )}
-                                                </div>
-                                            </div>
-                                        )}
-                                    </div>
-                                );
-                            })}
+                            {filteredRefunds.map((refund) => (
+                                <RefundRow
+                                    key={refund.id}
+                                    refund={refund}
+                                    isExpanded={expandedId === refund.id}
+                                    isProcessing={processingId === refund.id}
+                                    onToggle={() => toggleExpanded(refund.id)}
+                                    onProcess={() => processRefund(refund.id)}
+                                    onCancel={() => cancelRefund(refund.id)}
+                                    getStatusConfig={getStatusConfig}
+                                    getReasonLabel={getReasonLabel}
+                                />
+                            ))}
                         </div>
                     )}
                 </div>
             </div>
+        </div>
+    );
+}
+
+function StatCard({ icon, label, value, color }: { icon: React.ReactNode; label: string; value: string | number; color: string }) {
+    const colors: Record<string, string> = {
+        yellow: "bg-yellow-50 border-yellow-200 text-yellow-700",
+        blue: "bg-blue-50 border-blue-200 text-blue-700",
+        green: "bg-green-50 border-green-200 text-green-700",
+        red: "bg-red-50 border-red-200 text-red-700",
+        violet: "bg-violet-50 border-violet-200 text-violet-700",
+    };
+    const textColors: Record<string, string> = { yellow: "text-yellow-900", blue: "text-blue-900", green: "text-green-900", red: "text-red-900", violet: "text-violet-900" };
+    return (
+        <div className={`border rounded-xl p-4 ${colors[color]}`}>
+            <div className="flex items-center gap-2 mb-1">{icon}<span className="text-sm font-medium">{label}</span></div>
+            <p className={`text-2xl font-bold ${textColors[color]}`}>{value}</p>
+        </div>
+    );
+}
+
+function RefundRow({ refund, isExpanded, isProcessing, onToggle, onProcess, onCancel, getStatusConfig, getReasonLabel }: {
+    refund: RefundData; isExpanded: boolean; isProcessing: boolean;
+    onToggle: () => void; onProcess: () => void; onCancel: () => void;
+    getStatusConfig: (s: string) => { label: string; color: string; bg: string };
+    getReasonLabel: (r: string) => string;
+}) {
+    const status = getStatusConfig(refund.status);
+    return (
+        <div className="hover:bg-zinc-50 transition-colors">
+            <div className="p-4 cursor-pointer" onClick={onToggle}>
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                        <div className={`p-2 rounded-lg ${status.bg}`}>{STATUS_ICONS[refund.status]}</div>
+                        <div>
+                            <div className="flex items-center gap-2">
+                                <span className="font-semibold text-zinc-900">€{Number(refund.amount).toFixed(2)}</span>
+                                <span className={`text-xs px-2 py-0.5 rounded-full ${status.bg} ${status.color}`}>{status.label}</span>
+                            </div>
+                            <p className="text-sm text-zinc-500">Order: {refund.order.orderNumber} • {refund.order.customerName}</p>
+                        </div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                        <span className="text-xs text-zinc-400">{new Date(refund.createdAt).toLocaleDateString("nl-BE")}</span>
+                        {isExpanded ? <ChevronUp className="w-4 h-4 text-zinc-400" /> : <ChevronDown className="w-4 h-4 text-zinc-400" />}
+                    </div>
+                </div>
+            </div>
+
+            {isExpanded && (
+                <div className="px-4 pb-4 border-t border-zinc-100 bg-zinc-50">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 py-4">
+                        <div>
+                            <p className="text-xs text-zinc-500 mb-1">Reden</p>
+                            <p className="text-sm font-medium">{getReasonLabel(refund.reason)}</p>
+                            {refund.reasonText && <p className="text-sm text-zinc-600 mt-1">{refund.reasonText}</p>}
+                        </div>
+                        <div>
+                            <p className="text-xs text-zinc-500 mb-1">Klant</p>
+                            <p className="text-sm">{refund.order.customerEmail}</p>
+                        </div>
+                        {refund.returnRequired && (
+                            <div>
+                                <p className="text-xs text-zinc-500 mb-1">Retourzending</p>
+                                <p className={`text-sm font-medium ${refund.returnReceived ? "text-green-600" : "text-yellow-600"}`}>
+                                    {refund.returnReceived ? "✓ Ontvangen" : "⏳ In afwachting"}
+                                </p>
+                                {refund.returnTrackingNumber && <p className="text-xs text-zinc-500 mt-1">Track: {refund.returnTrackingNumber}</p>}
+                            </div>
+                        )}
+                        {refund.stripeRefundId && (
+                            <div>
+                                <p className="text-xs text-zinc-500 mb-1">Stripe Refund ID</p>
+                                <p className="text-sm font-mono text-xs">{refund.stripeRefundId}</p>
+                            </div>
+                        )}
+                        {refund.failureReason && (
+                            <div className="md:col-span-2">
+                                <p className="text-xs text-red-500 mb-1">Foutmelding</p>
+                                <p className="text-sm text-red-600">{refund.failureReason}</p>
+                            </div>
+                        )}
+                        {refund.adminNotes && (
+                            <div className="md:col-span-2">
+                                <p className="text-xs text-zinc-500 mb-1">Interne notities</p>
+                                <p className="text-sm text-zinc-600">{refund.adminNotes}</p>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Actions */}
+                    <div className="flex items-center gap-3 pt-3 border-t border-zinc-200">
+                        <Link href={`/admin/orders/${refund.orderId}`} className="flex items-center gap-1 text-sm text-violet-600 hover:text-violet-700">
+                            <ExternalLink className="w-3 h-3" />Bekijk order
+                        </Link>
+                        {refund.status === "PENDING" && (
+                            <>
+                                <button onClick={(e) => { e.stopPropagation(); onProcess(); }} disabled={isProcessing}
+                                    className="flex items-center gap-1 px-3 py-1.5 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 disabled:opacity-50">
+                                    {isProcessing ? <RefreshCcw className="w-3 h-3 animate-spin" /> : <Check className="w-3 h-3" />}Verwerk via Stripe
+                                </button>
+                                <button onClick={(e) => { e.stopPropagation(); onCancel(); }}
+                                    className="flex items-center gap-1 px-3 py-1.5 bg-zinc-200 text-zinc-700 text-sm rounded-lg hover:bg-zinc-300">
+                                    <X className="w-3 h-3" />Annuleren
+                                </button>
+                            </>
+                        )}
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

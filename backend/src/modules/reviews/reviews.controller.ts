@@ -5,6 +5,7 @@ import type { CreateReviewDto } from './reviews.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
+import { TenantId } from '../tenant/tenant.decorator';
 
 @Controller('api/reviews')
 export class ReviewsController {
@@ -19,8 +20,8 @@ export class ReviewsController {
      * Get reviews for a product (public, only approved)
      */
     @Get('product/:productId')
-    async getProductReviews(@Param('productId') productId: string) {
-        return this.reviewsService.getProductReviews(productId);
+    async getProductReviews(@TenantId() tenantId: string, @Param('productId') productId: string) {
+        return this.reviewsService.getProductReviews(tenantId, productId);
     }
 
     /**
@@ -28,12 +29,13 @@ export class ReviewsController {
      */
     @Post()
     async createReview(
+        @TenantId() tenantId: string,
         @Body() dto: CreateReviewDto,
         @Req() req?: { user?: { sub: string } },
     ) {
         // If user is authenticated, link the review
         const userId = req?.user?.sub;
-        return this.reviewsService.createReview({ ...dto, userId });
+        return this.reviewsService.createReview(tenantId, { ...dto, userId });
     }
 
     // ========== ADMIN ENDPOINTS ==========
@@ -42,12 +44,13 @@ export class ReviewsController {
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Roles('ADMIN', 'STAFF')
     async getAllReviews(
+        @TenantId() tenantId: string,
         @Query('page') page?: string,
         @Query('limit') limit?: string,
         @Query('status') status?: 'pending' | 'approved' | 'hidden' | 'all',
         @Query('productId') productId?: string,
     ) {
-        return this.reviewsService.getAllReviews({
+        return this.reviewsService.getAllReviews(tenantId, {
             page: page ? parseInt(page) : 1,
             limit: limit ? parseInt(limit) : 20,
             status,
@@ -58,8 +61,8 @@ export class ReviewsController {
     @Get('admin/pending-count')
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Roles('ADMIN', 'STAFF')
-    async getPendingCount() {
-        const count = await this.reviewsService.getPendingCount();
+    async getPendingCount(@TenantId() tenantId: string) {
+        const count = await this.reviewsService.getPendingCount(tenantId);
         return { count };
     }
 
@@ -67,20 +70,22 @@ export class ReviewsController {
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Roles('ADMIN', 'STAFF')
     async moderateReview(
+        @TenantId() tenantId: string,
         @Param('id') id: string,
         @Body() body: { action: 'approve' | 'reject' | 'hide'; adminNotes?: string },
     ) {
-        return this.reviewsService.moderateReview(id, body.action, body.adminNotes);
+        return this.reviewsService.moderateReview(tenantId, id, body.action, body.adminNotes);
     }
 
     @Delete('admin/:id')
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Roles('ADMIN')
-    async deleteReview(@Param('id') id: string) {
-        return this.reviewsService.deleteReview(id);
+    async deleteReview(@TenantId() tenantId: string, @Param('id') id: string) {
+        return this.reviewsService.deleteReview(tenantId, id);
     }
 
     // ========== GOOGLE REVIEWS ENDPOINTS ==========
+    // Note: Google Reviews are global (not tenant-scoped) - they're synced from external source
 
     /**
      * Get Google Reviews sync status

@@ -8,11 +8,11 @@ import * as bcrypt from 'bcrypt';
 export class UsersService {
     constructor(private prisma: PrismaService) { }
 
-    async findAll(params: { search?: string; page?: number; limit?: number }) {
+    async findAll(tenantId: string, params: { search?: string; page?: number; limit?: number }) {
         const { search, page = 1, limit = 20 } = params;
         const skip = (page - 1) * limit;
 
-        const where: any = {};
+        const where: any = { tenantId };
         if (search) {
             where.OR = [
                 { email: { contains: search, mode: 'insensitive' } },
@@ -46,10 +46,11 @@ export class UsersService {
         // Get emails to fetch order stats
         const emails = users.map(u => u.email);
 
-        // Fetch order counts and totals by email (since orders use customerEmail, not userId)
+        // Fetch order counts and totals by email (scoped to tenant)
         const orderStats = await this.prisma.order.groupBy({
             by: ['customerEmail'],
             where: {
+                tenantId,
                 customerEmail: { in: emails },
                 status: { notIn: ['CANCELLED', 'PENDING'] },
             },
@@ -88,9 +89,9 @@ export class UsersService {
         };
     }
 
-    async findOne(id: string) {
-        const user = await this.prisma.user.findUnique({
-            where: { id },
+    async findOne(tenantId: string, id: string) {
+        const user = await this.prisma.user.findFirst({
+            where: { tenantId, id },
             select: {
                 id: true,
                 email: true,
@@ -112,9 +113,9 @@ export class UsersService {
             throw new NotFoundException('User not found');
         }
 
-        // Get orders by customer email (not relation - orders may have null userId)
+        // Get orders by customer email (scoped to tenant)
         const orders = await this.prisma.order.findMany({
-            where: { customerEmail: user.email },
+            where: { tenantId, customerEmail: user.email },
             select: {
                 id: true,
                 orderNumber: true,
@@ -126,16 +127,16 @@ export class UsersService {
             take: 10,
         });
 
-        // Get appointments by email
+        // Get appointments by email (scoped to tenant)
         const appointments = await this.prisma.appointment.findMany({
-            where: { customerEmail: user.email },
+            where: { tenantId, customerEmail: user.email },
             orderBy: { appointmentDate: 'desc' },
             take: 10,
         });
 
-        // Get tickets by customer email
+        // Get tickets by customer email (scoped to tenant)
         const tickets = await this.prisma.ticket.findMany({
-            where: { customerEmail: user.email },
+            where: { tenantId, customerEmail: user.email },
             orderBy: { createdAt: 'desc' },
             take: 10,
             include: {
@@ -158,17 +159,17 @@ export class UsersService {
         };
     }
 
-    async createAdmin(dto: CreateAdminDto) {
+    async createAdmin(tenantId: string, dto: CreateAdminDto) {
         // Only allow creating ADMIN or STAFF roles
         if (dto.role !== UserRole.ADMIN && dto.role !== UserRole.STAFF) {
             throw new ForbiddenException('Can only create ADMIN or STAFF users');
         }
 
-        // Use username as email for admin accounts
-        const email = `${dto.username.toLowerCase()}@admin.smartphoneservice.be`;
+        // Use username as email for admin accounts (scoped to tenant)
+        const email = dto.username.toLowerCase();
 
-        // Check if username/email exists (using findFirst since email uniqueness is per-tenant)
-        const existing = await this.prisma.user.findFirst({ where: { email, tenantId: null } });
+        // Check if username/email exists within tenant
+        const existing = await this.prisma.user.findFirst({ where: { email, tenantId } });
         if (existing) {
             throw new ConflictException('Username already exists');
         }
@@ -177,6 +178,7 @@ export class UsersService {
 
         const user = await this.prisma.user.create({
             data: {
+                tenantId,
                 email,
                 name: dto.name,
                 passwordHash,
@@ -199,8 +201,8 @@ export class UsersService {
         };
     }
 
-    async deleteUser(id: string) {
-        const user = await this.prisma.user.findUnique({ where: { id } });
+    async deleteUser(tenantId: string, id: string) {
+        const user = await this.prisma.user.findFirst({ where: { tenantId, id } });
         if (!user) {
             throw new NotFoundException('User not found');
         }
@@ -209,8 +211,8 @@ export class UsersService {
         return { message: 'User deleted successfully' };
     }
 
-    async update(id: string, dto: UpdateUserDto) {
-        await this.findOne(id); // Check exists
+    async update(tenantId: string, id: string, dto: UpdateUserDto) {
+        await this.findOne(tenantId, id); // Check exists
 
         return this.prisma.user.update({
             where: { id },
@@ -226,8 +228,8 @@ export class UsersService {
         });
     }
 
-    async adminResetPassword(id: string, newPassword: string) {
-        await this.findOne(id); // Check exists
+    async adminResetPassword(tenantId: string, id: string, newPassword: string) {
+        await this.findOne(tenantId, id); // Check exists
 
         const passwordHash = await bcrypt.hash(newPassword, 10);
 
@@ -240,14 +242,15 @@ export class UsersService {
     }
 
     async updateLastActive(id: string) {
+        // This is called from JWT validation, no tenant check needed
         return this.prisma.user.update({
             where: { id },
             data: { lastActiveAt: new Date() },
         });
     }
 
-    async updateVipStatus(id: string, isVip: boolean) {
-        await this.findOne(id); // Check exists
+    async updateVipStatus(tenantId: string, id: string, isVip: boolean) {
+        await this.findOne(tenantId, id); // Check exists
 
         return this.prisma.user.update({
             where: { id },
@@ -261,8 +264,8 @@ export class UsersService {
         });
     }
 
-    async updateNotes(id: string, adminNotes: string | null) {
-        await this.findOne(id); // Check exists
+    async updateNotes(tenantId: string, id: string, adminNotes: string | null) {
+        await this.findOne(tenantId, id); // Check exists
 
         return this.prisma.user.update({
             where: { id },
@@ -274,9 +277,9 @@ export class UsersService {
         });
     }
 
-    async recalculateLifetimeValue(id: string) {
-        const user = await this.prisma.user.findUnique({
-            where: { id },
+    async recalculateLifetimeValue(tenantId: string, id: string) {
+        const user = await this.prisma.user.findFirst({
+            where: { tenantId, id },
             select: { email: true },
         });
 
@@ -284,9 +287,10 @@ export class UsersService {
             throw new NotFoundException('User not found');
         }
 
-        // Calculate total spent from all orders
+        // Calculate total spent from all orders (scoped to tenant)
         const result = await this.prisma.order.aggregate({
             where: {
+                tenantId,
                 customerEmail: user.email,
                 status: { notIn: ['CANCELLED', 'PENDING'] },
             },

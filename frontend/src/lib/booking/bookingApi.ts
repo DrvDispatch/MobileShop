@@ -139,13 +139,50 @@ export async function fetchAvailableSlots(date: Date): Promise<string[]> {
 
 /**
  * Create a new appointment
+ * If the user is authenticated (via localStorage token OR httpOnly cookie),
+ * uses the /authenticated endpoint which enables booker tracking
  */
 export async function createAppointment(data: AppointmentData): Promise<void> {
-    const response = await fetch('/api/appointments', {
+    // Check if user is logged in via localStorage (traditional login)
+    const authToken = typeof window !== 'undefined'
+        ? localStorage.getItem('accessToken')
+        : null;
+
+    // For OAuth users, the token is in an httpOnly cookie (not accessible via JS)
+    // We'll always try the authenticated endpoint first if not in localStorage
+    // and include credentials to send cookies
+    const hasLocalToken = !!authToken && authToken !== 'cookie-based';
+
+    // Use authenticated endpoint - credentials: include will send cookies
+    const endpoint = '/api/appointments/authenticated';
+
+    const headers: Record<string, string> = { "Content-Type": "application/json" };
+    if (hasLocalToken) {
+        headers['Authorization'] = `Bearer ${authToken}`;
+    }
+
+    const response = await fetch(endpoint, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers,
         body: JSON.stringify(data),
+        credentials: 'include', // CRITICAL: Send cookies for OAuth cookie-based auth
     });
+
+    // If authenticated endpoint fails with 401, try unauthenticated endpoint as fallback
+    if (response.status === 401) {
+        console.log('[Booking] Authenticated endpoint returned 401, trying unauthenticated...');
+        const fallbackResponse = await fetch('/api/appointments', {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+        });
+
+        if (!fallbackResponse.ok) {
+            const errorData = await fallbackResponse.json().catch(() => ({}));
+            throw new Error(errorData.message || "Could not create appointment");
+        }
+        return;
+    }
 
     if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));

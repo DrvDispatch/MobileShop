@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
@@ -19,10 +19,24 @@ export default function TenantDetailPage() {
 
     const [actionLoading, setActionLoading] = useState(false);
 
-    // Seed data state
+    // Seed data state (repair catalog)
     const [seedLoading, setSeedLoading] = useState(false);
     const [seedStats, setSeedStats] = useState<{ brands: number; devices: number; serviceTypes: number; deviceServices: number } | null>(null);
     const [seedError, setSeedError] = useState<string | null>(null);
+
+    // Product seeding state
+    const [productSeedLoading, setProductSeedLoading] = useState(false);
+    const [productSeedCount, setProductSeedCount] = useState(50);
+    const [productSeedResult, setProductSeedResult] = useState<{ created: number; skipped: number } | null>(null);
+    const [productSeedError, setProductSeedError] = useState<string | null>(null);
+    const [availableProductsCount, setAvailableProductsCount] = useState(0);
+
+    // Fetch available products count on mount
+    useEffect(() => {
+        ownerApi.getAvailableProductsCount()
+            .then(result => setAvailableProductsCount(result.count))
+            .catch(() => setAvailableProductsCount(0));
+    }, []);
 
     // Impersonation state
     const [users, setUsers] = useState<TenantUser[]>([]);
@@ -147,6 +161,45 @@ export default function TenantDetailPage() {
             alert(message);
         } finally {
             setSeedLoading(false);
+        }
+    };
+
+    // Seed products for tenant
+    const handleSeedProducts = async () => {
+        const countText = productSeedCount === 0 ? `all ${availableProductsCount}` : productSeedCount.toString();
+        if (!confirm(`Seed ${countText} demo products for this tenant? This will add refurbished phones to the shop.`)) return;
+        setProductSeedLoading(true);
+        setProductSeedError(null);
+        try {
+            const result = await ownerApi.seedProducts(tenantId, productSeedCount);
+            setProductSeedResult({ created: result.created, skipped: result.skipped });
+            await reloadTenant();
+            alert(`Product seeding complete! ${result.created} products created, ${result.skipped} skipped.`);
+        } catch (err) {
+            const message = err instanceof Error ? err.message : 'Failed to seed products';
+            setProductSeedError(message);
+            alert(message);
+        } finally {
+            setProductSeedLoading(false);
+        }
+    };
+
+    // Clear all products for tenant
+    const handleClearProducts = async () => {
+        if (!confirm('This will DELETE ALL products for this tenant. This action is irreversible. Continue?')) return;
+        setProductSeedLoading(true);
+        setProductSeedError(null);
+        try {
+            const result = await ownerApi.clearProducts(tenantId);
+            setProductSeedResult(null);
+            await reloadTenant();
+            alert(`Cleared ${result.deleted} products.`);
+        } catch (err) {
+            const message = err instanceof Error ? err.message : 'Failed to clear products';
+            setProductSeedError(message);
+            alert(message);
+        } finally {
+            setProductSeedLoading(false);
         }
     };
 
@@ -336,6 +389,89 @@ export default function TenantDetailPage() {
                     <p className="text-sm text-gray-500 dark:text-gray-400">
                         Note: Seeding creates brands, devices, and services from devices.json.
                         Reseeding will delete all existing repair data first.
+                    </p>
+                </CardContent>
+            </Card>
+
+            {/* Product Catalog Seeding */}
+            <Card className="mb-8 border-emerald-200 dark:border-emerald-800">
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                        </svg>
+                        Product Catalog Seeding
+                    </CardTitle>
+                    <CardDescription>
+                        Populate the shop with demo refurbished smartphones
+                    </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                    {/* Current Product Count */}
+                    <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <p className="text-sm text-gray-600 dark:text-gray-400">Current Products</p>
+                                <p className="text-2xl font-bold text-emerald-600">{tenant._count?.products || 0}</p>
+                            </div>
+                            {productSeedResult && (
+                                <div className="text-right">
+                                    <p className="text-sm text-gray-600 dark:text-gray-400">Last Seed</p>
+                                    <p className="text-lg font-medium text-emerald-600">
+                                        +{productSeedResult.created} created
+                                    </p>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    {productSeedError && (
+                        <div className="p-3 bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400 rounded-lg text-sm">
+                            {productSeedError}
+                        </div>
+                    )}
+
+                    {/* Seed Count Selector */}
+                    <div className="flex items-center gap-4">
+                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                            Products to seed:
+                        </label>
+                        <select
+                            value={productSeedCount}
+                            onChange={(e) => setProductSeedCount(parseInt(e.target.value))}
+                            className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500"
+                        >
+                            <option value={10}>10 products</option>
+                            <option value={25}>25 products</option>
+                            <option value={50}>50 products</option>
+                            <option value={100}>100 products</option>
+                            <option value={200}>200 products</option>
+                            <option value={0}>All ({availableProductsCount || '...'})</option>
+                        </select>
+                    </div>
+
+                    {/* Seed Actions */}
+                    <div className="flex gap-4">
+                        <Button
+                            onClick={handleSeedProducts}
+                            disabled={productSeedLoading}
+                            className="bg-emerald-600 hover:bg-emerald-700"
+                        >
+                            {productSeedLoading ? 'Seeding...' : 'Seed Products'}
+                        </Button>
+                        <Button
+                            onClick={handleClearProducts}
+                            disabled={productSeedLoading || (tenant._count?.products || 0) === 0}
+                            variant="outline"
+                            className="border-red-500 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
+                        >
+                            {productSeedLoading ? 'Clearing...' : 'Clear All Products'}
+                        </Button>
+                    </div>
+
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                        Note: Products include iPhones, Samsung Galaxy phones with realistic prices and descriptions.
+                        Images use the existing repair asset catalog.
                     </p>
                 </CardContent>
             </Card>

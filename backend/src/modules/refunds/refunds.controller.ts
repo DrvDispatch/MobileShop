@@ -15,6 +15,7 @@ import { CreateRefundDto, UpdateRefundDto, RefundListQueryDto, RefundResponseDto
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
+import { TenantId } from '../tenant/tenant.decorator';
 
 @ApiTags('Refunds')
 @Controller('refunds')
@@ -28,49 +29,50 @@ export class RefundsController {
     @ApiOperation({ summary: 'Create a new refund request' })
     @ApiResponse({ status: 201, type: RefundResponseDto })
     async createRefund(
+        @TenantId() tenantId: string,
         @Body() dto: CreateRefundDto,
         @Req() req: any,
     ) {
         const adminId = req.user?.sub || req.user?.id;
-        return this.refundsService.createRefund(dto, adminId);
+        return this.refundsService.createRefund(tenantId, dto, adminId);
     }
 
     @Post(':id/process')
     @Roles('ADMIN')
     @ApiOperation({ summary: 'Process a pending refund via Stripe' })
     @ApiResponse({ status: 200, type: RefundResponseDto })
-    async processRefund(@Param('id') id: string) {
-        return this.refundsService.processRefund(id);
+    async processRefund(@TenantId() tenantId: string, @Param('id') id: string) {
+        return this.refundsService.processRefund(tenantId, id);
     }
 
     @Post(':id/cancel')
     @Roles('ADMIN', 'STAFF')
     @ApiOperation({ summary: 'Cancel a pending refund' })
     @ApiResponse({ status: 200, type: RefundResponseDto })
-    async cancelRefund(@Param('id') id: string) {
-        return this.refundsService.cancelRefund(id);
+    async cancelRefund(@TenantId() tenantId: string, @Param('id') id: string) {
+        return this.refundsService.cancelRefund(tenantId, id);
     }
 
     @Get()
     @Roles('ADMIN', 'STAFF')
     @ApiOperation({ summary: 'Get all refunds with filters' })
-    async getAllRefunds(@Query() query: RefundListQueryDto) {
-        return this.refundsService.getAllRefunds(query);
+    async getAllRefunds(@TenantId() tenantId: string, @Query() query: RefundListQueryDto) {
+        return this.refundsService.getAllRefunds(tenantId, query);
     }
 
     @Get('stats')
     @Roles('ADMIN', 'STAFF')
     @ApiOperation({ summary: 'Get refund statistics' })
-    async getRefundStats() {
-        return this.refundsService.getRefundStats();
+    async getRefundStats(@TenantId() tenantId: string) {
+        return this.refundsService.getRefundStats(tenantId);
     }
 
     @Get(':id')
     @Roles('ADMIN', 'STAFF')
     @ApiOperation({ summary: 'Get refund details' })
     @ApiResponse({ status: 200, type: RefundResponseDto })
-    async getRefund(@Param('id') id: string) {
-        return this.refundsService.getRefund(id);
+    async getRefund(@TenantId() tenantId: string, @Param('id') id: string) {
+        return this.refundsService.getRefund(tenantId, id);
     }
 
     @Patch(':id')
@@ -78,9 +80,10 @@ export class RefundsController {
     @ApiOperation({ summary: 'Update refund (notes, return status)' })
     @ApiResponse({ status: 200, type: RefundResponseDto })
     async updateRefund(
+        @TenantId() tenantId: string,
         @Param('id') id: string,
         @Body() dto: UpdateRefundDto,
     ) {
-        return this.refundsService.updateRefund(id, dto);
+        return this.refundsService.updateRefund(tenantId, id, dto);
     }
 }

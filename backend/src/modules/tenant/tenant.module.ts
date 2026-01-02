@@ -2,14 +2,15 @@ import { Module, MiddlewareConsumer, NestModule, RequestMethod, forwardRef } fro
 import { TenantController } from './tenant.controller';
 import { TenantService } from './tenant.service';
 import { TenantMiddleware } from './tenant.middleware';
+import { UIConfigService } from './ui-config.service';
 import { PrismaModule } from '../../prisma';
 import { OwnerModule } from '../owner/owner.module';
 
 @Module({
     imports: [PrismaModule, forwardRef(() => OwnerModule)],
     controllers: [TenantController],
-    providers: [TenantService, TenantMiddleware],
-    exports: [TenantService, TenantMiddleware],
+    providers: [TenantService, TenantMiddleware, UIConfigService],
+    exports: [TenantService, TenantMiddleware, UIConfigService],
 })
 export class TenantModule implements NestModule {
     configure(consumer: MiddlewareConsumer) {
@@ -27,11 +28,23 @@ export class TenantModule implements NestModule {
                 { path: 'api/docs', method: RequestMethod.ALL },
                 { path: 'api/docs/(.*)', method: RequestMethod.ALL },
                 // Stripe webhooks (external origin, no domain context)
+                { path: 'orders/webhook', method: RequestMethod.POST },
                 { path: 'api/orders/webhook', method: RequestMethod.POST },
+                // Stripe checkout redirects (platform-level, resolves tenant then redirects)
+                // Include both with and without api/ prefix for compatibility
+                { path: 'orders/checkout-success', method: RequestMethod.GET },
+                { path: 'orders/checkout-cancel', method: RequestMethod.GET },
+                { path: 'orders/resolve-session/(.*)', method: RequestMethod.GET },
+                { path: 'api/orders/checkout-success', method: RequestMethod.GET },
+                { path: 'api/orders/checkout-cancel', method: RequestMethod.GET },
+                { path: 'api/orders/resolve-session/(.*)', method: RequestMethod.GET },
                 // Owner panel routes (platform-level, no tenant context)
                 { path: 'api/owner', method: RequestMethod.ALL },
                 { path: 'api/owner/(.*)', method: RequestMethod.ALL },
+                { path: 'owner', method: RequestMethod.ALL },
+                { path: 'owner/(.*)', method: RequestMethod.ALL },
                 { path: 'api/auth/owner-login', method: RequestMethod.POST },
+                { path: 'auth/owner-login', method: RequestMethod.POST },
             )
             .forRoutes('*');
 

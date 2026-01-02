@@ -30,6 +30,11 @@ export interface Tenant {
     onboardingStatus?: Record<string, boolean>;
     domains?: TenantDomain[];
     config?: TenantConfig;
+    _count?: {
+        products?: number;
+        users?: number;
+        orders?: number;
+    };
 }
 
 export interface TenantDomain {
@@ -68,6 +73,25 @@ export interface TenantConfig {
     currency?: string;
     timezone?: string;
     features?: Record<string, boolean>;
+    // Company/Invoice Settings
+    companyName?: string;
+    vatNumber?: string;
+    address?: {
+        line1?: string;
+        line2?: string;
+        city?: string;
+        postalCode?: string;
+        country?: string;
+    };
+    bankAccount?: string;
+    bankName?: string;
+    invoicePrefix?: string;
+    invoiceFooter?: string;
+    website?: string;
+    // Business Hours Settings
+    openingHours?: Record<string, { open: string; close: string } | null>;
+    timeSlots?: string[];
+    closedDays?: number[];
     createdAt: string;
     updatedAt: string;
 }
@@ -129,6 +153,25 @@ export interface UpdateConfigDto {
     currency?: string;
     timezone?: string;
     features?: Record<string, boolean>;
+    // Company/Invoice Settings
+    companyName?: string;
+    vatNumber?: string;
+    address?: {
+        line1?: string;
+        line2?: string;
+        city?: string;
+        postalCode?: string;
+        country?: string;
+    };
+    bankAccount?: string;
+    bankName?: string;
+    invoicePrefix?: string;
+    invoiceFooter?: string;
+    website?: string;
+    // Business Hours Settings
+    openingHours?: Record<string, { open: string; close: string } | null>;
+    timeSlots?: string[];
+    closedDays?: number[];
 }
 
 export interface OwnerUser {

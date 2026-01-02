@@ -508,6 +508,9 @@ export class OwnerService {
         logoUrl: string;
         primaryColor: string;
         secondaryColor: string;
+        accentColor: string;
+        borderRadius: string;
+        darkMode: boolean;
         email: string;
         phone: string;
         whatsappNumber: string;
@@ -515,6 +518,19 @@ export class OwnerService {
         currency: string;
         timezone: string;
         features: Record<string, boolean>;
+        // Company/Invoice Settings
+        companyName: string;
+        vatNumber: string;
+        address: { line1?: string; line2?: string; city?: string; postalCode?: string; country?: string };
+        bankAccount: string;
+        bankName: string;
+        invoicePrefix: string;
+        invoiceFooter: string;
+        website: string;
+        // Business Hours Settings
+        openingHours: Record<string, { open: string; close: string } | null>;
+        timeSlots: string[];
+        closedDays: number[];
     }>) {
         await this.findTenantById(tenantId);
 
@@ -831,6 +847,49 @@ export class OwnerService {
             success: true,
             newPassword: newPassword ? undefined : plainPassword // Return auto-generated password if applicable
         };
+    }
+
+    // ===== PRODUCT SEEDING =====
+    // Injected via setter to avoid circular dependency
+    private productSeeder: any = null;
+
+    setProductSeeder(seeder: any) {
+        this.productSeeder = seeder;
+    }
+
+    async seedProducts(tenantId: string, options?: { count?: number }) {
+        if (!this.productSeeder) {
+            throw new BadRequestException('Product seeder not initialized');
+        }
+
+        // Verify tenant exists
+        const tenant = await this.prisma.tenant.findUnique({ where: { id: tenantId } });
+        if (!tenant) {
+            throw new NotFoundException(`Tenant ${tenantId} not found`);
+        }
+
+        return this.productSeeder.seedProducts(tenantId, options);
+    }
+
+    async clearProducts(tenantId: string) {
+        if (!this.productSeeder) {
+            throw new BadRequestException('Product seeder not initialized');
+        }
+
+        // Verify tenant exists
+        const tenant = await this.prisma.tenant.findUnique({ where: { id: tenantId } });
+        if (!tenant) {
+            throw new NotFoundException(`Tenant ${tenantId} not found`);
+        }
+
+        return this.productSeeder.clearProducts(tenantId);
+    }
+
+    getAvailableProductsCount(): number {
+        if (!this.productSeeder) {
+            return 0;
+        }
+        return this.productSeeder.getAvailableProductsCount();
     }
 }
 

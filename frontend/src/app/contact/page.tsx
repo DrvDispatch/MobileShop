@@ -1,9 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect } from "react";
 import { Navbar, Footer } from "@/components/landing";
-import { useSettingsStore } from "@/lib/store";
+import { useTenant } from "@/lib/TenantProvider";
 
 // React Icons
 import { FaWhatsapp, FaPhone, FaEnvelope, FaMapMarkerAlt, FaClock, FaCalendarAlt } from "react-icons/fa";
@@ -12,20 +11,28 @@ import { HiExternalLink } from "react-icons/hi";
 import { BsCheckCircleFill } from "react-icons/bs";
 
 export default function ContactPage() {
-    const { settings, fetchSettings } = useSettingsStore();
+    const tenant = useTenant();
+    const { contact, branding, business } = tenant;
 
-    useEffect(() => {
-        fetchSettings();
-    }, [fetchSettings]);
+    // Format WhatsApp link from tenant config
+    const formatWhatsAppLink = (num: string | null): string | null => {
+        if (!num) return null;
+        const cleaned = num.replace(/[^0-9+]/g, '').replace(/^\+/, '');
+        return `https://wa.me/${cleaned}?text=Hallo,%20ik%20heb%20een%20vraag...`;
+    };
+    const whatsappLink = formatWhatsAppLink(contact.whatsappNumber);
+    const whatsappDisplay = contact.whatsappNumber || '';
 
-    const { store } = settings;
-
-    // WhatsApp link - plain digits only, no + or spaces
-    const whatsappNumber = "32465638106";
-    const whatsappLink = `https://wa.me/${whatsappNumber}?text=Hallo,%20ik%20heb%20een%20vraag...`;
+    // Store config from tenant
+    const store = {
+        name: branding.shopName,
+        email: contact.email || '',
+        phone: contact.phone || '',
+        address: contact.address as { line1?: string; postalCode?: string; city?: string } || {}
+    };
 
     // Google Maps link
-    const address = `${store.address.line1}, ${store.address.postalCode} ${store.address.city}`;
+    const address = `${store.address.line1 || ''}, ${store.address.postalCode || ''} ${store.address.city || ''}`;
     const googleMapsLink = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
 
     const openChatWidget = () => {
@@ -48,25 +55,27 @@ export default function ContactPage() {
                 <div className="grid lg:grid-cols-2 gap-8">
                     {/* Contact Methods - Elegant white cards with subtle borders */}
                     <div className="space-y-3">
-                        {/* WhatsApp */}
-                        <a
-                            href={whatsappLink}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center gap-4 bg-white border border-zinc-200 rounded-xl p-5 hover:border-green-300 hover:shadow-md transition-all group"
-                        >
-                            <div className="w-12 h-12 bg-green-500 rounded-xl flex items-center justify-center flex-shrink-0">
-                                <FaWhatsapp className="w-6 h-6 text-white" />
-                            </div>
-                            <div className="flex-1 min-w-0">
-                                <h3 className="text-lg font-semibold text-zinc-900">WhatsApp</h3>
-                                <p className="text-sm text-zinc-500">Snelste manier om ons te bereiken</p>
-                            </div>
-                            <div className="text-green-600 font-medium flex items-center gap-1">
-                                +32 465 63 81 06
-                                <HiExternalLink className="w-4 h-4" />
-                            </div>
-                        </a>
+                        {/* WhatsApp - only show if configured */}
+                        {whatsappLink && (
+                            <a
+                                href={whatsappLink}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center gap-4 bg-white border border-zinc-200 rounded-xl p-5 hover:border-green-300 hover:shadow-md transition-all group"
+                            >
+                                <div className="w-12 h-12 bg-green-500 rounded-xl flex items-center justify-center flex-shrink-0">
+                                    <FaWhatsapp className="w-6 h-6 text-white" />
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                    <h3 className="text-lg font-semibold text-zinc-900">WhatsApp</h3>
+                                    <p className="text-sm text-zinc-500">Snelste manier om ons te bereiken</p>
+                                </div>
+                                <div className="text-green-600 font-medium flex items-center gap-1">
+                                    {whatsappDisplay}
+                                    <HiExternalLink className="w-4 h-4" />
+                                </div>
+                            </a>
+                        )}
 
                         {/* Email */}
                         <a
@@ -183,22 +192,27 @@ export default function ContactPage() {
                             </div>
 
                             <div className="space-y-2 text-sm">
-                                {[
-                                    { day: "Maandag", hours: "09:00 - 18:00" },
-                                    { day: "Dinsdag", hours: "09:00 - 18:00" },
-                                    { day: "Woensdag", hours: "09:00 - 18:00" },
-                                    { day: "Donderdag", hours: "09:00 - 18:00" },
-                                    { day: "Vrijdag", hours: "09:00 - 18:00" },
-                                    { day: "Zaterdag", hours: "10:00 - 17:00" },
-                                    { day: "Zondag", hours: "Gesloten", closed: true },
-                                ].map(({ day, hours, closed }) => (
-                                    <div key={day} className="flex justify-between py-1">
-                                        <span className="text-zinc-500">{day}</span>
-                                        <span className={closed ? "text-red-500 font-medium" : "text-zinc-700 font-medium"}>
-                                            {hours}
-                                        </span>
-                                    </div>
-                                ))}
+                                {(() => {
+                                    const hours = business.openingHours as Record<string, { open: string; close: string } | null> | null;
+                                    const dayNames: Record<string, string> = {
+                                        monday: 'Maandag', tuesday: 'Dinsdag', wednesday: 'Woensdag',
+                                        thursday: 'Donderdag', friday: 'Vrijdag', saturday: 'Zaterdag', sunday: 'Zondag'
+                                    };
+                                    if (!hours) {
+                                        return <p className="text-zinc-500">Neem contact op voor openingsuren</p>;
+                                    }
+                                    return Object.entries(dayNames).map(([key, name]) => {
+                                        const dayHours = hours[key];
+                                        return (
+                                            <div key={key} className="flex justify-between py-1">
+                                                <span className="text-zinc-500">{name}</span>
+                                                <span className={`font-medium ${!dayHours ? 'text-red-500' : 'text-zinc-700'}`}>
+                                                    {dayHours ? `${dayHours.open} - ${dayHours.close}` : 'Gesloten'}
+                                                </span>
+                                            </div>
+                                        );
+                                    });
+                                })()}
                             </div>
                         </div>
 

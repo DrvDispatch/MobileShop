@@ -5,9 +5,9 @@ import { PrismaService } from '../../prisma';
 export class CategoriesService {
     constructor(private readonly prisma: PrismaService) { }
 
-    async findAll() {
+    async findAll(tenantId: string) {
         return this.prisma.category.findMany({
-            where: { isActive: true },
+            where: { tenantId, isActive: true },
             include: {
                 children: {
                     where: { isActive: true },
@@ -21,9 +21,9 @@ export class CategoriesService {
         });
     }
 
-    async findBySlug(slug: string) {
-        const category = await this.prisma.category.findUnique({
-            where: { slug },
+    async findBySlug(tenantId: string, slug: string) {
+        const category = await this.prisma.category.findFirst({
+            where: { tenantId, slug },
             include: {
                 children: {
                     where: { isActive: true },
@@ -40,9 +40,9 @@ export class CategoriesService {
         return category;
     }
 
-    async findById(id: string) {
-        const category = await this.prisma.category.findUnique({
-            where: { id },
+    async findById(tenantId: string, id: string) {
+        const category = await this.prisma.category.findFirst({
+            where: { tenantId, id },
             include: {
                 children: {
                     where: { isActive: true },
@@ -59,19 +59,20 @@ export class CategoriesService {
         return category;
     }
 
-    async create(data: { name: string; slug?: string; description?: string; parentId?: string }) {
+    async create(tenantId: string, data: { name: string; slug?: string; description?: string; parentId?: string }) {
         const slug = data.slug || this.generateSlug(data.name);
 
         return this.prisma.category.create({
             data: {
+                tenantId,
                 ...data,
                 slug,
             },
         });
     }
 
-    async update(id: string, data: { name?: string; slug?: string; description?: string; isActive?: boolean }) {
-        await this.findById(id);
+    async update(tenantId: string, id: string, data: { name?: string; slug?: string; description?: string; isActive?: boolean }) {
+        await this.findById(tenantId, id);
 
         return this.prisma.category.update({
             where: { id },
@@ -79,8 +80,8 @@ export class CategoriesService {
         });
     }
 
-    async delete(id: string) {
-        await this.findById(id);
+    async delete(tenantId: string, id: string) {
+        await this.findById(tenantId, id);
 
         return this.prisma.category.delete({
             where: { id },

@@ -19,7 +19,7 @@ async function fixOwnerUser() {
 
     // Find OWNER user
     const owner = await prisma.user.findFirst({
-        where: { email: 'owner@servicepulse.com' }
+        where: { email: 'owner@servicespulse.com' }
     });
 
     if (!owner) {
@@ -31,7 +31,7 @@ async function fixOwnerUser() {
         const newOwner = await prisma.user.create({
             data: {
                 tenantId: null,
-                email: 'owner@servicepulse.com',
+                email: 'owner@servicespulse.com',
                 name: 'Platform Owner',
                 role: 'OWNER',
                 passwordHash,
@@ -77,7 +77,7 @@ async function fixOwnerUser() {
 
     console.log('✅ OWNER user fixed successfully!\n');
     console.log('📝 Login credentials:');
-    console.log('   Email: owner@servicepulse.com');
+    console.log('   Email: owner@servicespulse.com');
     console.log('   Password: OwnerPass123!');
 }
 

@@ -388,6 +388,7 @@ export const ModelName = {
   TenantDomain: 'TenantDomain',
   TenantConfig: 'TenantConfig',
   TenantFeature: 'TenantFeature',
+  TenantUIConfig: 'TenantUIConfig',
   TenantHomepage: 'TenantHomepage',
   TenantPage: 'TenantPage',
   User: 'User',
@@ -441,7 +442,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "tenant" | "tenantDomain" | "tenantConfig" | "tenantFeature" | "tenantHomepage" | "tenantPage" | "user" | "ownerAuditLog" | "oAuthHandoffCode" | "category" | "product" | "productImage" | "order" | "orderItem" | "refund" | "repairService" | "repairTicket" | "inventoryMovement" | "setting" | "shippingZone" | "appointment" | "ticket" | "ticketMessage" | "supportedDevice" | "repairDeviceType" | "repairBrand" | "repairDevice" | "repairServiceType" | "repairDeviceService" | "feedbackRating" | "emailUnsubscribe" | "discountCode" | "promotionalBanner" | "orderStatusHistory" | "auditLog" | "productReview" | "googleReview" | "wishlist" | "wishlistItem" | "stockNotification" | "invoice" | "invoiceItem"
+    modelProps: "tenant" | "tenantDomain" | "tenantConfig" | "tenantFeature" | "tenantUIConfig" | "tenantHomepage" | "tenantPage" | "user" | "ownerAuditLog" | "oAuthHandoffCode" | "category" | "product" | "productImage" | "order" | "orderItem" | "refund" | "repairService" | "repairTicket" | "inventoryMovement" | "setting" | "shippingZone" | "appointment" | "ticket" | "ticketMessage" | "supportedDevice" | "repairDeviceType" | "repairBrand" | "repairDevice" | "repairServiceType" | "repairDeviceService" | "feedbackRating" | "emailUnsubscribe" | "discountCode" | "promotionalBanner" | "orderStatusHistory" | "auditLog" | "productReview" | "googleReview" | "wishlist" | "wishlistItem" | "stockNotification" | "invoice" | "invoiceItem"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -738,6 +739,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.TenantFeatureCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.TenantFeatureCountAggregateOutputType> | number
+        }
+      }
+    }
+    TenantUIConfig: {
+      payload: Prisma.$TenantUIConfigPayload<ExtArgs>
+      fields: Prisma.TenantUIConfigFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.TenantUIConfigFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TenantUIConfigPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.TenantUIConfigFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TenantUIConfigPayload>
+        }
+        findFirst: {
+          args: Prisma.TenantUIConfigFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TenantUIConfigPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.TenantUIConfigFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TenantUIConfigPayload>
+        }
+        findMany: {
+          args: Prisma.TenantUIConfigFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TenantUIConfigPayload>[]
+        }
+        create: {
+          args: Prisma.TenantUIConfigCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TenantUIConfigPayload>
+        }
+        createMany: {
+          args: Prisma.TenantUIConfigCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.TenantUIConfigCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TenantUIConfigPayload>[]
+        }
+        delete: {
+          args: Prisma.TenantUIConfigDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TenantUIConfigPayload>
+        }
+        update: {
+          args: Prisma.TenantUIConfigUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TenantUIConfigPayload>
+        }
+        deleteMany: {
+          args: Prisma.TenantUIConfigDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.TenantUIConfigUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.TenantUIConfigUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TenantUIConfigPayload>[]
+        }
+        upsert: {
+          args: Prisma.TenantUIConfigUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TenantUIConfigPayload>
+        }
+        aggregate: {
+          args: Prisma.TenantUIConfigAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateTenantUIConfig>
+        }
+        groupBy: {
+          args: Prisma.TenantUIConfigGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.TenantUIConfigGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.TenantUIConfigCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.TenantUIConfigCountAggregateOutputType> | number
         }
       }
     }
@@ -3656,6 +3731,7 @@ export const TenantConfigScalarFieldEnum = {
   bankName: 'bankName',
   invoicePrefix: 'invoicePrefix',
   invoiceFooter: 'invoiceFooter',
+  website: 'website',
   googleAnalyticsId: 'googleAnalyticsId',
   cookiebotId: 'cookiebotId',
   seoTitle: 'seoTitle',
@@ -3695,6 +3771,32 @@ export const TenantFeatureScalarFieldEnum = {
 } as const
 
 export type TenantFeatureScalarFieldEnum = (typeof TenantFeatureScalarFieldEnum)[keyof typeof TenantFeatureScalarFieldEnum]
+
+
+export const TenantUIConfigScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  vertical: 'vertical',
+  marqueeItems: 'marqueeItems',
+  footerTagline: 'footerTagline',
+  newsletterTitle: 'newsletterTitle',
+  newsletterSubtitle: 'newsletterSubtitle',
+  googleReviewUrl: 'googleReviewUrl',
+  googleReviewRating: 'googleReviewRating',
+  dateLocale: 'dateLocale',
+  dateFormat: 'dateFormat',
+  checkoutLabels: 'checkoutLabels',
+  bookingLabels: 'bookingLabels',
+  reviewLabels: 'reviewLabels',
+  navLabels: 'navLabels',
+  authLabels: 'authLabels',
+  footerLabels: 'footerLabels',
+  supportFaqItems: 'supportFaqItems',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type TenantUIConfigScalarFieldEnum = (typeof TenantUIConfigScalarFieldEnum)[keyof typeof TenantUIConfigScalarFieldEnum]
 
 
 export const TenantHomepageScalarFieldEnum = {
@@ -4041,6 +4143,8 @@ export const AppointmentScalarFieldEnum = {
   customerName: 'customerName',
   customerEmail: 'customerEmail',
   customerPhone: 'customerPhone',
+  bookedByEmail: 'bookedByEmail',
+  bookedByName: 'bookedByName',
   deviceBrand: 'deviceBrand',
   deviceModel: 'deviceModel',
   repairType: 'repairType',
@@ -4574,6 +4678,20 @@ export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'In
 
 
 /**
+ * Reference to a field of type 'TenantVertical'
+ */
+export type EnumTenantVerticalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TenantVertical'>
+    
+
+
+/**
+ * Reference to a field of type 'TenantVertical[]'
+ */
+export type ListEnumTenantVerticalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TenantVertical[]'>
+    
+
+
+/**
  * Reference to a field of type 'CmsStatus'
  */
 export type EnumCmsStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CmsStatus'>
@@ -5021,6 +5139,7 @@ export type GlobalOmitConfig = {
   tenantDomain?: Prisma.TenantDomainOmit
   tenantConfig?: Prisma.TenantConfigOmit
   tenantFeature?: Prisma.TenantFeatureOmit
+  tenantUIConfig?: Prisma.TenantUIConfigOmit
   tenantHomepage?: Prisma.TenantHomepageOmit
   tenantPage?: Prisma.TenantPageOmit
   user?: Prisma.UserOmit

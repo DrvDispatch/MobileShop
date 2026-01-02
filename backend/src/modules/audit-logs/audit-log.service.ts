@@ -3,6 +3,7 @@ import { PrismaService } from '../../prisma/prisma.service';
 import { AuditAction } from '../../generated/prisma/client.js';
 
 export interface AuditLogEntry {
+    tenantId?: string;
     userId: string;
     userName: string;
     userRole: string;
@@ -31,6 +32,7 @@ export class AuditLogService {
         try {
             await this.prisma.auditLog.create({
                 data: {
+                    tenantId: entry.tenantId,
                     userId: entry.userId,
                     userName: entry.userName,
                     userRole: entry.userRole,
@@ -52,6 +54,7 @@ export class AuditLogService {
             // Don't throw - audit logging should never break the main flow
         }
     }
+
 
     /**
      * Get audit logs with filtering and pagination

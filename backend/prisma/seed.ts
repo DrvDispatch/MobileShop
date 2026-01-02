@@ -10,54 +10,7 @@ const adapter = new PrismaPg({
 const prisma = new PrismaClient({ adapter });
 
 async function main() {
-    console.log('🌱 Seeding database...');
 
-    // Create admin user
-    const adminPassword = await bcrypt.hash('admin123', 12);
-    const admin = await prisma.user.upsert({
-        where: { email: 'admin@mobileshop.com' },
-        update: {},
-        create: {
-            email: 'admin@mobileshop.com',
-            name: 'Admin User',
-            passwordHash: adminPassword,
-            role: UserRole.ADMIN,
-            phone: '+1234567890',
-        },
-    });
-    console.log('✅ Admin user created:', admin.email);
-
-    // Create owner admin (Nader - Super Admin)
-    const ownerPassword = await bcrypt.hash('Naderi123!', 12);
-    const owner = await prisma.user.upsert({
-        where: { email: 'admin@smartphoneservice.be' },
-        update: {
-            passwordHash: ownerPassword,
-        },
-        create: {
-            email: 'admin@smartphoneservice.be',
-            name: 'Nader',
-            passwordHash: ownerPassword,
-            role: UserRole.ADMIN,
-            phone: '+32465638106',
-        },
-    });
-    console.log('✅ Owner admin created:', owner.email);
-
-    // Create staff user
-    const staffPassword = await bcrypt.hash('staff123', 12);
-    const staff = await prisma.user.upsert({
-        where: { email: 'staff@mobileshop.com' },
-        update: {},
-        create: {
-            email: 'staff@mobileshop.com',
-            name: 'Staff Member',
-            passwordHash: staffPassword,
-            role: UserRole.STAFF,
-            phone: '+1234567891',
-        },
-    });
-    console.log('✅ Staff user created:', staff.email);
 
     // Create categories
     const categories = await Promise.all([

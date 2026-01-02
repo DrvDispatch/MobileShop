@@ -188,9 +188,11 @@ export class InvoiceController {
         @Req() req: any,
     ) {
         const createdBy = req.user?.sub || req.user?.id;
+        const tenantId = req.tenantId; // From TenantMiddleware
         return this.invoiceService.createInvoice({
             ...dto,
             createdBy,
+            tenantId,
         });
     }
 

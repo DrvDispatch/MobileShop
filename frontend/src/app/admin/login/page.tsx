@@ -22,6 +22,34 @@ function LoginContent() {
         }
     }, [searchParams]);
 
+    /**
+     * Map backend error messages to user-friendly Dutch descriptions
+     */
+    const getErrorMessage = (message: string, statusCode?: number): string => {
+        const msg = message?.toLowerCase() || '';
+
+        if (msg.includes('invalid credentials')) {
+            return 'Ongeldige inloggegevens. Controleer uw e-mail en wachtwoord.';
+        }
+        if (msg.includes('email is not verified') || msg.includes('verify your email')) {
+            return 'Uw e-mail is nog niet geverifieerd. Controleer uw inbox voor een verificatielink.';
+        }
+        if (msg.includes('account is deactivated') || msg.includes('inactive')) {
+            return 'Dit account is gedeactiveerd. Neem contact op met de beheerder.';
+        }
+        if (msg.includes('admin') && msg.includes('not found')) {
+            return 'Geen admin-account gevonden met deze gegevens.';
+        }
+        if (statusCode === 429) {
+            return 'Te veel loginpogingen. Wacht een paar minuten en probeer opnieuw.';
+        }
+        if (statusCode && statusCode >= 500) {
+            return 'Serverfout. Probeer het later opnieuw.';
+        }
+
+        return message || 'Login mislukt. Probeer het opnieuw.';
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError("");
@@ -39,7 +67,7 @@ function LoginContent() {
             const data = await res.json();
 
             if (!res.ok) {
-                throw new Error(data.message || "Login mislukt");
+                throw { message: data.message || "Login mislukt", statusCode: res.status };
             }
 
             // Store JWT token for ADMIN API calls (separate from customer token)
@@ -53,8 +81,9 @@ function LoginContent() {
             // Redirect to admin dashboard
             router.push("/admin");
 
-        } catch (err: any) {
-            setError(err.message || "Login mislukt");
+        } catch (err: unknown) {
+            const error = err as { message?: string; statusCode?: number };
+            setError(getErrorMessage(error.message || '', error.statusCode));
         } finally {
             setIsLoading(false);
         }
