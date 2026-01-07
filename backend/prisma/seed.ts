@@ -721,8 +721,7 @@ async function main() {
 
     console.log('🎉 Database seeding completed!');
     console.log('\n📋 Login credentials:');
-    console.log('   Admin: admin@mobileshop.com / admin123');
-    console.log('   Staff: staff@mobileshop.com / staff123');
+
     console.log('\n🏷️ Discount codes:');
     console.log('   WELKOM10 - 10% welkomstkorting (altijd actief)');
     console.log('   REPAIR15 - 15% na reparatie (altijd actief)');

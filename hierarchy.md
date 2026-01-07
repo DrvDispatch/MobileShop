@@ -218,126 +218,188 @@ frontend
     │   └── wishlist-button.tsx
     ├── contexts
     │   └── FeatureContext.tsx
-    └── lib
-        ├── TenantAnalytics.tsx
-        ├── TenantProvider.tsx
-        ├── account
-        │   ├── index.ts
-        │   └── useAccountData.ts
-        ├── admin
-        │   ├── adminApi.ts
-        │   ├── appointments
-        │   │   ├── index.ts
-        │   │   └── useAppointmentsAdmin.ts
-        │   ├── audit-logs
-        │   │   ├── index.ts
-        │   │   └── useAuditLogs.ts
-        │   ├── banners
-        │   │   ├── index.ts
-        │   │   └── useBanners.ts
-        │   ├── dashboard
-        │   │   ├── index.ts
-        │   │   └── useDashboard.ts
-        │   ├── devices
-        │   │   ├── index.ts
-        │   │   └── useDevices.ts
-        │   ├── discounts
-        │   │   ├── index.ts
-        │   │   └── useDiscounts.ts
-        │   ├── export
-        │   │   ├── index.ts
-        │   │   └── useExport.ts
-        │   ├── gallery
-        │   │   ├── index.ts
-        │   │   └── useGallery.ts
-        │   ├── index.ts
-        │   ├── inventory
-        │   │   ├── index.ts
-        │   │   └── useInventory.ts
-        │   ├── invoice
-        │   │   ├── index.ts
-        │   │   ├── types.ts
-        │   │   ├── useInvoice.ts
-        │   │   ├── useInvoiceCreate.ts
-        │   │   ├── useInvoiceList.ts
-        │   │   ├── useInvoiceSettings.ts
-        │   │   └── useRepairPicker.ts
-        │   ├── marketing
-        │   │   ├── index.ts
-        │   │   ├── types.ts
-        │   │   └── useMarketing.ts
-        │   ├── orders
-        │   │   ├── configs.ts
-        │   │   ├── index.ts
-        │   │   ├── types.ts
-        │   │   ├── useOrderDetail.ts
-        │   │   └── useOrders.ts
-        │   ├── products
-        │   │   ├── index.ts
-        │   │   ├── types.ts
-        │   │   ├── useProductAI.ts
-        │   │   ├── useProductCreate.ts
-        │   │   ├── useProductEdit.ts
-        │   │   └── useProducts.ts
-        │   ├── refunds
-        │   │   ├── index.ts
-        │   │   └── useRefunds.ts
-        │   ├── repairs
-        │   │   ├── index.ts
-        │   │   ├── useRepairs.ts
-        │   │   └── useRepairsCatalog.ts
-        │   ├── settings
-        │   │   ├── index.ts
-        │   │   ├── useSettings.ts
-        │   │   └── useSettingsForm.ts
-        │   ├── shipping
-        │   │   ├── index.ts
-        │   │   └── useShipping.ts
-        │   ├── statusConfigs.ts
-        │   ├── tickets
-        │   │   ├── index.ts
-        │   │   ├── useTickets.ts
-        │   │   └── useTicketsAdmin.ts
-        │   ├── useAdmin.ts
-        │   ├── useAdminCRUD.ts
-        │   ├── useAdminDataFetching.ts
-        │   ├── useAdminPagination.ts
-        │   ├── useAdminSearch.ts
-        │   ├── useAdminTable.ts
-        │   └── users
-        │       ├── index.ts
-        │       └── useUsers.ts
-        ├── api.ts
-        ├── auth
-        │   ├── index.ts
-        │   └── useAuth.ts
-        ├── booking
-        │   ├── bookingApi.ts
-        │   ├── index.ts
-        │   └── useBookingFlow.ts
-        ├── chat
-        │   ├── index.ts
-        │   ├── types.ts
-        │   └── useChatWidget.ts
-        ├── checkout
-        │   ├── checkoutApi.ts
-        │   ├── index.ts
-        │   └── useCheckout.ts
-        ├── image-utils.ts
-        ├── products
-        │   ├── index.ts
-        │   └── useProductList.ts
-        ├── reviews
-        │   ├── index.ts
-        │   └── useProductReviews.ts
-        ├── store
-        │   ├── cart.ts
-        │   ├── index.ts
-        │   └── settings.ts
-        ├── tenant-types.ts
-        ├── ui-config-types.ts
-        ├── useUIConfig.ts
-        └── utils.ts
+    ├── core
+    │   ├── api
+    │   │   ├── adminApi.ts
+    │   │   └── api.ts
+    │   ├── hooks
+    │   │   ├── admin
+    │   │   │   ├── adminApi.ts
+    │   │   │   ├── appointments
+    │   │   │   ├── audit-logs
+    │   │   │   ├── banners
+    │   │   │   ├── dashboard
+    │   │   │   ├── devices
+    │   │   │   ├── discounts
+    │   │   │   ├── export
+    │   │   │   ├── gallery
+    │   │   │   ├── index.ts
+    │   │   │   ├── inventory
+    │   │   │   ├── invoice
+    │   │   │   ├── marketing
+    │   │   │   ├── orders
+    │   │   │   ├── products
+    │   │   │   ├── refunds
+    │   │   │   ├── repairs
+    │   │   │   ├── settings
+    │   │   │   ├── shipping
+    │   │   │   ├── statusConfigs.ts
+    │   │   │   ├── tickets
+    │   │   │   ├── useAdmin.ts
+    │   │   │   ├── useAdminCRUD.ts
+    │   │   │   ├── useAdminDataFetching.ts
+    │   │   │   ├── useAdminPagination.ts
+    │   │   │   ├── useAdminSearch.ts
+    │   │   │   ├── useAdminTable.ts
+    │   │   │   └── users
+    │   │   ├── booking
+    │   │   │   ├── bookingApi.ts
+    │   │   │   ├── index.ts
+    │   │   │   └── useBookingFlow.ts
+    │   │   ├── chat
+    │   │   │   ├── index.ts
+    │   │   │   ├── types.ts
+    │   │   │   └── useChatWidget.ts
+    │   │   ├── checkout
+    │   │   │   ├── checkoutApi.ts
+    │   │   │   ├── index.ts
+    │   │   │   └── useCheckout.ts
+    │   │   ├── store
+    │   │   │   ├── cart.ts
+    │   │   │   ├── index.ts
+    │   │   │   └── settings.ts
+    │   │   ├── ui-config-types.ts
+    │   │   └── useUIConfig.ts
+    │   ├── providers
+    │   │   ├── FeatureProvider.tsx
+    │   │   └── TenantProvider.tsx
+    │   └── types
+    │       └── tenant.ts
+    ├── lib
+    │   ├── TenantAnalytics.tsx
+    │   ├── TenantProvider.tsx
+    │   ├── account
+    │   │   ├── index.ts
+    │   │   └── useAccountData.ts
+    │   ├── admin
+    │   │   ├── adminApi.ts
+    │   │   ├── appointments
+    │   │   │   ├── index.ts
+    │   │   │   └── useAppointmentsAdmin.ts
+    │   │   ├── audit-logs
+    │   │   │   ├── index.ts
+    │   │   │   └── useAuditLogs.ts
+    │   │   ├── banners
+    │   │   │   ├── index.ts
+    │   │   │   └── useBanners.ts
+    │   │   ├── dashboard
+    │   │   │   ├── index.ts
+    │   │   │   └── useDashboard.ts
+    │   │   ├── devices
+    │   │   │   ├── index.ts
+    │   │   │   └── useDevices.ts
+    │   │   ├── discounts
+    │   │   │   ├── index.ts
+    │   │   │   └── useDiscounts.ts
+    │   │   ├── export
+    │   │   │   ├── index.ts
+    │   │   │   └── useExport.ts
+    │   │   ├── gallery
+    │   │   │   ├── index.ts
+    │   │   │   └── useGallery.ts
+    │   │   ├── index.ts
+    │   │   ├── inventory
+    │   │   │   ├── index.ts
+    │   │   │   └── useInventory.ts
+    │   │   ├── invoice
+    │   │   │   ├── index.ts
+    │   │   │   ├── types.ts
+    │   │   │   ├── useInvoice.ts
+    │   │   │   ├── useInvoiceCreate.ts
+    │   │   │   ├── useInvoiceList.ts
+    │   │   │   ├── useInvoiceSettings.ts
+    │   │   │   └── useRepairPicker.ts
+    │   │   ├── marketing
+    │   │   │   ├── index.ts
+    │   │   │   ├── types.ts
+    │   │   │   └── useMarketing.ts
+    │   │   ├── orders
+    │   │   │   ├── configs.ts
+    │   │   │   ├── index.ts
+    │   │   │   ├── types.ts
+    │   │   │   ├── useOrderDetail.ts
+    │   │   │   └── useOrders.ts
+    │   │   ├── products
+    │   │   │   ├── index.ts
+    │   │   │   ├── types.ts
+    │   │   │   ├── useProductAI.ts
+    │   │   │   ├── useProductCreate.ts
+    │   │   │   ├── useProductEdit.ts
+    │   │   │   └── useProducts.ts
+    │   │   ├── refunds
+    │   │   │   ├── index.ts
+    │   │   │   └── useRefunds.ts
+    │   │   ├── repairs
+    │   │   │   ├── index.ts
+    │   │   │   ├── useRepairs.ts
+    │   │   │   └── useRepairsCatalog.ts
+    │   │   ├── settings
+    │   │   │   ├── index.ts
+    │   │   │   ├── useSettings.ts
+    │   │   │   └── useSettingsForm.ts
+    │   │   ├── shipping
+    │   │   │   ├── index.ts
+    │   │   │   └── useShipping.ts
+    │   │   ├── statusConfigs.ts
+    │   │   ├── tickets
+    │   │   │   ├── index.ts
+    │   │   │   ├── useTickets.ts
+    │   │   │   └── useTicketsAdmin.ts
+    │   │   ├── useAdmin.ts
+    │   │   ├── useAdminCRUD.ts
+    │   │   ├── useAdminDataFetching.ts
+    │   │   ├── useAdminPagination.ts
+    │   │   ├── useAdminSearch.ts
+    │   │   ├── useAdminTable.ts
+    │   │   └── users
+    │   │       ├── index.ts
+    │   │       └── useUsers.ts
+    │   ├── api.ts
+    │   ├── auth
+    │   │   ├── index.ts
+    │   │   └── useAuth.ts
+    │   ├── booking
+    │   │   ├── bookingApi.ts
+    │   │   ├── index.ts
+    │   │   └── useBookingFlow.ts
+    │   ├── chat
+    │   │   ├── index.ts
+    │   │   ├── types.ts
+    │   │   └── useChatWidget.ts
+    │   ├── checkout
+    │   │   ├── checkoutApi.ts
+    │   │   ├── index.ts
+    │   │   └── useCheckout.ts
+    │   ├── image-utils.ts
+    │   ├── products
+    │   │   ├── index.ts
+    │   │   └── useProductList.ts
+    │   ├── reviews
+    │   │   ├── index.ts
+    │   │   └── useProductReviews.ts
+    │   ├── store
+    │   │   ├── cart.ts
+    │   │   ├── index.ts
+    │   │   └── settings.ts
+    │   ├── tenant-types.ts
+    │   ├── ui-config-types.ts
+    │   ├── useUIConfig.ts
+    │   └── utils.ts
+    └── skins
+        └── default
+            ├── components
+            ├── layouts
+            └── pages
 ```
 
 ## Backend

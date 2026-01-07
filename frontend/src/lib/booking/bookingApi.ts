@@ -1,12 +1,134 @@
 /**
- * Booking API - All API calls for the repair booking flow
+ * Booking API - All API calls for the booking flow
  * 
  * BUSINESS LOGIC LAYER - UI Agnostic
  * This module handles all data fetching for the booking flow.
  * It can be used by any theme/vertical that implements booking.
+ * 
+ * Contains both:
+ * - Generic service API (vertical-agnostic, uses new /services/* endpoints)
+ * - Legacy repair API (mobile-specific, uses /repairs/* endpoints) - DEPRECATED
  */
 
-// Types
+// ============================================
+// GENERIC SERVICE TYPES (vertical-agnostic)
+// ============================================
+
+export interface ServiceCategory {
+    id: string;
+    tenantId: string;
+    parentId: string | null;
+    name: string;
+    slug: string;
+    icon?: string | null;
+    image?: string | null;
+    description?: string | null;
+    depth: number;
+    sortOrder: number;
+    isActive: boolean;
+    children?: ServiceCategory[];
+    services?: Service[];
+}
+
+export interface Service {
+    id: string;
+    tenantId: string;
+    categoryId: string | null;
+    name: string;
+    slug: string;
+    description?: string | null;
+    icon?: string | null;
+    price?: number | null;
+    priceDisplay?: string | null;
+    duration?: number | null;
+    durationText?: string | null;
+    sortOrder: number;
+    isActive: boolean;
+    category?: ServiceCategory | null;
+}
+
+export interface ServiceCatalog {
+    categories: ServiceCategory[];
+    services: Service[]; // Uncategorized services
+}
+
+export interface BookingFlowConfig {
+    steps: string[];
+    terminology: Record<string, string> | null;
+}
+
+// ============================================
+// GENERIC SERVICE API (vertical-agnostic)
+// ============================================
+
+/**
+ * Fetch the complete service catalog for the current tenant
+ * Returns category tree with services attached
+ */
+export async function fetchServiceCatalog(): Promise<ServiceCatalog> {
+    try {
+        const response = await fetch('/api/services/catalog');
+        if (!response.ok) throw new Error('Failed to fetch service catalog');
+        return await response.json();
+    } catch (error) {
+        console.error("Failed to fetch service catalog:", error);
+        return { categories: [], services: [] };
+    }
+}
+
+/**
+ * Fetch services for a specific category
+ */
+export async function fetchServicesByCategory(categorySlug: string): Promise<ServiceCategory | null> {
+    try {
+        const response = await fetch(`/api/services/categories/${categorySlug}`);
+        if (!response.ok) throw new Error('Failed to fetch category');
+        return await response.json();
+    } catch (error) {
+        console.error("Failed to fetch category:", error);
+        return null;
+    }
+}
+
+/**
+ * Fetch a single service by slug
+ */
+export async function fetchServiceBySlug(serviceSlug: string): Promise<Service | null> {
+    try {
+        const response = await fetch(`/api/services/by-slug/${serviceSlug}`);
+        if (!response.ok) throw new Error('Failed to fetch service');
+        return await response.json();
+    } catch (error) {
+        console.error("Failed to fetch service:", error);
+        return null;
+    }
+}
+
+/**
+ * Fetch booking flow configuration for the current tenant
+ * Returns steps array and terminology overrides
+ */
+export async function fetchBookingFlowConfig(): Promise<BookingFlowConfig> {
+    try {
+        const response = await fetch('/api/services/booking-flow');
+        if (!response.ok) throw new Error('Failed to fetch booking flow config');
+        return await response.json();
+    } catch (error) {
+        console.error("Failed to fetch booking flow config:", error);
+        // Return default 3-step flow
+        return {
+            steps: ['select_service', 'select_time', 'contact'],
+            terminology: null,
+        };
+    }
+}
+
+// ============================================
+// LEGACY REPAIR TYPES (mobile-specific)
+// @deprecated - Use generic Service types instead
+// ============================================
+
+/** @deprecated Use ServiceCategory instead */
 export interface DeviceType {
     id: string;
     name: string;
@@ -14,6 +136,7 @@ export interface DeviceType {
     icon?: string;
 }
 
+/** @deprecated Use ServiceCategory instead */
 export interface Brand {
     id: string;
     name: string;
@@ -21,6 +144,7 @@ export interface Brand {
     logo?: string;
 }
 
+/** @deprecated Use ServiceCategory instead */
 export interface Device {
     id: string;
     name: string;
@@ -28,6 +152,7 @@ export interface Device {
     image?: string;
 }
 
+/** @deprecated Use Service instead */
 export interface RepairService {
     id: string;
     deviceId: string;
@@ -62,8 +187,14 @@ export interface AvailableSlotsResponse {
 // Default time slots (fallback)
 export const DEFAULT_TIME_SLOTS = ["09:00", "10:00", "11:00", "14:00", "15:00", "16:00", "17:00"];
 
+// ============================================
+// LEGACY REPAIR API (mobile-specific)
+// @deprecated - Use generic service API instead
+// ============================================
+
 /**
  * Fetch available device types (Smartphone, Tablet, etc.)
+ * @deprecated Use fetchServiceCatalog() instead
  */
 export async function fetchDeviceTypes(): Promise<DeviceType[]> {
     try {
@@ -72,16 +203,14 @@ export async function fetchDeviceTypes(): Promise<DeviceType[]> {
         return await response.json();
     } catch (error) {
         console.error("Failed to fetch device types:", error);
-        // Fallback for graceful degradation
-        return [
-            { id: "1", name: "Smartphone", slug: "smartphone" },
-            { id: "2", name: "Tablet", slug: "tablet" },
-        ];
+        // Return empty array - no more hardcoded fallbacks
+        return [];
     }
 }
 
 /**
  * Fetch brands for a specific device type
+ * @deprecated Use fetchServicesByCategory() instead
  */
 export async function fetchBrands(deviceTypeSlug: string): Promise<Brand[]> {
     try {
@@ -96,6 +225,7 @@ export async function fetchBrands(deviceTypeSlug: string): Promise<Brand[]> {
 
 /**
  * Fetch devices for a specific brand
+ * @deprecated Use fetchServicesByCategory() instead
  */
 export async function fetchDevices(brandSlug: string): Promise<Device[]> {
     try {
@@ -110,6 +240,7 @@ export async function fetchDevices(brandSlug: string): Promise<Device[]> {
 
 /**
  * Fetch available repair services for a specific device
+ * @deprecated Use fetchServicesByCategory() instead
  */
 export async function fetchRepairServices(deviceSlug: string): Promise<RepairService[]> {
     try {
@@ -121,6 +252,10 @@ export async function fetchRepairServices(deviceSlug: string): Promise<RepairSer
         return [];
     }
 }
+
+// ============================================
+// SHARED API (used by both flows)
+// ============================================
 
 /**
  * Fetch available appointment slots for a specific date
@@ -136,6 +271,7 @@ export async function fetchAvailableSlots(date: Date): Promise<string[]> {
         return DEFAULT_TIME_SLOTS;
     }
 }
+
 
 /**
  * Create a new appointment
@@ -212,3 +348,4 @@ export function getAvailableDates(daysAhead = 14, closedDays = [0]): Date[] {
 
     return dates;
 }
+

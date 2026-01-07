@@ -1,76 +1,51 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { notFound, useParams } from 'next/navigation';
-import { TipTapRenderer } from '@/components/cms';
+/**
+ * Dynamic CMS Page Route - Thin Delegate
+ * 
+ * Loads CMS pages by slug and wraps in PublicLayout.
+ * Uses Suspense for useParams.
+ */
 
-interface CmsPageData {
-    id: string;
-    slug: string;
-    title: string;
-    content: object | null;
-    seoTitle?: string;
-    seoDescription?: string;
-}
+import { Suspense } from 'react';
+import { useParams, notFound } from 'next/navigation';
+import { useActiveSkin } from '@core/skin';
+import { useCmsPageVM } from '@core/hooks/pages';
+import { usePublicLayoutVM } from '@core/hooks/layouts';
+import { CmsPage } from '@skins/base/components/cms';
 
-export default function DynamicCmsPage() {
+function CmsContent() {
     const params = useParams();
     const slug = params?.slug as string;
 
-    const [page, setPage] = useState<CmsPageData | null>(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(false);
+    const Skin = useActiveSkin();
+    const layoutVM = usePublicLayoutVM();
+    const pageVM = useCmsPageVM({
+        slug,
+        fallbackTitle: 'Page Not Found',
+        fallbackContent: 'The requested page could not be found.',
+    });
 
-    useEffect(() => {
-        if (!slug) return;
-
-        const fetchPage = async () => {
-            try {
-                const res = await fetch(`/api/tenant/pages/${slug}`);
-                if (!res.ok) {
-                    if (res.status === 404) {
-                        setError(true);
-                        return;
-                    }
-                    throw new Error('Failed to fetch page');
-                }
-                const data = await res.json();
-                setPage(data);
-            } catch (err) {
-                console.error('Failed to load CMS page:', err);
-                setError(true);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchPage();
-    }, [slug]);
-
-    if (loading) {
-        return (
-            <div className="min-h-screen flex items-center justify-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary" />
-            </div>
-        );
-    }
-
-    if (error || !page) {
+    // If there's an error and no page, show 404
+    if (pageVM.hasError && !pageVM.page && !pageVM.isLoading) {
         notFound();
     }
 
     return (
-        <div className="min-h-screen bg-background">
-            <div className="container mx-auto px-4 py-12 max-w-4xl">
-                <article className="prose prose-lg dark:prose-invert max-w-none">
-                    <h1 className="text-4xl font-bold text-foreground mb-8">
-                        {page.title}
-                    </h1>
-                    <div className="text-foreground/80">
-                        <TipTapRenderer content={page.content} />
-                    </div>
-                </article>
+        <Skin.layouts.PublicLayout vm={layoutVM}>
+            <CmsPage vm={pageVM} />
+        </Skin.layouts.PublicLayout>
+    );
+}
+
+export default function DynamicCmsPage() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen flex items-center justify-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-zinc-400" />
             </div>
-        </div>
+        }>
+            <CmsContent />
+        </Suspense>
     );
 }

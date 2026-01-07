@@ -22,6 +22,7 @@ export function TenantLayoutContent({ children, tenantId }: { children: React.Re
 
     const tabs = [
         { id: 'overview', label: 'Overview', href: `/tenants/${tenantId}` },
+        { id: 'services', label: 'Services', href: `/tenants/${tenantId}/services` },
         { id: 'cms', label: 'CMS', href: `/tenants/${tenantId}/cms` },
         { id: 'features', label: 'Features', href: `/tenants/${tenantId}/features` },
         { id: 'users', label: 'Users', href: `/tenants/${tenantId}/users` },

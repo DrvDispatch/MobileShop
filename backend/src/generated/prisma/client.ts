@@ -163,6 +163,36 @@ export type TicketMessage = Prisma.TicketMessageModel
  */
 export type SupportedDevice = Prisma.SupportedDeviceModel
 /**
+ * Model ServiceCategory
+ * 
+ */
+export type ServiceCategory = Prisma.ServiceCategoryModel
+/**
+ * Model Service
+ * 
+ */
+export type Service = Prisma.ServiceModel
+/**
+ * Model Booking
+ * 
+ */
+export type Booking = Prisma.BookingModel
+/**
+ * Model BookingAnswer
+ * 
+ */
+export type BookingAnswer = Prisma.BookingAnswerModel
+/**
+ * Model BookingFlowConfig
+ * 
+ */
+export type BookingFlowConfig = Prisma.BookingFlowConfigModel
+/**
+ * Model FieldDefinition
+ * 
+ */
+export type FieldDefinition = Prisma.FieldDefinitionModel
+/**
  * Model RepairDeviceType
  * 
  */

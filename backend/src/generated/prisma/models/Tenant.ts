@@ -239,6 +239,11 @@ export type TenantWhereInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeListRelationFilter
   homepage?: Prisma.XOR<Prisma.TenantHomepageNullableScalarRelationFilter, Prisma.TenantHomepageWhereInput> | null
   pages?: Prisma.TenantPageListRelationFilter
+  serviceCategories?: Prisma.ServiceCategoryListRelationFilter
+  services?: Prisma.ServiceListRelationFilter
+  bookings?: Prisma.BookingListRelationFilter
+  bookingFlowConfig?: Prisma.XOR<Prisma.BookingFlowConfigNullableScalarRelationFilter, Prisma.BookingFlowConfigWhereInput> | null
+  fieldDefinitions?: Prisma.FieldDefinitionListRelationFilter
 }
 
 export type TenantOrderByWithRelationInput = {
@@ -276,6 +281,11 @@ export type TenantOrderByWithRelationInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeOrderByRelationAggregateInput
   homepage?: Prisma.TenantHomepageOrderByWithRelationInput
   pages?: Prisma.TenantPageOrderByRelationAggregateInput
+  serviceCategories?: Prisma.ServiceCategoryOrderByRelationAggregateInput
+  services?: Prisma.ServiceOrderByRelationAggregateInput
+  bookings?: Prisma.BookingOrderByRelationAggregateInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigOrderByWithRelationInput
+  fieldDefinitions?: Prisma.FieldDefinitionOrderByRelationAggregateInput
 }
 
 export type TenantWhereUniqueInput = Prisma.AtLeast<{
@@ -316,6 +326,11 @@ export type TenantWhereUniqueInput = Prisma.AtLeast<{
   repairServiceTypes?: Prisma.RepairServiceTypeListRelationFilter
   homepage?: Prisma.XOR<Prisma.TenantHomepageNullableScalarRelationFilter, Prisma.TenantHomepageWhereInput> | null
   pages?: Prisma.TenantPageListRelationFilter
+  serviceCategories?: Prisma.ServiceCategoryListRelationFilter
+  services?: Prisma.ServiceListRelationFilter
+  bookings?: Prisma.BookingListRelationFilter
+  bookingFlowConfig?: Prisma.XOR<Prisma.BookingFlowConfigNullableScalarRelationFilter, Prisma.BookingFlowConfigWhereInput> | null
+  fieldDefinitions?: Prisma.FieldDefinitionListRelationFilter
 }, "id" | "slug">
 
 export type TenantOrderByWithAggregationInput = {
@@ -383,6 +398,11 @@ export type TenantCreateInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeCreateNestedManyWithoutTenantInput
   homepage?: Prisma.TenantHomepageCreateNestedOneWithoutTenantInput
   pages?: Prisma.TenantPageCreateNestedManyWithoutTenantInput
+  serviceCategories?: Prisma.ServiceCategoryCreateNestedManyWithoutTenantInput
+  services?: Prisma.ServiceCreateNestedManyWithoutTenantInput
+  bookings?: Prisma.BookingCreateNestedManyWithoutTenantInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigCreateNestedOneWithoutTenantInput
+  fieldDefinitions?: Prisma.FieldDefinitionCreateNestedManyWithoutTenantInput
 }
 
 export type TenantUncheckedCreateInput = {
@@ -420,6 +440,11 @@ export type TenantUncheckedCreateInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeUncheckedCreateNestedManyWithoutTenantInput
   homepage?: Prisma.TenantHomepageUncheckedCreateNestedOneWithoutTenantInput
   pages?: Prisma.TenantPageUncheckedCreateNestedManyWithoutTenantInput
+  serviceCategories?: Prisma.ServiceCategoryUncheckedCreateNestedManyWithoutTenantInput
+  services?: Prisma.ServiceUncheckedCreateNestedManyWithoutTenantInput
+  bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutTenantInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUncheckedCreateNestedOneWithoutTenantInput
+  fieldDefinitions?: Prisma.FieldDefinitionUncheckedCreateNestedManyWithoutTenantInput
 }
 
 export type TenantUpdateInput = {
@@ -457,6 +482,11 @@ export type TenantUpdateInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeUpdateManyWithoutTenantNestedInput
   homepage?: Prisma.TenantHomepageUpdateOneWithoutTenantNestedInput
   pages?: Prisma.TenantPageUpdateManyWithoutTenantNestedInput
+  serviceCategories?: Prisma.ServiceCategoryUpdateManyWithoutTenantNestedInput
+  services?: Prisma.ServiceUpdateManyWithoutTenantNestedInput
+  bookings?: Prisma.BookingUpdateManyWithoutTenantNestedInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUpdateOneWithoutTenantNestedInput
+  fieldDefinitions?: Prisma.FieldDefinitionUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantUncheckedUpdateInput = {
@@ -494,6 +524,11 @@ export type TenantUncheckedUpdateInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeUncheckedUpdateManyWithoutTenantNestedInput
   homepage?: Prisma.TenantHomepageUncheckedUpdateOneWithoutTenantNestedInput
   pages?: Prisma.TenantPageUncheckedUpdateManyWithoutTenantNestedInput
+  serviceCategories?: Prisma.ServiceCategoryUncheckedUpdateManyWithoutTenantNestedInput
+  services?: Prisma.ServiceUncheckedUpdateManyWithoutTenantNestedInput
+  bookings?: Prisma.BookingUncheckedUpdateManyWithoutTenantNestedInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUncheckedUpdateOneWithoutTenantNestedInput
+  fieldDefinitions?: Prisma.FieldDefinitionUncheckedUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantCreateManyInput = {
@@ -826,6 +861,76 @@ export type TenantUpdateOneWithoutTicketsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.TenantUpdateToOneWithWhereWithoutTicketsInput, Prisma.TenantUpdateWithoutTicketsInput>, Prisma.TenantUncheckedUpdateWithoutTicketsInput>
 }
 
+export type TenantCreateNestedOneWithoutServiceCategoriesInput = {
+  create?: Prisma.XOR<Prisma.TenantCreateWithoutServiceCategoriesInput, Prisma.TenantUncheckedCreateWithoutServiceCategoriesInput>
+  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutServiceCategoriesInput
+  connect?: Prisma.TenantWhereUniqueInput
+}
+
+export type TenantUpdateOneRequiredWithoutServiceCategoriesNestedInput = {
+  create?: Prisma.XOR<Prisma.TenantCreateWithoutServiceCategoriesInput, Prisma.TenantUncheckedCreateWithoutServiceCategoriesInput>
+  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutServiceCategoriesInput
+  upsert?: Prisma.TenantUpsertWithoutServiceCategoriesInput
+  connect?: Prisma.TenantWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.TenantUpdateToOneWithWhereWithoutServiceCategoriesInput, Prisma.TenantUpdateWithoutServiceCategoriesInput>, Prisma.TenantUncheckedUpdateWithoutServiceCategoriesInput>
+}
+
+export type TenantCreateNestedOneWithoutServicesInput = {
+  create?: Prisma.XOR<Prisma.TenantCreateWithoutServicesInput, Prisma.TenantUncheckedCreateWithoutServicesInput>
+  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutServicesInput
+  connect?: Prisma.TenantWhereUniqueInput
+}
+
+export type TenantUpdateOneRequiredWithoutServicesNestedInput = {
+  create?: Prisma.XOR<Prisma.TenantCreateWithoutServicesInput, Prisma.TenantUncheckedCreateWithoutServicesInput>
+  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutServicesInput
+  upsert?: Prisma.TenantUpsertWithoutServicesInput
+  connect?: Prisma.TenantWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.TenantUpdateToOneWithWhereWithoutServicesInput, Prisma.TenantUpdateWithoutServicesInput>, Prisma.TenantUncheckedUpdateWithoutServicesInput>
+}
+
+export type TenantCreateNestedOneWithoutBookingsInput = {
+  create?: Prisma.XOR<Prisma.TenantCreateWithoutBookingsInput, Prisma.TenantUncheckedCreateWithoutBookingsInput>
+  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutBookingsInput
+  connect?: Prisma.TenantWhereUniqueInput
+}
+
+export type TenantUpdateOneRequiredWithoutBookingsNestedInput = {
+  create?: Prisma.XOR<Prisma.TenantCreateWithoutBookingsInput, Prisma.TenantUncheckedCreateWithoutBookingsInput>
+  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutBookingsInput
+  upsert?: Prisma.TenantUpsertWithoutBookingsInput
+  connect?: Prisma.TenantWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.TenantUpdateToOneWithWhereWithoutBookingsInput, Prisma.TenantUpdateWithoutBookingsInput>, Prisma.TenantUncheckedUpdateWithoutBookingsInput>
+}
+
+export type TenantCreateNestedOneWithoutBookingFlowConfigInput = {
+  create?: Prisma.XOR<Prisma.TenantCreateWithoutBookingFlowConfigInput, Prisma.TenantUncheckedCreateWithoutBookingFlowConfigInput>
+  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutBookingFlowConfigInput
+  connect?: Prisma.TenantWhereUniqueInput
+}
+
+export type TenantUpdateOneRequiredWithoutBookingFlowConfigNestedInput = {
+  create?: Prisma.XOR<Prisma.TenantCreateWithoutBookingFlowConfigInput, Prisma.TenantUncheckedCreateWithoutBookingFlowConfigInput>
+  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutBookingFlowConfigInput
+  upsert?: Prisma.TenantUpsertWithoutBookingFlowConfigInput
+  connect?: Prisma.TenantWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.TenantUpdateToOneWithWhereWithoutBookingFlowConfigInput, Prisma.TenantUpdateWithoutBookingFlowConfigInput>, Prisma.TenantUncheckedUpdateWithoutBookingFlowConfigInput>
+}
+
+export type TenantCreateNestedOneWithoutFieldDefinitionsInput = {
+  create?: Prisma.XOR<Prisma.TenantCreateWithoutFieldDefinitionsInput, Prisma.TenantUncheckedCreateWithoutFieldDefinitionsInput>
+  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutFieldDefinitionsInput
+  connect?: Prisma.TenantWhereUniqueInput
+}
+
+export type TenantUpdateOneRequiredWithoutFieldDefinitionsNestedInput = {
+  create?: Prisma.XOR<Prisma.TenantCreateWithoutFieldDefinitionsInput, Prisma.TenantUncheckedCreateWithoutFieldDefinitionsInput>
+  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutFieldDefinitionsInput
+  upsert?: Prisma.TenantUpsertWithoutFieldDefinitionsInput
+  connect?: Prisma.TenantWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.TenantUpdateToOneWithWhereWithoutFieldDefinitionsInput, Prisma.TenantUpdateWithoutFieldDefinitionsInput>, Prisma.TenantUncheckedUpdateWithoutFieldDefinitionsInput>
+}
+
 export type TenantCreateNestedOneWithoutRepairBrandsInput = {
   create?: Prisma.XOR<Prisma.TenantCreateWithoutRepairBrandsInput, Prisma.TenantUncheckedCreateWithoutRepairBrandsInput>
   connectOrCreate?: Prisma.TenantCreateOrConnectWithoutRepairBrandsInput
@@ -1020,6 +1125,11 @@ export type TenantCreateWithoutDomainsInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeCreateNestedManyWithoutTenantInput
   homepage?: Prisma.TenantHomepageCreateNestedOneWithoutTenantInput
   pages?: Prisma.TenantPageCreateNestedManyWithoutTenantInput
+  serviceCategories?: Prisma.ServiceCategoryCreateNestedManyWithoutTenantInput
+  services?: Prisma.ServiceCreateNestedManyWithoutTenantInput
+  bookings?: Prisma.BookingCreateNestedManyWithoutTenantInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigCreateNestedOneWithoutTenantInput
+  fieldDefinitions?: Prisma.FieldDefinitionCreateNestedManyWithoutTenantInput
 }
 
 export type TenantUncheckedCreateWithoutDomainsInput = {
@@ -1056,6 +1166,11 @@ export type TenantUncheckedCreateWithoutDomainsInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeUncheckedCreateNestedManyWithoutTenantInput
   homepage?: Prisma.TenantHomepageUncheckedCreateNestedOneWithoutTenantInput
   pages?: Prisma.TenantPageUncheckedCreateNestedManyWithoutTenantInput
+  serviceCategories?: Prisma.ServiceCategoryUncheckedCreateNestedManyWithoutTenantInput
+  services?: Prisma.ServiceUncheckedCreateNestedManyWithoutTenantInput
+  bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutTenantInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUncheckedCreateNestedOneWithoutTenantInput
+  fieldDefinitions?: Prisma.FieldDefinitionUncheckedCreateNestedManyWithoutTenantInput
 }
 
 export type TenantCreateOrConnectWithoutDomainsInput = {
@@ -1108,6 +1223,11 @@ export type TenantUpdateWithoutDomainsInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeUpdateManyWithoutTenantNestedInput
   homepage?: Prisma.TenantHomepageUpdateOneWithoutTenantNestedInput
   pages?: Prisma.TenantPageUpdateManyWithoutTenantNestedInput
+  serviceCategories?: Prisma.ServiceCategoryUpdateManyWithoutTenantNestedInput
+  services?: Prisma.ServiceUpdateManyWithoutTenantNestedInput
+  bookings?: Prisma.BookingUpdateManyWithoutTenantNestedInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUpdateOneWithoutTenantNestedInput
+  fieldDefinitions?: Prisma.FieldDefinitionUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantUncheckedUpdateWithoutDomainsInput = {
@@ -1144,6 +1264,11 @@ export type TenantUncheckedUpdateWithoutDomainsInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeUncheckedUpdateManyWithoutTenantNestedInput
   homepage?: Prisma.TenantHomepageUncheckedUpdateOneWithoutTenantNestedInput
   pages?: Prisma.TenantPageUncheckedUpdateManyWithoutTenantNestedInput
+  serviceCategories?: Prisma.ServiceCategoryUncheckedUpdateManyWithoutTenantNestedInput
+  services?: Prisma.ServiceUncheckedUpdateManyWithoutTenantNestedInput
+  bookings?: Prisma.BookingUncheckedUpdateManyWithoutTenantNestedInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUncheckedUpdateOneWithoutTenantNestedInput
+  fieldDefinitions?: Prisma.FieldDefinitionUncheckedUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantCreateWithoutConfigInput = {
@@ -1180,6 +1305,11 @@ export type TenantCreateWithoutConfigInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeCreateNestedManyWithoutTenantInput
   homepage?: Prisma.TenantHomepageCreateNestedOneWithoutTenantInput
   pages?: Prisma.TenantPageCreateNestedManyWithoutTenantInput
+  serviceCategories?: Prisma.ServiceCategoryCreateNestedManyWithoutTenantInput
+  services?: Prisma.ServiceCreateNestedManyWithoutTenantInput
+  bookings?: Prisma.BookingCreateNestedManyWithoutTenantInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigCreateNestedOneWithoutTenantInput
+  fieldDefinitions?: Prisma.FieldDefinitionCreateNestedManyWithoutTenantInput
 }
 
 export type TenantUncheckedCreateWithoutConfigInput = {
@@ -1216,6 +1346,11 @@ export type TenantUncheckedCreateWithoutConfigInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeUncheckedCreateNestedManyWithoutTenantInput
   homepage?: Prisma.TenantHomepageUncheckedCreateNestedOneWithoutTenantInput
   pages?: Prisma.TenantPageUncheckedCreateNestedManyWithoutTenantInput
+  serviceCategories?: Prisma.ServiceCategoryUncheckedCreateNestedManyWithoutTenantInput
+  services?: Prisma.ServiceUncheckedCreateNestedManyWithoutTenantInput
+  bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutTenantInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUncheckedCreateNestedOneWithoutTenantInput
+  fieldDefinitions?: Prisma.FieldDefinitionUncheckedCreateNestedManyWithoutTenantInput
 }
 
 export type TenantCreateOrConnectWithoutConfigInput = {
@@ -1268,6 +1403,11 @@ export type TenantUpdateWithoutConfigInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeUpdateManyWithoutTenantNestedInput
   homepage?: Prisma.TenantHomepageUpdateOneWithoutTenantNestedInput
   pages?: Prisma.TenantPageUpdateManyWithoutTenantNestedInput
+  serviceCategories?: Prisma.ServiceCategoryUpdateManyWithoutTenantNestedInput
+  services?: Prisma.ServiceUpdateManyWithoutTenantNestedInput
+  bookings?: Prisma.BookingUpdateManyWithoutTenantNestedInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUpdateOneWithoutTenantNestedInput
+  fieldDefinitions?: Prisma.FieldDefinitionUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantUncheckedUpdateWithoutConfigInput = {
@@ -1304,6 +1444,11 @@ export type TenantUncheckedUpdateWithoutConfigInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeUncheckedUpdateManyWithoutTenantNestedInput
   homepage?: Prisma.TenantHomepageUncheckedUpdateOneWithoutTenantNestedInput
   pages?: Prisma.TenantPageUncheckedUpdateManyWithoutTenantNestedInput
+  serviceCategories?: Prisma.ServiceCategoryUncheckedUpdateManyWithoutTenantNestedInput
+  services?: Prisma.ServiceUncheckedUpdateManyWithoutTenantNestedInput
+  bookings?: Prisma.BookingUncheckedUpdateManyWithoutTenantNestedInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUncheckedUpdateOneWithoutTenantNestedInput
+  fieldDefinitions?: Prisma.FieldDefinitionUncheckedUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantCreateWithoutFeaturesInput = {
@@ -1340,6 +1485,11 @@ export type TenantCreateWithoutFeaturesInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeCreateNestedManyWithoutTenantInput
   homepage?: Prisma.TenantHomepageCreateNestedOneWithoutTenantInput
   pages?: Prisma.TenantPageCreateNestedManyWithoutTenantInput
+  serviceCategories?: Prisma.ServiceCategoryCreateNestedManyWithoutTenantInput
+  services?: Prisma.ServiceCreateNestedManyWithoutTenantInput
+  bookings?: Prisma.BookingCreateNestedManyWithoutTenantInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigCreateNestedOneWithoutTenantInput
+  fieldDefinitions?: Prisma.FieldDefinitionCreateNestedManyWithoutTenantInput
 }
 
 export type TenantUncheckedCreateWithoutFeaturesInput = {
@@ -1376,6 +1526,11 @@ export type TenantUncheckedCreateWithoutFeaturesInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeUncheckedCreateNestedManyWithoutTenantInput
   homepage?: Prisma.TenantHomepageUncheckedCreateNestedOneWithoutTenantInput
   pages?: Prisma.TenantPageUncheckedCreateNestedManyWithoutTenantInput
+  serviceCategories?: Prisma.ServiceCategoryUncheckedCreateNestedManyWithoutTenantInput
+  services?: Prisma.ServiceUncheckedCreateNestedManyWithoutTenantInput
+  bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutTenantInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUncheckedCreateNestedOneWithoutTenantInput
+  fieldDefinitions?: Prisma.FieldDefinitionUncheckedCreateNestedManyWithoutTenantInput
 }
 
 export type TenantCreateOrConnectWithoutFeaturesInput = {
@@ -1428,6 +1583,11 @@ export type TenantUpdateWithoutFeaturesInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeUpdateManyWithoutTenantNestedInput
   homepage?: Prisma.TenantHomepageUpdateOneWithoutTenantNestedInput
   pages?: Prisma.TenantPageUpdateManyWithoutTenantNestedInput
+  serviceCategories?: Prisma.ServiceCategoryUpdateManyWithoutTenantNestedInput
+  services?: Prisma.ServiceUpdateManyWithoutTenantNestedInput
+  bookings?: Prisma.BookingUpdateManyWithoutTenantNestedInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUpdateOneWithoutTenantNestedInput
+  fieldDefinitions?: Prisma.FieldDefinitionUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantUncheckedUpdateWithoutFeaturesInput = {
@@ -1464,6 +1624,11 @@ export type TenantUncheckedUpdateWithoutFeaturesInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeUncheckedUpdateManyWithoutTenantNestedInput
   homepage?: Prisma.TenantHomepageUncheckedUpdateOneWithoutTenantNestedInput
   pages?: Prisma.TenantPageUncheckedUpdateManyWithoutTenantNestedInput
+  serviceCategories?: Prisma.ServiceCategoryUncheckedUpdateManyWithoutTenantNestedInput
+  services?: Prisma.ServiceUncheckedUpdateManyWithoutTenantNestedInput
+  bookings?: Prisma.BookingUncheckedUpdateManyWithoutTenantNestedInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUncheckedUpdateOneWithoutTenantNestedInput
+  fieldDefinitions?: Prisma.FieldDefinitionUncheckedUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantCreateWithoutUiConfigInput = {
@@ -1500,6 +1665,11 @@ export type TenantCreateWithoutUiConfigInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeCreateNestedManyWithoutTenantInput
   homepage?: Prisma.TenantHomepageCreateNestedOneWithoutTenantInput
   pages?: Prisma.TenantPageCreateNestedManyWithoutTenantInput
+  serviceCategories?: Prisma.ServiceCategoryCreateNestedManyWithoutTenantInput
+  services?: Prisma.ServiceCreateNestedManyWithoutTenantInput
+  bookings?: Prisma.BookingCreateNestedManyWithoutTenantInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigCreateNestedOneWithoutTenantInput
+  fieldDefinitions?: Prisma.FieldDefinitionCreateNestedManyWithoutTenantInput
 }
 
 export type TenantUncheckedCreateWithoutUiConfigInput = {
@@ -1536,6 +1706,11 @@ export type TenantUncheckedCreateWithoutUiConfigInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeUncheckedCreateNestedManyWithoutTenantInput
   homepage?: Prisma.TenantHomepageUncheckedCreateNestedOneWithoutTenantInput
   pages?: Prisma.TenantPageUncheckedCreateNestedManyWithoutTenantInput
+  serviceCategories?: Prisma.ServiceCategoryUncheckedCreateNestedManyWithoutTenantInput
+  services?: Prisma.ServiceUncheckedCreateNestedManyWithoutTenantInput
+  bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutTenantInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUncheckedCreateNestedOneWithoutTenantInput
+  fieldDefinitions?: Prisma.FieldDefinitionUncheckedCreateNestedManyWithoutTenantInput
 }
 
 export type TenantCreateOrConnectWithoutUiConfigInput = {
@@ -1588,6 +1763,11 @@ export type TenantUpdateWithoutUiConfigInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeUpdateManyWithoutTenantNestedInput
   homepage?: Prisma.TenantHomepageUpdateOneWithoutTenantNestedInput
   pages?: Prisma.TenantPageUpdateManyWithoutTenantNestedInput
+  serviceCategories?: Prisma.ServiceCategoryUpdateManyWithoutTenantNestedInput
+  services?: Prisma.ServiceUpdateManyWithoutTenantNestedInput
+  bookings?: Prisma.BookingUpdateManyWithoutTenantNestedInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUpdateOneWithoutTenantNestedInput
+  fieldDefinitions?: Prisma.FieldDefinitionUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantUncheckedUpdateWithoutUiConfigInput = {
@@ -1624,6 +1804,11 @@ export type TenantUncheckedUpdateWithoutUiConfigInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeUncheckedUpdateManyWithoutTenantNestedInput
   homepage?: Prisma.TenantHomepageUncheckedUpdateOneWithoutTenantNestedInput
   pages?: Prisma.TenantPageUncheckedUpdateManyWithoutTenantNestedInput
+  serviceCategories?: Prisma.ServiceCategoryUncheckedUpdateManyWithoutTenantNestedInput
+  services?: Prisma.ServiceUncheckedUpdateManyWithoutTenantNestedInput
+  bookings?: Prisma.BookingUncheckedUpdateManyWithoutTenantNestedInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUncheckedUpdateOneWithoutTenantNestedInput
+  fieldDefinitions?: Prisma.FieldDefinitionUncheckedUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantCreateWithoutHomepageInput = {
@@ -1660,6 +1845,11 @@ export type TenantCreateWithoutHomepageInput = {
   repairDevices?: Prisma.RepairDeviceCreateNestedManyWithoutTenantInput
   repairServiceTypes?: Prisma.RepairServiceTypeCreateNestedManyWithoutTenantInput
   pages?: Prisma.TenantPageCreateNestedManyWithoutTenantInput
+  serviceCategories?: Prisma.ServiceCategoryCreateNestedManyWithoutTenantInput
+  services?: Prisma.ServiceCreateNestedManyWithoutTenantInput
+  bookings?: Prisma.BookingCreateNestedManyWithoutTenantInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigCreateNestedOneWithoutTenantInput
+  fieldDefinitions?: Prisma.FieldDefinitionCreateNestedManyWithoutTenantInput
 }
 
 export type TenantUncheckedCreateWithoutHomepageInput = {
@@ -1696,6 +1886,11 @@ export type TenantUncheckedCreateWithoutHomepageInput = {
   repairDevices?: Prisma.RepairDeviceUncheckedCreateNestedManyWithoutTenantInput
   repairServiceTypes?: Prisma.RepairServiceTypeUncheckedCreateNestedManyWithoutTenantInput
   pages?: Prisma.TenantPageUncheckedCreateNestedManyWithoutTenantInput
+  serviceCategories?: Prisma.ServiceCategoryUncheckedCreateNestedManyWithoutTenantInput
+  services?: Prisma.ServiceUncheckedCreateNestedManyWithoutTenantInput
+  bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutTenantInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUncheckedCreateNestedOneWithoutTenantInput
+  fieldDefinitions?: Prisma.FieldDefinitionUncheckedCreateNestedManyWithoutTenantInput
 }
 
 export type TenantCreateOrConnectWithoutHomepageInput = {
@@ -1748,6 +1943,11 @@ export type TenantUpdateWithoutHomepageInput = {
   repairDevices?: Prisma.RepairDeviceUpdateManyWithoutTenantNestedInput
   repairServiceTypes?: Prisma.RepairServiceTypeUpdateManyWithoutTenantNestedInput
   pages?: Prisma.TenantPageUpdateManyWithoutTenantNestedInput
+  serviceCategories?: Prisma.ServiceCategoryUpdateManyWithoutTenantNestedInput
+  services?: Prisma.ServiceUpdateManyWithoutTenantNestedInput
+  bookings?: Prisma.BookingUpdateManyWithoutTenantNestedInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUpdateOneWithoutTenantNestedInput
+  fieldDefinitions?: Prisma.FieldDefinitionUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantUncheckedUpdateWithoutHomepageInput = {
@@ -1784,6 +1984,11 @@ export type TenantUncheckedUpdateWithoutHomepageInput = {
   repairDevices?: Prisma.RepairDeviceUncheckedUpdateManyWithoutTenantNestedInput
   repairServiceTypes?: Prisma.RepairServiceTypeUncheckedUpdateManyWithoutTenantNestedInput
   pages?: Prisma.TenantPageUncheckedUpdateManyWithoutTenantNestedInput
+  serviceCategories?: Prisma.ServiceCategoryUncheckedUpdateManyWithoutTenantNestedInput
+  services?: Prisma.ServiceUncheckedUpdateManyWithoutTenantNestedInput
+  bookings?: Prisma.BookingUncheckedUpdateManyWithoutTenantNestedInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUncheckedUpdateOneWithoutTenantNestedInput
+  fieldDefinitions?: Prisma.FieldDefinitionUncheckedUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantCreateWithoutPagesInput = {
@@ -1820,6 +2025,11 @@ export type TenantCreateWithoutPagesInput = {
   repairDevices?: Prisma.RepairDeviceCreateNestedManyWithoutTenantInput
   repairServiceTypes?: Prisma.RepairServiceTypeCreateNestedManyWithoutTenantInput
   homepage?: Prisma.TenantHomepageCreateNestedOneWithoutTenantInput
+  serviceCategories?: Prisma.ServiceCategoryCreateNestedManyWithoutTenantInput
+  services?: Prisma.ServiceCreateNestedManyWithoutTenantInput
+  bookings?: Prisma.BookingCreateNestedManyWithoutTenantInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigCreateNestedOneWithoutTenantInput
+  fieldDefinitions?: Prisma.FieldDefinitionCreateNestedManyWithoutTenantInput
 }
 
 export type TenantUncheckedCreateWithoutPagesInput = {
@@ -1856,6 +2066,11 @@ export type TenantUncheckedCreateWithoutPagesInput = {
   repairDevices?: Prisma.RepairDeviceUncheckedCreateNestedManyWithoutTenantInput
   repairServiceTypes?: Prisma.RepairServiceTypeUncheckedCreateNestedManyWithoutTenantInput
   homepage?: Prisma.TenantHomepageUncheckedCreateNestedOneWithoutTenantInput
+  serviceCategories?: Prisma.ServiceCategoryUncheckedCreateNestedManyWithoutTenantInput
+  services?: Prisma.ServiceUncheckedCreateNestedManyWithoutTenantInput
+  bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutTenantInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUncheckedCreateNestedOneWithoutTenantInput
+  fieldDefinitions?: Prisma.FieldDefinitionUncheckedCreateNestedManyWithoutTenantInput
 }
 
 export type TenantCreateOrConnectWithoutPagesInput = {
@@ -1908,6 +2123,11 @@ export type TenantUpdateWithoutPagesInput = {
   repairDevices?: Prisma.RepairDeviceUpdateManyWithoutTenantNestedInput
   repairServiceTypes?: Prisma.RepairServiceTypeUpdateManyWithoutTenantNestedInput
   homepage?: Prisma.TenantHomepageUpdateOneWithoutTenantNestedInput
+  serviceCategories?: Prisma.ServiceCategoryUpdateManyWithoutTenantNestedInput
+  services?: Prisma.ServiceUpdateManyWithoutTenantNestedInput
+  bookings?: Prisma.BookingUpdateManyWithoutTenantNestedInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUpdateOneWithoutTenantNestedInput
+  fieldDefinitions?: Prisma.FieldDefinitionUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantUncheckedUpdateWithoutPagesInput = {
@@ -1944,6 +2164,11 @@ export type TenantUncheckedUpdateWithoutPagesInput = {
   repairDevices?: Prisma.RepairDeviceUncheckedUpdateManyWithoutTenantNestedInput
   repairServiceTypes?: Prisma.RepairServiceTypeUncheckedUpdateManyWithoutTenantNestedInput
   homepage?: Prisma.TenantHomepageUncheckedUpdateOneWithoutTenantNestedInput
+  serviceCategories?: Prisma.ServiceCategoryUncheckedUpdateManyWithoutTenantNestedInput
+  services?: Prisma.ServiceUncheckedUpdateManyWithoutTenantNestedInput
+  bookings?: Prisma.BookingUncheckedUpdateManyWithoutTenantNestedInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUncheckedUpdateOneWithoutTenantNestedInput
+  fieldDefinitions?: Prisma.FieldDefinitionUncheckedUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantCreateWithoutUsersInput = {
@@ -1980,6 +2205,11 @@ export type TenantCreateWithoutUsersInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeCreateNestedManyWithoutTenantInput
   homepage?: Prisma.TenantHomepageCreateNestedOneWithoutTenantInput
   pages?: Prisma.TenantPageCreateNestedManyWithoutTenantInput
+  serviceCategories?: Prisma.ServiceCategoryCreateNestedManyWithoutTenantInput
+  services?: Prisma.ServiceCreateNestedManyWithoutTenantInput
+  bookings?: Prisma.BookingCreateNestedManyWithoutTenantInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigCreateNestedOneWithoutTenantInput
+  fieldDefinitions?: Prisma.FieldDefinitionCreateNestedManyWithoutTenantInput
 }
 
 export type TenantUncheckedCreateWithoutUsersInput = {
@@ -2016,6 +2246,11 @@ export type TenantUncheckedCreateWithoutUsersInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeUncheckedCreateNestedManyWithoutTenantInput
   homepage?: Prisma.TenantHomepageUncheckedCreateNestedOneWithoutTenantInput
   pages?: Prisma.TenantPageUncheckedCreateNestedManyWithoutTenantInput
+  serviceCategories?: Prisma.ServiceCategoryUncheckedCreateNestedManyWithoutTenantInput
+  services?: Prisma.ServiceUncheckedCreateNestedManyWithoutTenantInput
+  bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutTenantInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUncheckedCreateNestedOneWithoutTenantInput
+  fieldDefinitions?: Prisma.FieldDefinitionUncheckedCreateNestedManyWithoutTenantInput
 }
 
 export type TenantCreateOrConnectWithoutUsersInput = {
@@ -2068,6 +2303,11 @@ export type TenantUpdateWithoutUsersInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeUpdateManyWithoutTenantNestedInput
   homepage?: Prisma.TenantHomepageUpdateOneWithoutTenantNestedInput
   pages?: Prisma.TenantPageUpdateManyWithoutTenantNestedInput
+  serviceCategories?: Prisma.ServiceCategoryUpdateManyWithoutTenantNestedInput
+  services?: Prisma.ServiceUpdateManyWithoutTenantNestedInput
+  bookings?: Prisma.BookingUpdateManyWithoutTenantNestedInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUpdateOneWithoutTenantNestedInput
+  fieldDefinitions?: Prisma.FieldDefinitionUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantUncheckedUpdateWithoutUsersInput = {
@@ -2104,6 +2344,11 @@ export type TenantUncheckedUpdateWithoutUsersInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeUncheckedUpdateManyWithoutTenantNestedInput
   homepage?: Prisma.TenantHomepageUncheckedUpdateOneWithoutTenantNestedInput
   pages?: Prisma.TenantPageUncheckedUpdateManyWithoutTenantNestedInput
+  serviceCategories?: Prisma.ServiceCategoryUncheckedUpdateManyWithoutTenantNestedInput
+  services?: Prisma.ServiceUncheckedUpdateManyWithoutTenantNestedInput
+  bookings?: Prisma.BookingUncheckedUpdateManyWithoutTenantNestedInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUncheckedUpdateOneWithoutTenantNestedInput
+  fieldDefinitions?: Prisma.FieldDefinitionUncheckedUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantCreateWithoutCategoriesInput = {
@@ -2140,6 +2385,11 @@ export type TenantCreateWithoutCategoriesInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeCreateNestedManyWithoutTenantInput
   homepage?: Prisma.TenantHomepageCreateNestedOneWithoutTenantInput
   pages?: Prisma.TenantPageCreateNestedManyWithoutTenantInput
+  serviceCategories?: Prisma.ServiceCategoryCreateNestedManyWithoutTenantInput
+  services?: Prisma.ServiceCreateNestedManyWithoutTenantInput
+  bookings?: Prisma.BookingCreateNestedManyWithoutTenantInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigCreateNestedOneWithoutTenantInput
+  fieldDefinitions?: Prisma.FieldDefinitionCreateNestedManyWithoutTenantInput
 }
 
 export type TenantUncheckedCreateWithoutCategoriesInput = {
@@ -2176,6 +2426,11 @@ export type TenantUncheckedCreateWithoutCategoriesInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeUncheckedCreateNestedManyWithoutTenantInput
   homepage?: Prisma.TenantHomepageUncheckedCreateNestedOneWithoutTenantInput
   pages?: Prisma.TenantPageUncheckedCreateNestedManyWithoutTenantInput
+  serviceCategories?: Prisma.ServiceCategoryUncheckedCreateNestedManyWithoutTenantInput
+  services?: Prisma.ServiceUncheckedCreateNestedManyWithoutTenantInput
+  bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutTenantInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUncheckedCreateNestedOneWithoutTenantInput
+  fieldDefinitions?: Prisma.FieldDefinitionUncheckedCreateNestedManyWithoutTenantInput
 }
 
 export type TenantCreateOrConnectWithoutCategoriesInput = {
@@ -2228,6 +2483,11 @@ export type TenantUpdateWithoutCategoriesInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeUpdateManyWithoutTenantNestedInput
   homepage?: Prisma.TenantHomepageUpdateOneWithoutTenantNestedInput
   pages?: Prisma.TenantPageUpdateManyWithoutTenantNestedInput
+  serviceCategories?: Prisma.ServiceCategoryUpdateManyWithoutTenantNestedInput
+  services?: Prisma.ServiceUpdateManyWithoutTenantNestedInput
+  bookings?: Prisma.BookingUpdateManyWithoutTenantNestedInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUpdateOneWithoutTenantNestedInput
+  fieldDefinitions?: Prisma.FieldDefinitionUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantUncheckedUpdateWithoutCategoriesInput = {
@@ -2264,6 +2524,11 @@ export type TenantUncheckedUpdateWithoutCategoriesInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeUncheckedUpdateManyWithoutTenantNestedInput
   homepage?: Prisma.TenantHomepageUncheckedUpdateOneWithoutTenantNestedInput
   pages?: Prisma.TenantPageUncheckedUpdateManyWithoutTenantNestedInput
+  serviceCategories?: Prisma.ServiceCategoryUncheckedUpdateManyWithoutTenantNestedInput
+  services?: Prisma.ServiceUncheckedUpdateManyWithoutTenantNestedInput
+  bookings?: Prisma.BookingUncheckedUpdateManyWithoutTenantNestedInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUncheckedUpdateOneWithoutTenantNestedInput
+  fieldDefinitions?: Prisma.FieldDefinitionUncheckedUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantCreateWithoutProductsInput = {
@@ -2300,6 +2565,11 @@ export type TenantCreateWithoutProductsInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeCreateNestedManyWithoutTenantInput
   homepage?: Prisma.TenantHomepageCreateNestedOneWithoutTenantInput
   pages?: Prisma.TenantPageCreateNestedManyWithoutTenantInput
+  serviceCategories?: Prisma.ServiceCategoryCreateNestedManyWithoutTenantInput
+  services?: Prisma.ServiceCreateNestedManyWithoutTenantInput
+  bookings?: Prisma.BookingCreateNestedManyWithoutTenantInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigCreateNestedOneWithoutTenantInput
+  fieldDefinitions?: Prisma.FieldDefinitionCreateNestedManyWithoutTenantInput
 }
 
 export type TenantUncheckedCreateWithoutProductsInput = {
@@ -2336,6 +2606,11 @@ export type TenantUncheckedCreateWithoutProductsInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeUncheckedCreateNestedManyWithoutTenantInput
   homepage?: Prisma.TenantHomepageUncheckedCreateNestedOneWithoutTenantInput
   pages?: Prisma.TenantPageUncheckedCreateNestedManyWithoutTenantInput
+  serviceCategories?: Prisma.ServiceCategoryUncheckedCreateNestedManyWithoutTenantInput
+  services?: Prisma.ServiceUncheckedCreateNestedManyWithoutTenantInput
+  bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutTenantInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUncheckedCreateNestedOneWithoutTenantInput
+  fieldDefinitions?: Prisma.FieldDefinitionUncheckedCreateNestedManyWithoutTenantInput
 }
 
 export type TenantCreateOrConnectWithoutProductsInput = {
@@ -2388,6 +2663,11 @@ export type TenantUpdateWithoutProductsInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeUpdateManyWithoutTenantNestedInput
   homepage?: Prisma.TenantHomepageUpdateOneWithoutTenantNestedInput
   pages?: Prisma.TenantPageUpdateManyWithoutTenantNestedInput
+  serviceCategories?: Prisma.ServiceCategoryUpdateManyWithoutTenantNestedInput
+  services?: Prisma.ServiceUpdateManyWithoutTenantNestedInput
+  bookings?: Prisma.BookingUpdateManyWithoutTenantNestedInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUpdateOneWithoutTenantNestedInput
+  fieldDefinitions?: Prisma.FieldDefinitionUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantUncheckedUpdateWithoutProductsInput = {
@@ -2424,6 +2704,11 @@ export type TenantUncheckedUpdateWithoutProductsInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeUncheckedUpdateManyWithoutTenantNestedInput
   homepage?: Prisma.TenantHomepageUncheckedUpdateOneWithoutTenantNestedInput
   pages?: Prisma.TenantPageUncheckedUpdateManyWithoutTenantNestedInput
+  serviceCategories?: Prisma.ServiceCategoryUncheckedUpdateManyWithoutTenantNestedInput
+  services?: Prisma.ServiceUncheckedUpdateManyWithoutTenantNestedInput
+  bookings?: Prisma.BookingUncheckedUpdateManyWithoutTenantNestedInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUncheckedUpdateOneWithoutTenantNestedInput
+  fieldDefinitions?: Prisma.FieldDefinitionUncheckedUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantCreateWithoutOrdersInput = {
@@ -2460,6 +2745,11 @@ export type TenantCreateWithoutOrdersInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeCreateNestedManyWithoutTenantInput
   homepage?: Prisma.TenantHomepageCreateNestedOneWithoutTenantInput
   pages?: Prisma.TenantPageCreateNestedManyWithoutTenantInput
+  serviceCategories?: Prisma.ServiceCategoryCreateNestedManyWithoutTenantInput
+  services?: Prisma.ServiceCreateNestedManyWithoutTenantInput
+  bookings?: Prisma.BookingCreateNestedManyWithoutTenantInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigCreateNestedOneWithoutTenantInput
+  fieldDefinitions?: Prisma.FieldDefinitionCreateNestedManyWithoutTenantInput
 }
 
 export type TenantUncheckedCreateWithoutOrdersInput = {
@@ -2496,6 +2786,11 @@ export type TenantUncheckedCreateWithoutOrdersInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeUncheckedCreateNestedManyWithoutTenantInput
   homepage?: Prisma.TenantHomepageUncheckedCreateNestedOneWithoutTenantInput
   pages?: Prisma.TenantPageUncheckedCreateNestedManyWithoutTenantInput
+  serviceCategories?: Prisma.ServiceCategoryUncheckedCreateNestedManyWithoutTenantInput
+  services?: Prisma.ServiceUncheckedCreateNestedManyWithoutTenantInput
+  bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutTenantInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUncheckedCreateNestedOneWithoutTenantInput
+  fieldDefinitions?: Prisma.FieldDefinitionUncheckedCreateNestedManyWithoutTenantInput
 }
 
 export type TenantCreateOrConnectWithoutOrdersInput = {
@@ -2548,6 +2843,11 @@ export type TenantUpdateWithoutOrdersInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeUpdateManyWithoutTenantNestedInput
   homepage?: Prisma.TenantHomepageUpdateOneWithoutTenantNestedInput
   pages?: Prisma.TenantPageUpdateManyWithoutTenantNestedInput
+  serviceCategories?: Prisma.ServiceCategoryUpdateManyWithoutTenantNestedInput
+  services?: Prisma.ServiceUpdateManyWithoutTenantNestedInput
+  bookings?: Prisma.BookingUpdateManyWithoutTenantNestedInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUpdateOneWithoutTenantNestedInput
+  fieldDefinitions?: Prisma.FieldDefinitionUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantUncheckedUpdateWithoutOrdersInput = {
@@ -2584,6 +2884,11 @@ export type TenantUncheckedUpdateWithoutOrdersInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeUncheckedUpdateManyWithoutTenantNestedInput
   homepage?: Prisma.TenantHomepageUncheckedUpdateOneWithoutTenantNestedInput
   pages?: Prisma.TenantPageUncheckedUpdateManyWithoutTenantNestedInput
+  serviceCategories?: Prisma.ServiceCategoryUncheckedUpdateManyWithoutTenantNestedInput
+  services?: Prisma.ServiceUncheckedUpdateManyWithoutTenantNestedInput
+  bookings?: Prisma.BookingUncheckedUpdateManyWithoutTenantNestedInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUncheckedUpdateOneWithoutTenantNestedInput
+  fieldDefinitions?: Prisma.FieldDefinitionUncheckedUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantCreateWithoutRepairTicketsInput = {
@@ -2620,6 +2925,11 @@ export type TenantCreateWithoutRepairTicketsInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeCreateNestedManyWithoutTenantInput
   homepage?: Prisma.TenantHomepageCreateNestedOneWithoutTenantInput
   pages?: Prisma.TenantPageCreateNestedManyWithoutTenantInput
+  serviceCategories?: Prisma.ServiceCategoryCreateNestedManyWithoutTenantInput
+  services?: Prisma.ServiceCreateNestedManyWithoutTenantInput
+  bookings?: Prisma.BookingCreateNestedManyWithoutTenantInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigCreateNestedOneWithoutTenantInput
+  fieldDefinitions?: Prisma.FieldDefinitionCreateNestedManyWithoutTenantInput
 }
 
 export type TenantUncheckedCreateWithoutRepairTicketsInput = {
@@ -2656,6 +2966,11 @@ export type TenantUncheckedCreateWithoutRepairTicketsInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeUncheckedCreateNestedManyWithoutTenantInput
   homepage?: Prisma.TenantHomepageUncheckedCreateNestedOneWithoutTenantInput
   pages?: Prisma.TenantPageUncheckedCreateNestedManyWithoutTenantInput
+  serviceCategories?: Prisma.ServiceCategoryUncheckedCreateNestedManyWithoutTenantInput
+  services?: Prisma.ServiceUncheckedCreateNestedManyWithoutTenantInput
+  bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutTenantInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUncheckedCreateNestedOneWithoutTenantInput
+  fieldDefinitions?: Prisma.FieldDefinitionUncheckedCreateNestedManyWithoutTenantInput
 }
 
 export type TenantCreateOrConnectWithoutRepairTicketsInput = {
@@ -2708,6 +3023,11 @@ export type TenantUpdateWithoutRepairTicketsInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeUpdateManyWithoutTenantNestedInput
   homepage?: Prisma.TenantHomepageUpdateOneWithoutTenantNestedInput
   pages?: Prisma.TenantPageUpdateManyWithoutTenantNestedInput
+  serviceCategories?: Prisma.ServiceCategoryUpdateManyWithoutTenantNestedInput
+  services?: Prisma.ServiceUpdateManyWithoutTenantNestedInput
+  bookings?: Prisma.BookingUpdateManyWithoutTenantNestedInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUpdateOneWithoutTenantNestedInput
+  fieldDefinitions?: Prisma.FieldDefinitionUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantUncheckedUpdateWithoutRepairTicketsInput = {
@@ -2744,6 +3064,11 @@ export type TenantUncheckedUpdateWithoutRepairTicketsInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeUncheckedUpdateManyWithoutTenantNestedInput
   homepage?: Prisma.TenantHomepageUncheckedUpdateOneWithoutTenantNestedInput
   pages?: Prisma.TenantPageUncheckedUpdateManyWithoutTenantNestedInput
+  serviceCategories?: Prisma.ServiceCategoryUncheckedUpdateManyWithoutTenantNestedInput
+  services?: Prisma.ServiceUncheckedUpdateManyWithoutTenantNestedInput
+  bookings?: Prisma.BookingUncheckedUpdateManyWithoutTenantNestedInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUncheckedUpdateOneWithoutTenantNestedInput
+  fieldDefinitions?: Prisma.FieldDefinitionUncheckedUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantCreateWithoutSettingsInput = {
@@ -2780,6 +3105,11 @@ export type TenantCreateWithoutSettingsInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeCreateNestedManyWithoutTenantInput
   homepage?: Prisma.TenantHomepageCreateNestedOneWithoutTenantInput
   pages?: Prisma.TenantPageCreateNestedManyWithoutTenantInput
+  serviceCategories?: Prisma.ServiceCategoryCreateNestedManyWithoutTenantInput
+  services?: Prisma.ServiceCreateNestedManyWithoutTenantInput
+  bookings?: Prisma.BookingCreateNestedManyWithoutTenantInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigCreateNestedOneWithoutTenantInput
+  fieldDefinitions?: Prisma.FieldDefinitionCreateNestedManyWithoutTenantInput
 }
 
 export type TenantUncheckedCreateWithoutSettingsInput = {
@@ -2816,6 +3146,11 @@ export type TenantUncheckedCreateWithoutSettingsInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeUncheckedCreateNestedManyWithoutTenantInput
   homepage?: Prisma.TenantHomepageUncheckedCreateNestedOneWithoutTenantInput
   pages?: Prisma.TenantPageUncheckedCreateNestedManyWithoutTenantInput
+  serviceCategories?: Prisma.ServiceCategoryUncheckedCreateNestedManyWithoutTenantInput
+  services?: Prisma.ServiceUncheckedCreateNestedManyWithoutTenantInput
+  bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutTenantInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUncheckedCreateNestedOneWithoutTenantInput
+  fieldDefinitions?: Prisma.FieldDefinitionUncheckedCreateNestedManyWithoutTenantInput
 }
 
 export type TenantCreateOrConnectWithoutSettingsInput = {
@@ -2868,6 +3203,11 @@ export type TenantUpdateWithoutSettingsInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeUpdateManyWithoutTenantNestedInput
   homepage?: Prisma.TenantHomepageUpdateOneWithoutTenantNestedInput
   pages?: Prisma.TenantPageUpdateManyWithoutTenantNestedInput
+  serviceCategories?: Prisma.ServiceCategoryUpdateManyWithoutTenantNestedInput
+  services?: Prisma.ServiceUpdateManyWithoutTenantNestedInput
+  bookings?: Prisma.BookingUpdateManyWithoutTenantNestedInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUpdateOneWithoutTenantNestedInput
+  fieldDefinitions?: Prisma.FieldDefinitionUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantUncheckedUpdateWithoutSettingsInput = {
@@ -2904,6 +3244,11 @@ export type TenantUncheckedUpdateWithoutSettingsInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeUncheckedUpdateManyWithoutTenantNestedInput
   homepage?: Prisma.TenantHomepageUncheckedUpdateOneWithoutTenantNestedInput
   pages?: Prisma.TenantPageUncheckedUpdateManyWithoutTenantNestedInput
+  serviceCategories?: Prisma.ServiceCategoryUncheckedUpdateManyWithoutTenantNestedInput
+  services?: Prisma.ServiceUncheckedUpdateManyWithoutTenantNestedInput
+  bookings?: Prisma.BookingUncheckedUpdateManyWithoutTenantNestedInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUncheckedUpdateOneWithoutTenantNestedInput
+  fieldDefinitions?: Prisma.FieldDefinitionUncheckedUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantCreateWithoutShippingZonesInput = {
@@ -2940,6 +3285,11 @@ export type TenantCreateWithoutShippingZonesInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeCreateNestedManyWithoutTenantInput
   homepage?: Prisma.TenantHomepageCreateNestedOneWithoutTenantInput
   pages?: Prisma.TenantPageCreateNestedManyWithoutTenantInput
+  serviceCategories?: Prisma.ServiceCategoryCreateNestedManyWithoutTenantInput
+  services?: Prisma.ServiceCreateNestedManyWithoutTenantInput
+  bookings?: Prisma.BookingCreateNestedManyWithoutTenantInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigCreateNestedOneWithoutTenantInput
+  fieldDefinitions?: Prisma.FieldDefinitionCreateNestedManyWithoutTenantInput
 }
 
 export type TenantUncheckedCreateWithoutShippingZonesInput = {
@@ -2976,6 +3326,11 @@ export type TenantUncheckedCreateWithoutShippingZonesInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeUncheckedCreateNestedManyWithoutTenantInput
   homepage?: Prisma.TenantHomepageUncheckedCreateNestedOneWithoutTenantInput
   pages?: Prisma.TenantPageUncheckedCreateNestedManyWithoutTenantInput
+  serviceCategories?: Prisma.ServiceCategoryUncheckedCreateNestedManyWithoutTenantInput
+  services?: Prisma.ServiceUncheckedCreateNestedManyWithoutTenantInput
+  bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutTenantInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUncheckedCreateNestedOneWithoutTenantInput
+  fieldDefinitions?: Prisma.FieldDefinitionUncheckedCreateNestedManyWithoutTenantInput
 }
 
 export type TenantCreateOrConnectWithoutShippingZonesInput = {
@@ -3028,6 +3383,11 @@ export type TenantUpdateWithoutShippingZonesInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeUpdateManyWithoutTenantNestedInput
   homepage?: Prisma.TenantHomepageUpdateOneWithoutTenantNestedInput
   pages?: Prisma.TenantPageUpdateManyWithoutTenantNestedInput
+  serviceCategories?: Prisma.ServiceCategoryUpdateManyWithoutTenantNestedInput
+  services?: Prisma.ServiceUpdateManyWithoutTenantNestedInput
+  bookings?: Prisma.BookingUpdateManyWithoutTenantNestedInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUpdateOneWithoutTenantNestedInput
+  fieldDefinitions?: Prisma.FieldDefinitionUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantUncheckedUpdateWithoutShippingZonesInput = {
@@ -3064,6 +3424,11 @@ export type TenantUncheckedUpdateWithoutShippingZonesInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeUncheckedUpdateManyWithoutTenantNestedInput
   homepage?: Prisma.TenantHomepageUncheckedUpdateOneWithoutTenantNestedInput
   pages?: Prisma.TenantPageUncheckedUpdateManyWithoutTenantNestedInput
+  serviceCategories?: Prisma.ServiceCategoryUncheckedUpdateManyWithoutTenantNestedInput
+  services?: Prisma.ServiceUncheckedUpdateManyWithoutTenantNestedInput
+  bookings?: Prisma.BookingUncheckedUpdateManyWithoutTenantNestedInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUncheckedUpdateOneWithoutTenantNestedInput
+  fieldDefinitions?: Prisma.FieldDefinitionUncheckedUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantCreateWithoutAppointmentsInput = {
@@ -3100,6 +3465,11 @@ export type TenantCreateWithoutAppointmentsInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeCreateNestedManyWithoutTenantInput
   homepage?: Prisma.TenantHomepageCreateNestedOneWithoutTenantInput
   pages?: Prisma.TenantPageCreateNestedManyWithoutTenantInput
+  serviceCategories?: Prisma.ServiceCategoryCreateNestedManyWithoutTenantInput
+  services?: Prisma.ServiceCreateNestedManyWithoutTenantInput
+  bookings?: Prisma.BookingCreateNestedManyWithoutTenantInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigCreateNestedOneWithoutTenantInput
+  fieldDefinitions?: Prisma.FieldDefinitionCreateNestedManyWithoutTenantInput
 }
 
 export type TenantUncheckedCreateWithoutAppointmentsInput = {
@@ -3136,6 +3506,11 @@ export type TenantUncheckedCreateWithoutAppointmentsInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeUncheckedCreateNestedManyWithoutTenantInput
   homepage?: Prisma.TenantHomepageUncheckedCreateNestedOneWithoutTenantInput
   pages?: Prisma.TenantPageUncheckedCreateNestedManyWithoutTenantInput
+  serviceCategories?: Prisma.ServiceCategoryUncheckedCreateNestedManyWithoutTenantInput
+  services?: Prisma.ServiceUncheckedCreateNestedManyWithoutTenantInput
+  bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutTenantInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUncheckedCreateNestedOneWithoutTenantInput
+  fieldDefinitions?: Prisma.FieldDefinitionUncheckedCreateNestedManyWithoutTenantInput
 }
 
 export type TenantCreateOrConnectWithoutAppointmentsInput = {
@@ -3188,6 +3563,11 @@ export type TenantUpdateWithoutAppointmentsInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeUpdateManyWithoutTenantNestedInput
   homepage?: Prisma.TenantHomepageUpdateOneWithoutTenantNestedInput
   pages?: Prisma.TenantPageUpdateManyWithoutTenantNestedInput
+  serviceCategories?: Prisma.ServiceCategoryUpdateManyWithoutTenantNestedInput
+  services?: Prisma.ServiceUpdateManyWithoutTenantNestedInput
+  bookings?: Prisma.BookingUpdateManyWithoutTenantNestedInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUpdateOneWithoutTenantNestedInput
+  fieldDefinitions?: Prisma.FieldDefinitionUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantUncheckedUpdateWithoutAppointmentsInput = {
@@ -3224,6 +3604,11 @@ export type TenantUncheckedUpdateWithoutAppointmentsInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeUncheckedUpdateManyWithoutTenantNestedInput
   homepage?: Prisma.TenantHomepageUncheckedUpdateOneWithoutTenantNestedInput
   pages?: Prisma.TenantPageUncheckedUpdateManyWithoutTenantNestedInput
+  serviceCategories?: Prisma.ServiceCategoryUncheckedUpdateManyWithoutTenantNestedInput
+  services?: Prisma.ServiceUncheckedUpdateManyWithoutTenantNestedInput
+  bookings?: Prisma.BookingUncheckedUpdateManyWithoutTenantNestedInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUncheckedUpdateOneWithoutTenantNestedInput
+  fieldDefinitions?: Prisma.FieldDefinitionUncheckedUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantCreateWithoutTicketsInput = {
@@ -3260,6 +3645,11 @@ export type TenantCreateWithoutTicketsInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeCreateNestedManyWithoutTenantInput
   homepage?: Prisma.TenantHomepageCreateNestedOneWithoutTenantInput
   pages?: Prisma.TenantPageCreateNestedManyWithoutTenantInput
+  serviceCategories?: Prisma.ServiceCategoryCreateNestedManyWithoutTenantInput
+  services?: Prisma.ServiceCreateNestedManyWithoutTenantInput
+  bookings?: Prisma.BookingCreateNestedManyWithoutTenantInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigCreateNestedOneWithoutTenantInput
+  fieldDefinitions?: Prisma.FieldDefinitionCreateNestedManyWithoutTenantInput
 }
 
 export type TenantUncheckedCreateWithoutTicketsInput = {
@@ -3296,6 +3686,11 @@ export type TenantUncheckedCreateWithoutTicketsInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeUncheckedCreateNestedManyWithoutTenantInput
   homepage?: Prisma.TenantHomepageUncheckedCreateNestedOneWithoutTenantInput
   pages?: Prisma.TenantPageUncheckedCreateNestedManyWithoutTenantInput
+  serviceCategories?: Prisma.ServiceCategoryUncheckedCreateNestedManyWithoutTenantInput
+  services?: Prisma.ServiceUncheckedCreateNestedManyWithoutTenantInput
+  bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutTenantInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUncheckedCreateNestedOneWithoutTenantInput
+  fieldDefinitions?: Prisma.FieldDefinitionUncheckedCreateNestedManyWithoutTenantInput
 }
 
 export type TenantCreateOrConnectWithoutTicketsInput = {
@@ -3348,6 +3743,11 @@ export type TenantUpdateWithoutTicketsInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeUpdateManyWithoutTenantNestedInput
   homepage?: Prisma.TenantHomepageUpdateOneWithoutTenantNestedInput
   pages?: Prisma.TenantPageUpdateManyWithoutTenantNestedInput
+  serviceCategories?: Prisma.ServiceCategoryUpdateManyWithoutTenantNestedInput
+  services?: Prisma.ServiceUpdateManyWithoutTenantNestedInput
+  bookings?: Prisma.BookingUpdateManyWithoutTenantNestedInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUpdateOneWithoutTenantNestedInput
+  fieldDefinitions?: Prisma.FieldDefinitionUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantUncheckedUpdateWithoutTicketsInput = {
@@ -3384,6 +3784,911 @@ export type TenantUncheckedUpdateWithoutTicketsInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeUncheckedUpdateManyWithoutTenantNestedInput
   homepage?: Prisma.TenantHomepageUncheckedUpdateOneWithoutTenantNestedInput
   pages?: Prisma.TenantPageUncheckedUpdateManyWithoutTenantNestedInput
+  serviceCategories?: Prisma.ServiceCategoryUncheckedUpdateManyWithoutTenantNestedInput
+  services?: Prisma.ServiceUncheckedUpdateManyWithoutTenantNestedInput
+  bookings?: Prisma.BookingUncheckedUpdateManyWithoutTenantNestedInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUncheckedUpdateOneWithoutTenantNestedInput
+  fieldDefinitions?: Prisma.FieldDefinitionUncheckedUpdateManyWithoutTenantNestedInput
+}
+
+export type TenantCreateWithoutServiceCategoriesInput = {
+  id?: string
+  name: string
+  slug: string
+  status?: $Enums.TenantStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  suspendedAt?: Date | string | null
+  archivedAt?: Date | string | null
+  onboardingStatus?: string | null
+  domains?: Prisma.TenantDomainCreateNestedManyWithoutTenantInput
+  config?: Prisma.TenantConfigCreateNestedOneWithoutTenantInput
+  features?: Prisma.TenantFeatureCreateNestedOneWithoutTenantInput
+  uiConfig?: Prisma.TenantUIConfigCreateNestedOneWithoutTenantInput
+  users?: Prisma.UserCreateNestedManyWithoutTenantInput
+  products?: Prisma.ProductCreateNestedManyWithoutTenantInput
+  categories?: Prisma.CategoryCreateNestedManyWithoutTenantInput
+  orders?: Prisma.OrderCreateNestedManyWithoutTenantInput
+  appointments?: Prisma.AppointmentCreateNestedManyWithoutTenantInput
+  tickets?: Prisma.TicketCreateNestedManyWithoutTenantInput
+  repairTickets?: Prisma.RepairTicketCreateNestedManyWithoutTenantInput
+  invoices?: Prisma.InvoiceCreateNestedManyWithoutTenantInput
+  settings?: Prisma.SettingCreateNestedManyWithoutTenantInput
+  banners?: Prisma.PromotionalBannerCreateNestedManyWithoutTenantInput
+  discountCodes?: Prisma.DiscountCodeCreateNestedManyWithoutTenantInput
+  shippingZones?: Prisma.ShippingZoneCreateNestedManyWithoutTenantInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutTenantInput
+  feedbackRatings?: Prisma.FeedbackRatingCreateNestedManyWithoutTenantInput
+  emailUnsubscribes?: Prisma.EmailUnsubscribeCreateNestedManyWithoutTenantInput
+  repairDeviceServices?: Prisma.RepairDeviceServiceCreateNestedManyWithoutTenantInput
+  repairBrands?: Prisma.RepairBrandCreateNestedManyWithoutTenantInput
+  repairDevices?: Prisma.RepairDeviceCreateNestedManyWithoutTenantInput
+  repairServiceTypes?: Prisma.RepairServiceTypeCreateNestedManyWithoutTenantInput
+  homepage?: Prisma.TenantHomepageCreateNestedOneWithoutTenantInput
+  pages?: Prisma.TenantPageCreateNestedManyWithoutTenantInput
+  services?: Prisma.ServiceCreateNestedManyWithoutTenantInput
+  bookings?: Prisma.BookingCreateNestedManyWithoutTenantInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigCreateNestedOneWithoutTenantInput
+  fieldDefinitions?: Prisma.FieldDefinitionCreateNestedManyWithoutTenantInput
+}
+
+export type TenantUncheckedCreateWithoutServiceCategoriesInput = {
+  id?: string
+  name: string
+  slug: string
+  status?: $Enums.TenantStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  suspendedAt?: Date | string | null
+  archivedAt?: Date | string | null
+  onboardingStatus?: string | null
+  domains?: Prisma.TenantDomainUncheckedCreateNestedManyWithoutTenantInput
+  config?: Prisma.TenantConfigUncheckedCreateNestedOneWithoutTenantInput
+  features?: Prisma.TenantFeatureUncheckedCreateNestedOneWithoutTenantInput
+  uiConfig?: Prisma.TenantUIConfigUncheckedCreateNestedOneWithoutTenantInput
+  users?: Prisma.UserUncheckedCreateNestedManyWithoutTenantInput
+  products?: Prisma.ProductUncheckedCreateNestedManyWithoutTenantInput
+  categories?: Prisma.CategoryUncheckedCreateNestedManyWithoutTenantInput
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutTenantInput
+  appointments?: Prisma.AppointmentUncheckedCreateNestedManyWithoutTenantInput
+  tickets?: Prisma.TicketUncheckedCreateNestedManyWithoutTenantInput
+  repairTickets?: Prisma.RepairTicketUncheckedCreateNestedManyWithoutTenantInput
+  invoices?: Prisma.InvoiceUncheckedCreateNestedManyWithoutTenantInput
+  settings?: Prisma.SettingUncheckedCreateNestedManyWithoutTenantInput
+  banners?: Prisma.PromotionalBannerUncheckedCreateNestedManyWithoutTenantInput
+  discountCodes?: Prisma.DiscountCodeUncheckedCreateNestedManyWithoutTenantInput
+  shippingZones?: Prisma.ShippingZoneUncheckedCreateNestedManyWithoutTenantInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutTenantInput
+  feedbackRatings?: Prisma.FeedbackRatingUncheckedCreateNestedManyWithoutTenantInput
+  emailUnsubscribes?: Prisma.EmailUnsubscribeUncheckedCreateNestedManyWithoutTenantInput
+  repairDeviceServices?: Prisma.RepairDeviceServiceUncheckedCreateNestedManyWithoutTenantInput
+  repairBrands?: Prisma.RepairBrandUncheckedCreateNestedManyWithoutTenantInput
+  repairDevices?: Prisma.RepairDeviceUncheckedCreateNestedManyWithoutTenantInput
+  repairServiceTypes?: Prisma.RepairServiceTypeUncheckedCreateNestedManyWithoutTenantInput
+  homepage?: Prisma.TenantHomepageUncheckedCreateNestedOneWithoutTenantInput
+  pages?: Prisma.TenantPageUncheckedCreateNestedManyWithoutTenantInput
+  services?: Prisma.ServiceUncheckedCreateNestedManyWithoutTenantInput
+  bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutTenantInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUncheckedCreateNestedOneWithoutTenantInput
+  fieldDefinitions?: Prisma.FieldDefinitionUncheckedCreateNestedManyWithoutTenantInput
+}
+
+export type TenantCreateOrConnectWithoutServiceCategoriesInput = {
+  where: Prisma.TenantWhereUniqueInput
+  create: Prisma.XOR<Prisma.TenantCreateWithoutServiceCategoriesInput, Prisma.TenantUncheckedCreateWithoutServiceCategoriesInput>
+}
+
+export type TenantUpsertWithoutServiceCategoriesInput = {
+  update: Prisma.XOR<Prisma.TenantUpdateWithoutServiceCategoriesInput, Prisma.TenantUncheckedUpdateWithoutServiceCategoriesInput>
+  create: Prisma.XOR<Prisma.TenantCreateWithoutServiceCategoriesInput, Prisma.TenantUncheckedCreateWithoutServiceCategoriesInput>
+  where?: Prisma.TenantWhereInput
+}
+
+export type TenantUpdateToOneWithWhereWithoutServiceCategoriesInput = {
+  where?: Prisma.TenantWhereInput
+  data: Prisma.XOR<Prisma.TenantUpdateWithoutServiceCategoriesInput, Prisma.TenantUncheckedUpdateWithoutServiceCategoriesInput>
+}
+
+export type TenantUpdateWithoutServiceCategoriesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumTenantStatusFieldUpdateOperationsInput | $Enums.TenantStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  onboardingStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  domains?: Prisma.TenantDomainUpdateManyWithoutTenantNestedInput
+  config?: Prisma.TenantConfigUpdateOneWithoutTenantNestedInput
+  features?: Prisma.TenantFeatureUpdateOneWithoutTenantNestedInput
+  uiConfig?: Prisma.TenantUIConfigUpdateOneWithoutTenantNestedInput
+  users?: Prisma.UserUpdateManyWithoutTenantNestedInput
+  products?: Prisma.ProductUpdateManyWithoutTenantNestedInput
+  categories?: Prisma.CategoryUpdateManyWithoutTenantNestedInput
+  orders?: Prisma.OrderUpdateManyWithoutTenantNestedInput
+  appointments?: Prisma.AppointmentUpdateManyWithoutTenantNestedInput
+  tickets?: Prisma.TicketUpdateManyWithoutTenantNestedInput
+  repairTickets?: Prisma.RepairTicketUpdateManyWithoutTenantNestedInput
+  invoices?: Prisma.InvoiceUpdateManyWithoutTenantNestedInput
+  settings?: Prisma.SettingUpdateManyWithoutTenantNestedInput
+  banners?: Prisma.PromotionalBannerUpdateManyWithoutTenantNestedInput
+  discountCodes?: Prisma.DiscountCodeUpdateManyWithoutTenantNestedInput
+  shippingZones?: Prisma.ShippingZoneUpdateManyWithoutTenantNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutTenantNestedInput
+  feedbackRatings?: Prisma.FeedbackRatingUpdateManyWithoutTenantNestedInput
+  emailUnsubscribes?: Prisma.EmailUnsubscribeUpdateManyWithoutTenantNestedInput
+  repairDeviceServices?: Prisma.RepairDeviceServiceUpdateManyWithoutTenantNestedInput
+  repairBrands?: Prisma.RepairBrandUpdateManyWithoutTenantNestedInput
+  repairDevices?: Prisma.RepairDeviceUpdateManyWithoutTenantNestedInput
+  repairServiceTypes?: Prisma.RepairServiceTypeUpdateManyWithoutTenantNestedInput
+  homepage?: Prisma.TenantHomepageUpdateOneWithoutTenantNestedInput
+  pages?: Prisma.TenantPageUpdateManyWithoutTenantNestedInput
+  services?: Prisma.ServiceUpdateManyWithoutTenantNestedInput
+  bookings?: Prisma.BookingUpdateManyWithoutTenantNestedInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUpdateOneWithoutTenantNestedInput
+  fieldDefinitions?: Prisma.FieldDefinitionUpdateManyWithoutTenantNestedInput
+}
+
+export type TenantUncheckedUpdateWithoutServiceCategoriesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumTenantStatusFieldUpdateOperationsInput | $Enums.TenantStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  onboardingStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  domains?: Prisma.TenantDomainUncheckedUpdateManyWithoutTenantNestedInput
+  config?: Prisma.TenantConfigUncheckedUpdateOneWithoutTenantNestedInput
+  features?: Prisma.TenantFeatureUncheckedUpdateOneWithoutTenantNestedInput
+  uiConfig?: Prisma.TenantUIConfigUncheckedUpdateOneWithoutTenantNestedInput
+  users?: Prisma.UserUncheckedUpdateManyWithoutTenantNestedInput
+  products?: Prisma.ProductUncheckedUpdateManyWithoutTenantNestedInput
+  categories?: Prisma.CategoryUncheckedUpdateManyWithoutTenantNestedInput
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutTenantNestedInput
+  appointments?: Prisma.AppointmentUncheckedUpdateManyWithoutTenantNestedInput
+  tickets?: Prisma.TicketUncheckedUpdateManyWithoutTenantNestedInput
+  repairTickets?: Prisma.RepairTicketUncheckedUpdateManyWithoutTenantNestedInput
+  invoices?: Prisma.InvoiceUncheckedUpdateManyWithoutTenantNestedInput
+  settings?: Prisma.SettingUncheckedUpdateManyWithoutTenantNestedInput
+  banners?: Prisma.PromotionalBannerUncheckedUpdateManyWithoutTenantNestedInput
+  discountCodes?: Prisma.DiscountCodeUncheckedUpdateManyWithoutTenantNestedInput
+  shippingZones?: Prisma.ShippingZoneUncheckedUpdateManyWithoutTenantNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutTenantNestedInput
+  feedbackRatings?: Prisma.FeedbackRatingUncheckedUpdateManyWithoutTenantNestedInput
+  emailUnsubscribes?: Prisma.EmailUnsubscribeUncheckedUpdateManyWithoutTenantNestedInput
+  repairDeviceServices?: Prisma.RepairDeviceServiceUncheckedUpdateManyWithoutTenantNestedInput
+  repairBrands?: Prisma.RepairBrandUncheckedUpdateManyWithoutTenantNestedInput
+  repairDevices?: Prisma.RepairDeviceUncheckedUpdateManyWithoutTenantNestedInput
+  repairServiceTypes?: Prisma.RepairServiceTypeUncheckedUpdateManyWithoutTenantNestedInput
+  homepage?: Prisma.TenantHomepageUncheckedUpdateOneWithoutTenantNestedInput
+  pages?: Prisma.TenantPageUncheckedUpdateManyWithoutTenantNestedInput
+  services?: Prisma.ServiceUncheckedUpdateManyWithoutTenantNestedInput
+  bookings?: Prisma.BookingUncheckedUpdateManyWithoutTenantNestedInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUncheckedUpdateOneWithoutTenantNestedInput
+  fieldDefinitions?: Prisma.FieldDefinitionUncheckedUpdateManyWithoutTenantNestedInput
+}
+
+export type TenantCreateWithoutServicesInput = {
+  id?: string
+  name: string
+  slug: string
+  status?: $Enums.TenantStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  suspendedAt?: Date | string | null
+  archivedAt?: Date | string | null
+  onboardingStatus?: string | null
+  domains?: Prisma.TenantDomainCreateNestedManyWithoutTenantInput
+  config?: Prisma.TenantConfigCreateNestedOneWithoutTenantInput
+  features?: Prisma.TenantFeatureCreateNestedOneWithoutTenantInput
+  uiConfig?: Prisma.TenantUIConfigCreateNestedOneWithoutTenantInput
+  users?: Prisma.UserCreateNestedManyWithoutTenantInput
+  products?: Prisma.ProductCreateNestedManyWithoutTenantInput
+  categories?: Prisma.CategoryCreateNestedManyWithoutTenantInput
+  orders?: Prisma.OrderCreateNestedManyWithoutTenantInput
+  appointments?: Prisma.AppointmentCreateNestedManyWithoutTenantInput
+  tickets?: Prisma.TicketCreateNestedManyWithoutTenantInput
+  repairTickets?: Prisma.RepairTicketCreateNestedManyWithoutTenantInput
+  invoices?: Prisma.InvoiceCreateNestedManyWithoutTenantInput
+  settings?: Prisma.SettingCreateNestedManyWithoutTenantInput
+  banners?: Prisma.PromotionalBannerCreateNestedManyWithoutTenantInput
+  discountCodes?: Prisma.DiscountCodeCreateNestedManyWithoutTenantInput
+  shippingZones?: Prisma.ShippingZoneCreateNestedManyWithoutTenantInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutTenantInput
+  feedbackRatings?: Prisma.FeedbackRatingCreateNestedManyWithoutTenantInput
+  emailUnsubscribes?: Prisma.EmailUnsubscribeCreateNestedManyWithoutTenantInput
+  repairDeviceServices?: Prisma.RepairDeviceServiceCreateNestedManyWithoutTenantInput
+  repairBrands?: Prisma.RepairBrandCreateNestedManyWithoutTenantInput
+  repairDevices?: Prisma.RepairDeviceCreateNestedManyWithoutTenantInput
+  repairServiceTypes?: Prisma.RepairServiceTypeCreateNestedManyWithoutTenantInput
+  homepage?: Prisma.TenantHomepageCreateNestedOneWithoutTenantInput
+  pages?: Prisma.TenantPageCreateNestedManyWithoutTenantInput
+  serviceCategories?: Prisma.ServiceCategoryCreateNestedManyWithoutTenantInput
+  bookings?: Prisma.BookingCreateNestedManyWithoutTenantInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigCreateNestedOneWithoutTenantInput
+  fieldDefinitions?: Prisma.FieldDefinitionCreateNestedManyWithoutTenantInput
+}
+
+export type TenantUncheckedCreateWithoutServicesInput = {
+  id?: string
+  name: string
+  slug: string
+  status?: $Enums.TenantStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  suspendedAt?: Date | string | null
+  archivedAt?: Date | string | null
+  onboardingStatus?: string | null
+  domains?: Prisma.TenantDomainUncheckedCreateNestedManyWithoutTenantInput
+  config?: Prisma.TenantConfigUncheckedCreateNestedOneWithoutTenantInput
+  features?: Prisma.TenantFeatureUncheckedCreateNestedOneWithoutTenantInput
+  uiConfig?: Prisma.TenantUIConfigUncheckedCreateNestedOneWithoutTenantInput
+  users?: Prisma.UserUncheckedCreateNestedManyWithoutTenantInput
+  products?: Prisma.ProductUncheckedCreateNestedManyWithoutTenantInput
+  categories?: Prisma.CategoryUncheckedCreateNestedManyWithoutTenantInput
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutTenantInput
+  appointments?: Prisma.AppointmentUncheckedCreateNestedManyWithoutTenantInput
+  tickets?: Prisma.TicketUncheckedCreateNestedManyWithoutTenantInput
+  repairTickets?: Prisma.RepairTicketUncheckedCreateNestedManyWithoutTenantInput
+  invoices?: Prisma.InvoiceUncheckedCreateNestedManyWithoutTenantInput
+  settings?: Prisma.SettingUncheckedCreateNestedManyWithoutTenantInput
+  banners?: Prisma.PromotionalBannerUncheckedCreateNestedManyWithoutTenantInput
+  discountCodes?: Prisma.DiscountCodeUncheckedCreateNestedManyWithoutTenantInput
+  shippingZones?: Prisma.ShippingZoneUncheckedCreateNestedManyWithoutTenantInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutTenantInput
+  feedbackRatings?: Prisma.FeedbackRatingUncheckedCreateNestedManyWithoutTenantInput
+  emailUnsubscribes?: Prisma.EmailUnsubscribeUncheckedCreateNestedManyWithoutTenantInput
+  repairDeviceServices?: Prisma.RepairDeviceServiceUncheckedCreateNestedManyWithoutTenantInput
+  repairBrands?: Prisma.RepairBrandUncheckedCreateNestedManyWithoutTenantInput
+  repairDevices?: Prisma.RepairDeviceUncheckedCreateNestedManyWithoutTenantInput
+  repairServiceTypes?: Prisma.RepairServiceTypeUncheckedCreateNestedManyWithoutTenantInput
+  homepage?: Prisma.TenantHomepageUncheckedCreateNestedOneWithoutTenantInput
+  pages?: Prisma.TenantPageUncheckedCreateNestedManyWithoutTenantInput
+  serviceCategories?: Prisma.ServiceCategoryUncheckedCreateNestedManyWithoutTenantInput
+  bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutTenantInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUncheckedCreateNestedOneWithoutTenantInput
+  fieldDefinitions?: Prisma.FieldDefinitionUncheckedCreateNestedManyWithoutTenantInput
+}
+
+export type TenantCreateOrConnectWithoutServicesInput = {
+  where: Prisma.TenantWhereUniqueInput
+  create: Prisma.XOR<Prisma.TenantCreateWithoutServicesInput, Prisma.TenantUncheckedCreateWithoutServicesInput>
+}
+
+export type TenantUpsertWithoutServicesInput = {
+  update: Prisma.XOR<Prisma.TenantUpdateWithoutServicesInput, Prisma.TenantUncheckedUpdateWithoutServicesInput>
+  create: Prisma.XOR<Prisma.TenantCreateWithoutServicesInput, Prisma.TenantUncheckedCreateWithoutServicesInput>
+  where?: Prisma.TenantWhereInput
+}
+
+export type TenantUpdateToOneWithWhereWithoutServicesInput = {
+  where?: Prisma.TenantWhereInput
+  data: Prisma.XOR<Prisma.TenantUpdateWithoutServicesInput, Prisma.TenantUncheckedUpdateWithoutServicesInput>
+}
+
+export type TenantUpdateWithoutServicesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumTenantStatusFieldUpdateOperationsInput | $Enums.TenantStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  onboardingStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  domains?: Prisma.TenantDomainUpdateManyWithoutTenantNestedInput
+  config?: Prisma.TenantConfigUpdateOneWithoutTenantNestedInput
+  features?: Prisma.TenantFeatureUpdateOneWithoutTenantNestedInput
+  uiConfig?: Prisma.TenantUIConfigUpdateOneWithoutTenantNestedInput
+  users?: Prisma.UserUpdateManyWithoutTenantNestedInput
+  products?: Prisma.ProductUpdateManyWithoutTenantNestedInput
+  categories?: Prisma.CategoryUpdateManyWithoutTenantNestedInput
+  orders?: Prisma.OrderUpdateManyWithoutTenantNestedInput
+  appointments?: Prisma.AppointmentUpdateManyWithoutTenantNestedInput
+  tickets?: Prisma.TicketUpdateManyWithoutTenantNestedInput
+  repairTickets?: Prisma.RepairTicketUpdateManyWithoutTenantNestedInput
+  invoices?: Prisma.InvoiceUpdateManyWithoutTenantNestedInput
+  settings?: Prisma.SettingUpdateManyWithoutTenantNestedInput
+  banners?: Prisma.PromotionalBannerUpdateManyWithoutTenantNestedInput
+  discountCodes?: Prisma.DiscountCodeUpdateManyWithoutTenantNestedInput
+  shippingZones?: Prisma.ShippingZoneUpdateManyWithoutTenantNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutTenantNestedInput
+  feedbackRatings?: Prisma.FeedbackRatingUpdateManyWithoutTenantNestedInput
+  emailUnsubscribes?: Prisma.EmailUnsubscribeUpdateManyWithoutTenantNestedInput
+  repairDeviceServices?: Prisma.RepairDeviceServiceUpdateManyWithoutTenantNestedInput
+  repairBrands?: Prisma.RepairBrandUpdateManyWithoutTenantNestedInput
+  repairDevices?: Prisma.RepairDeviceUpdateManyWithoutTenantNestedInput
+  repairServiceTypes?: Prisma.RepairServiceTypeUpdateManyWithoutTenantNestedInput
+  homepage?: Prisma.TenantHomepageUpdateOneWithoutTenantNestedInput
+  pages?: Prisma.TenantPageUpdateManyWithoutTenantNestedInput
+  serviceCategories?: Prisma.ServiceCategoryUpdateManyWithoutTenantNestedInput
+  bookings?: Prisma.BookingUpdateManyWithoutTenantNestedInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUpdateOneWithoutTenantNestedInput
+  fieldDefinitions?: Prisma.FieldDefinitionUpdateManyWithoutTenantNestedInput
+}
+
+export type TenantUncheckedUpdateWithoutServicesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumTenantStatusFieldUpdateOperationsInput | $Enums.TenantStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  onboardingStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  domains?: Prisma.TenantDomainUncheckedUpdateManyWithoutTenantNestedInput
+  config?: Prisma.TenantConfigUncheckedUpdateOneWithoutTenantNestedInput
+  features?: Prisma.TenantFeatureUncheckedUpdateOneWithoutTenantNestedInput
+  uiConfig?: Prisma.TenantUIConfigUncheckedUpdateOneWithoutTenantNestedInput
+  users?: Prisma.UserUncheckedUpdateManyWithoutTenantNestedInput
+  products?: Prisma.ProductUncheckedUpdateManyWithoutTenantNestedInput
+  categories?: Prisma.CategoryUncheckedUpdateManyWithoutTenantNestedInput
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutTenantNestedInput
+  appointments?: Prisma.AppointmentUncheckedUpdateManyWithoutTenantNestedInput
+  tickets?: Prisma.TicketUncheckedUpdateManyWithoutTenantNestedInput
+  repairTickets?: Prisma.RepairTicketUncheckedUpdateManyWithoutTenantNestedInput
+  invoices?: Prisma.InvoiceUncheckedUpdateManyWithoutTenantNestedInput
+  settings?: Prisma.SettingUncheckedUpdateManyWithoutTenantNestedInput
+  banners?: Prisma.PromotionalBannerUncheckedUpdateManyWithoutTenantNestedInput
+  discountCodes?: Prisma.DiscountCodeUncheckedUpdateManyWithoutTenantNestedInput
+  shippingZones?: Prisma.ShippingZoneUncheckedUpdateManyWithoutTenantNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutTenantNestedInput
+  feedbackRatings?: Prisma.FeedbackRatingUncheckedUpdateManyWithoutTenantNestedInput
+  emailUnsubscribes?: Prisma.EmailUnsubscribeUncheckedUpdateManyWithoutTenantNestedInput
+  repairDeviceServices?: Prisma.RepairDeviceServiceUncheckedUpdateManyWithoutTenantNestedInput
+  repairBrands?: Prisma.RepairBrandUncheckedUpdateManyWithoutTenantNestedInput
+  repairDevices?: Prisma.RepairDeviceUncheckedUpdateManyWithoutTenantNestedInput
+  repairServiceTypes?: Prisma.RepairServiceTypeUncheckedUpdateManyWithoutTenantNestedInput
+  homepage?: Prisma.TenantHomepageUncheckedUpdateOneWithoutTenantNestedInput
+  pages?: Prisma.TenantPageUncheckedUpdateManyWithoutTenantNestedInput
+  serviceCategories?: Prisma.ServiceCategoryUncheckedUpdateManyWithoutTenantNestedInput
+  bookings?: Prisma.BookingUncheckedUpdateManyWithoutTenantNestedInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUncheckedUpdateOneWithoutTenantNestedInput
+  fieldDefinitions?: Prisma.FieldDefinitionUncheckedUpdateManyWithoutTenantNestedInput
+}
+
+export type TenantCreateWithoutBookingsInput = {
+  id?: string
+  name: string
+  slug: string
+  status?: $Enums.TenantStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  suspendedAt?: Date | string | null
+  archivedAt?: Date | string | null
+  onboardingStatus?: string | null
+  domains?: Prisma.TenantDomainCreateNestedManyWithoutTenantInput
+  config?: Prisma.TenantConfigCreateNestedOneWithoutTenantInput
+  features?: Prisma.TenantFeatureCreateNestedOneWithoutTenantInput
+  uiConfig?: Prisma.TenantUIConfigCreateNestedOneWithoutTenantInput
+  users?: Prisma.UserCreateNestedManyWithoutTenantInput
+  products?: Prisma.ProductCreateNestedManyWithoutTenantInput
+  categories?: Prisma.CategoryCreateNestedManyWithoutTenantInput
+  orders?: Prisma.OrderCreateNestedManyWithoutTenantInput
+  appointments?: Prisma.AppointmentCreateNestedManyWithoutTenantInput
+  tickets?: Prisma.TicketCreateNestedManyWithoutTenantInput
+  repairTickets?: Prisma.RepairTicketCreateNestedManyWithoutTenantInput
+  invoices?: Prisma.InvoiceCreateNestedManyWithoutTenantInput
+  settings?: Prisma.SettingCreateNestedManyWithoutTenantInput
+  banners?: Prisma.PromotionalBannerCreateNestedManyWithoutTenantInput
+  discountCodes?: Prisma.DiscountCodeCreateNestedManyWithoutTenantInput
+  shippingZones?: Prisma.ShippingZoneCreateNestedManyWithoutTenantInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutTenantInput
+  feedbackRatings?: Prisma.FeedbackRatingCreateNestedManyWithoutTenantInput
+  emailUnsubscribes?: Prisma.EmailUnsubscribeCreateNestedManyWithoutTenantInput
+  repairDeviceServices?: Prisma.RepairDeviceServiceCreateNestedManyWithoutTenantInput
+  repairBrands?: Prisma.RepairBrandCreateNestedManyWithoutTenantInput
+  repairDevices?: Prisma.RepairDeviceCreateNestedManyWithoutTenantInput
+  repairServiceTypes?: Prisma.RepairServiceTypeCreateNestedManyWithoutTenantInput
+  homepage?: Prisma.TenantHomepageCreateNestedOneWithoutTenantInput
+  pages?: Prisma.TenantPageCreateNestedManyWithoutTenantInput
+  serviceCategories?: Prisma.ServiceCategoryCreateNestedManyWithoutTenantInput
+  services?: Prisma.ServiceCreateNestedManyWithoutTenantInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigCreateNestedOneWithoutTenantInput
+  fieldDefinitions?: Prisma.FieldDefinitionCreateNestedManyWithoutTenantInput
+}
+
+export type TenantUncheckedCreateWithoutBookingsInput = {
+  id?: string
+  name: string
+  slug: string
+  status?: $Enums.TenantStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  suspendedAt?: Date | string | null
+  archivedAt?: Date | string | null
+  onboardingStatus?: string | null
+  domains?: Prisma.TenantDomainUncheckedCreateNestedManyWithoutTenantInput
+  config?: Prisma.TenantConfigUncheckedCreateNestedOneWithoutTenantInput
+  features?: Prisma.TenantFeatureUncheckedCreateNestedOneWithoutTenantInput
+  uiConfig?: Prisma.TenantUIConfigUncheckedCreateNestedOneWithoutTenantInput
+  users?: Prisma.UserUncheckedCreateNestedManyWithoutTenantInput
+  products?: Prisma.ProductUncheckedCreateNestedManyWithoutTenantInput
+  categories?: Prisma.CategoryUncheckedCreateNestedManyWithoutTenantInput
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutTenantInput
+  appointments?: Prisma.AppointmentUncheckedCreateNestedManyWithoutTenantInput
+  tickets?: Prisma.TicketUncheckedCreateNestedManyWithoutTenantInput
+  repairTickets?: Prisma.RepairTicketUncheckedCreateNestedManyWithoutTenantInput
+  invoices?: Prisma.InvoiceUncheckedCreateNestedManyWithoutTenantInput
+  settings?: Prisma.SettingUncheckedCreateNestedManyWithoutTenantInput
+  banners?: Prisma.PromotionalBannerUncheckedCreateNestedManyWithoutTenantInput
+  discountCodes?: Prisma.DiscountCodeUncheckedCreateNestedManyWithoutTenantInput
+  shippingZones?: Prisma.ShippingZoneUncheckedCreateNestedManyWithoutTenantInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutTenantInput
+  feedbackRatings?: Prisma.FeedbackRatingUncheckedCreateNestedManyWithoutTenantInput
+  emailUnsubscribes?: Prisma.EmailUnsubscribeUncheckedCreateNestedManyWithoutTenantInput
+  repairDeviceServices?: Prisma.RepairDeviceServiceUncheckedCreateNestedManyWithoutTenantInput
+  repairBrands?: Prisma.RepairBrandUncheckedCreateNestedManyWithoutTenantInput
+  repairDevices?: Prisma.RepairDeviceUncheckedCreateNestedManyWithoutTenantInput
+  repairServiceTypes?: Prisma.RepairServiceTypeUncheckedCreateNestedManyWithoutTenantInput
+  homepage?: Prisma.TenantHomepageUncheckedCreateNestedOneWithoutTenantInput
+  pages?: Prisma.TenantPageUncheckedCreateNestedManyWithoutTenantInput
+  serviceCategories?: Prisma.ServiceCategoryUncheckedCreateNestedManyWithoutTenantInput
+  services?: Prisma.ServiceUncheckedCreateNestedManyWithoutTenantInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUncheckedCreateNestedOneWithoutTenantInput
+  fieldDefinitions?: Prisma.FieldDefinitionUncheckedCreateNestedManyWithoutTenantInput
+}
+
+export type TenantCreateOrConnectWithoutBookingsInput = {
+  where: Prisma.TenantWhereUniqueInput
+  create: Prisma.XOR<Prisma.TenantCreateWithoutBookingsInput, Prisma.TenantUncheckedCreateWithoutBookingsInput>
+}
+
+export type TenantUpsertWithoutBookingsInput = {
+  update: Prisma.XOR<Prisma.TenantUpdateWithoutBookingsInput, Prisma.TenantUncheckedUpdateWithoutBookingsInput>
+  create: Prisma.XOR<Prisma.TenantCreateWithoutBookingsInput, Prisma.TenantUncheckedCreateWithoutBookingsInput>
+  where?: Prisma.TenantWhereInput
+}
+
+export type TenantUpdateToOneWithWhereWithoutBookingsInput = {
+  where?: Prisma.TenantWhereInput
+  data: Prisma.XOR<Prisma.TenantUpdateWithoutBookingsInput, Prisma.TenantUncheckedUpdateWithoutBookingsInput>
+}
+
+export type TenantUpdateWithoutBookingsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumTenantStatusFieldUpdateOperationsInput | $Enums.TenantStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  onboardingStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  domains?: Prisma.TenantDomainUpdateManyWithoutTenantNestedInput
+  config?: Prisma.TenantConfigUpdateOneWithoutTenantNestedInput
+  features?: Prisma.TenantFeatureUpdateOneWithoutTenantNestedInput
+  uiConfig?: Prisma.TenantUIConfigUpdateOneWithoutTenantNestedInput
+  users?: Prisma.UserUpdateManyWithoutTenantNestedInput
+  products?: Prisma.ProductUpdateManyWithoutTenantNestedInput
+  categories?: Prisma.CategoryUpdateManyWithoutTenantNestedInput
+  orders?: Prisma.OrderUpdateManyWithoutTenantNestedInput
+  appointments?: Prisma.AppointmentUpdateManyWithoutTenantNestedInput
+  tickets?: Prisma.TicketUpdateManyWithoutTenantNestedInput
+  repairTickets?: Prisma.RepairTicketUpdateManyWithoutTenantNestedInput
+  invoices?: Prisma.InvoiceUpdateManyWithoutTenantNestedInput
+  settings?: Prisma.SettingUpdateManyWithoutTenantNestedInput
+  banners?: Prisma.PromotionalBannerUpdateManyWithoutTenantNestedInput
+  discountCodes?: Prisma.DiscountCodeUpdateManyWithoutTenantNestedInput
+  shippingZones?: Prisma.ShippingZoneUpdateManyWithoutTenantNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutTenantNestedInput
+  feedbackRatings?: Prisma.FeedbackRatingUpdateManyWithoutTenantNestedInput
+  emailUnsubscribes?: Prisma.EmailUnsubscribeUpdateManyWithoutTenantNestedInput
+  repairDeviceServices?: Prisma.RepairDeviceServiceUpdateManyWithoutTenantNestedInput
+  repairBrands?: Prisma.RepairBrandUpdateManyWithoutTenantNestedInput
+  repairDevices?: Prisma.RepairDeviceUpdateManyWithoutTenantNestedInput
+  repairServiceTypes?: Prisma.RepairServiceTypeUpdateManyWithoutTenantNestedInput
+  homepage?: Prisma.TenantHomepageUpdateOneWithoutTenantNestedInput
+  pages?: Prisma.TenantPageUpdateManyWithoutTenantNestedInput
+  serviceCategories?: Prisma.ServiceCategoryUpdateManyWithoutTenantNestedInput
+  services?: Prisma.ServiceUpdateManyWithoutTenantNestedInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUpdateOneWithoutTenantNestedInput
+  fieldDefinitions?: Prisma.FieldDefinitionUpdateManyWithoutTenantNestedInput
+}
+
+export type TenantUncheckedUpdateWithoutBookingsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumTenantStatusFieldUpdateOperationsInput | $Enums.TenantStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  onboardingStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  domains?: Prisma.TenantDomainUncheckedUpdateManyWithoutTenantNestedInput
+  config?: Prisma.TenantConfigUncheckedUpdateOneWithoutTenantNestedInput
+  features?: Prisma.TenantFeatureUncheckedUpdateOneWithoutTenantNestedInput
+  uiConfig?: Prisma.TenantUIConfigUncheckedUpdateOneWithoutTenantNestedInput
+  users?: Prisma.UserUncheckedUpdateManyWithoutTenantNestedInput
+  products?: Prisma.ProductUncheckedUpdateManyWithoutTenantNestedInput
+  categories?: Prisma.CategoryUncheckedUpdateManyWithoutTenantNestedInput
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutTenantNestedInput
+  appointments?: Prisma.AppointmentUncheckedUpdateManyWithoutTenantNestedInput
+  tickets?: Prisma.TicketUncheckedUpdateManyWithoutTenantNestedInput
+  repairTickets?: Prisma.RepairTicketUncheckedUpdateManyWithoutTenantNestedInput
+  invoices?: Prisma.InvoiceUncheckedUpdateManyWithoutTenantNestedInput
+  settings?: Prisma.SettingUncheckedUpdateManyWithoutTenantNestedInput
+  banners?: Prisma.PromotionalBannerUncheckedUpdateManyWithoutTenantNestedInput
+  discountCodes?: Prisma.DiscountCodeUncheckedUpdateManyWithoutTenantNestedInput
+  shippingZones?: Prisma.ShippingZoneUncheckedUpdateManyWithoutTenantNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutTenantNestedInput
+  feedbackRatings?: Prisma.FeedbackRatingUncheckedUpdateManyWithoutTenantNestedInput
+  emailUnsubscribes?: Prisma.EmailUnsubscribeUncheckedUpdateManyWithoutTenantNestedInput
+  repairDeviceServices?: Prisma.RepairDeviceServiceUncheckedUpdateManyWithoutTenantNestedInput
+  repairBrands?: Prisma.RepairBrandUncheckedUpdateManyWithoutTenantNestedInput
+  repairDevices?: Prisma.RepairDeviceUncheckedUpdateManyWithoutTenantNestedInput
+  repairServiceTypes?: Prisma.RepairServiceTypeUncheckedUpdateManyWithoutTenantNestedInput
+  homepage?: Prisma.TenantHomepageUncheckedUpdateOneWithoutTenantNestedInput
+  pages?: Prisma.TenantPageUncheckedUpdateManyWithoutTenantNestedInput
+  serviceCategories?: Prisma.ServiceCategoryUncheckedUpdateManyWithoutTenantNestedInput
+  services?: Prisma.ServiceUncheckedUpdateManyWithoutTenantNestedInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUncheckedUpdateOneWithoutTenantNestedInput
+  fieldDefinitions?: Prisma.FieldDefinitionUncheckedUpdateManyWithoutTenantNestedInput
+}
+
+export type TenantCreateWithoutBookingFlowConfigInput = {
+  id?: string
+  name: string
+  slug: string
+  status?: $Enums.TenantStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  suspendedAt?: Date | string | null
+  archivedAt?: Date | string | null
+  onboardingStatus?: string | null
+  domains?: Prisma.TenantDomainCreateNestedManyWithoutTenantInput
+  config?: Prisma.TenantConfigCreateNestedOneWithoutTenantInput
+  features?: Prisma.TenantFeatureCreateNestedOneWithoutTenantInput
+  uiConfig?: Prisma.TenantUIConfigCreateNestedOneWithoutTenantInput
+  users?: Prisma.UserCreateNestedManyWithoutTenantInput
+  products?: Prisma.ProductCreateNestedManyWithoutTenantInput
+  categories?: Prisma.CategoryCreateNestedManyWithoutTenantInput
+  orders?: Prisma.OrderCreateNestedManyWithoutTenantInput
+  appointments?: Prisma.AppointmentCreateNestedManyWithoutTenantInput
+  tickets?: Prisma.TicketCreateNestedManyWithoutTenantInput
+  repairTickets?: Prisma.RepairTicketCreateNestedManyWithoutTenantInput
+  invoices?: Prisma.InvoiceCreateNestedManyWithoutTenantInput
+  settings?: Prisma.SettingCreateNestedManyWithoutTenantInput
+  banners?: Prisma.PromotionalBannerCreateNestedManyWithoutTenantInput
+  discountCodes?: Prisma.DiscountCodeCreateNestedManyWithoutTenantInput
+  shippingZones?: Prisma.ShippingZoneCreateNestedManyWithoutTenantInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutTenantInput
+  feedbackRatings?: Prisma.FeedbackRatingCreateNestedManyWithoutTenantInput
+  emailUnsubscribes?: Prisma.EmailUnsubscribeCreateNestedManyWithoutTenantInput
+  repairDeviceServices?: Prisma.RepairDeviceServiceCreateNestedManyWithoutTenantInput
+  repairBrands?: Prisma.RepairBrandCreateNestedManyWithoutTenantInput
+  repairDevices?: Prisma.RepairDeviceCreateNestedManyWithoutTenantInput
+  repairServiceTypes?: Prisma.RepairServiceTypeCreateNestedManyWithoutTenantInput
+  homepage?: Prisma.TenantHomepageCreateNestedOneWithoutTenantInput
+  pages?: Prisma.TenantPageCreateNestedManyWithoutTenantInput
+  serviceCategories?: Prisma.ServiceCategoryCreateNestedManyWithoutTenantInput
+  services?: Prisma.ServiceCreateNestedManyWithoutTenantInput
+  bookings?: Prisma.BookingCreateNestedManyWithoutTenantInput
+  fieldDefinitions?: Prisma.FieldDefinitionCreateNestedManyWithoutTenantInput
+}
+
+export type TenantUncheckedCreateWithoutBookingFlowConfigInput = {
+  id?: string
+  name: string
+  slug: string
+  status?: $Enums.TenantStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  suspendedAt?: Date | string | null
+  archivedAt?: Date | string | null
+  onboardingStatus?: string | null
+  domains?: Prisma.TenantDomainUncheckedCreateNestedManyWithoutTenantInput
+  config?: Prisma.TenantConfigUncheckedCreateNestedOneWithoutTenantInput
+  features?: Prisma.TenantFeatureUncheckedCreateNestedOneWithoutTenantInput
+  uiConfig?: Prisma.TenantUIConfigUncheckedCreateNestedOneWithoutTenantInput
+  users?: Prisma.UserUncheckedCreateNestedManyWithoutTenantInput
+  products?: Prisma.ProductUncheckedCreateNestedManyWithoutTenantInput
+  categories?: Prisma.CategoryUncheckedCreateNestedManyWithoutTenantInput
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutTenantInput
+  appointments?: Prisma.AppointmentUncheckedCreateNestedManyWithoutTenantInput
+  tickets?: Prisma.TicketUncheckedCreateNestedManyWithoutTenantInput
+  repairTickets?: Prisma.RepairTicketUncheckedCreateNestedManyWithoutTenantInput
+  invoices?: Prisma.InvoiceUncheckedCreateNestedManyWithoutTenantInput
+  settings?: Prisma.SettingUncheckedCreateNestedManyWithoutTenantInput
+  banners?: Prisma.PromotionalBannerUncheckedCreateNestedManyWithoutTenantInput
+  discountCodes?: Prisma.DiscountCodeUncheckedCreateNestedManyWithoutTenantInput
+  shippingZones?: Prisma.ShippingZoneUncheckedCreateNestedManyWithoutTenantInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutTenantInput
+  feedbackRatings?: Prisma.FeedbackRatingUncheckedCreateNestedManyWithoutTenantInput
+  emailUnsubscribes?: Prisma.EmailUnsubscribeUncheckedCreateNestedManyWithoutTenantInput
+  repairDeviceServices?: Prisma.RepairDeviceServiceUncheckedCreateNestedManyWithoutTenantInput
+  repairBrands?: Prisma.RepairBrandUncheckedCreateNestedManyWithoutTenantInput
+  repairDevices?: Prisma.RepairDeviceUncheckedCreateNestedManyWithoutTenantInput
+  repairServiceTypes?: Prisma.RepairServiceTypeUncheckedCreateNestedManyWithoutTenantInput
+  homepage?: Prisma.TenantHomepageUncheckedCreateNestedOneWithoutTenantInput
+  pages?: Prisma.TenantPageUncheckedCreateNestedManyWithoutTenantInput
+  serviceCategories?: Prisma.ServiceCategoryUncheckedCreateNestedManyWithoutTenantInput
+  services?: Prisma.ServiceUncheckedCreateNestedManyWithoutTenantInput
+  bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutTenantInput
+  fieldDefinitions?: Prisma.FieldDefinitionUncheckedCreateNestedManyWithoutTenantInput
+}
+
+export type TenantCreateOrConnectWithoutBookingFlowConfigInput = {
+  where: Prisma.TenantWhereUniqueInput
+  create: Prisma.XOR<Prisma.TenantCreateWithoutBookingFlowConfigInput, Prisma.TenantUncheckedCreateWithoutBookingFlowConfigInput>
+}
+
+export type TenantUpsertWithoutBookingFlowConfigInput = {
+  update: Prisma.XOR<Prisma.TenantUpdateWithoutBookingFlowConfigInput, Prisma.TenantUncheckedUpdateWithoutBookingFlowConfigInput>
+  create: Prisma.XOR<Prisma.TenantCreateWithoutBookingFlowConfigInput, Prisma.TenantUncheckedCreateWithoutBookingFlowConfigInput>
+  where?: Prisma.TenantWhereInput
+}
+
+export type TenantUpdateToOneWithWhereWithoutBookingFlowConfigInput = {
+  where?: Prisma.TenantWhereInput
+  data: Prisma.XOR<Prisma.TenantUpdateWithoutBookingFlowConfigInput, Prisma.TenantUncheckedUpdateWithoutBookingFlowConfigInput>
+}
+
+export type TenantUpdateWithoutBookingFlowConfigInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumTenantStatusFieldUpdateOperationsInput | $Enums.TenantStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  onboardingStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  domains?: Prisma.TenantDomainUpdateManyWithoutTenantNestedInput
+  config?: Prisma.TenantConfigUpdateOneWithoutTenantNestedInput
+  features?: Prisma.TenantFeatureUpdateOneWithoutTenantNestedInput
+  uiConfig?: Prisma.TenantUIConfigUpdateOneWithoutTenantNestedInput
+  users?: Prisma.UserUpdateManyWithoutTenantNestedInput
+  products?: Prisma.ProductUpdateManyWithoutTenantNestedInput
+  categories?: Prisma.CategoryUpdateManyWithoutTenantNestedInput
+  orders?: Prisma.OrderUpdateManyWithoutTenantNestedInput
+  appointments?: Prisma.AppointmentUpdateManyWithoutTenantNestedInput
+  tickets?: Prisma.TicketUpdateManyWithoutTenantNestedInput
+  repairTickets?: Prisma.RepairTicketUpdateManyWithoutTenantNestedInput
+  invoices?: Prisma.InvoiceUpdateManyWithoutTenantNestedInput
+  settings?: Prisma.SettingUpdateManyWithoutTenantNestedInput
+  banners?: Prisma.PromotionalBannerUpdateManyWithoutTenantNestedInput
+  discountCodes?: Prisma.DiscountCodeUpdateManyWithoutTenantNestedInput
+  shippingZones?: Prisma.ShippingZoneUpdateManyWithoutTenantNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutTenantNestedInput
+  feedbackRatings?: Prisma.FeedbackRatingUpdateManyWithoutTenantNestedInput
+  emailUnsubscribes?: Prisma.EmailUnsubscribeUpdateManyWithoutTenantNestedInput
+  repairDeviceServices?: Prisma.RepairDeviceServiceUpdateManyWithoutTenantNestedInput
+  repairBrands?: Prisma.RepairBrandUpdateManyWithoutTenantNestedInput
+  repairDevices?: Prisma.RepairDeviceUpdateManyWithoutTenantNestedInput
+  repairServiceTypes?: Prisma.RepairServiceTypeUpdateManyWithoutTenantNestedInput
+  homepage?: Prisma.TenantHomepageUpdateOneWithoutTenantNestedInput
+  pages?: Prisma.TenantPageUpdateManyWithoutTenantNestedInput
+  serviceCategories?: Prisma.ServiceCategoryUpdateManyWithoutTenantNestedInput
+  services?: Prisma.ServiceUpdateManyWithoutTenantNestedInput
+  bookings?: Prisma.BookingUpdateManyWithoutTenantNestedInput
+  fieldDefinitions?: Prisma.FieldDefinitionUpdateManyWithoutTenantNestedInput
+}
+
+export type TenantUncheckedUpdateWithoutBookingFlowConfigInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumTenantStatusFieldUpdateOperationsInput | $Enums.TenantStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  onboardingStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  domains?: Prisma.TenantDomainUncheckedUpdateManyWithoutTenantNestedInput
+  config?: Prisma.TenantConfigUncheckedUpdateOneWithoutTenantNestedInput
+  features?: Prisma.TenantFeatureUncheckedUpdateOneWithoutTenantNestedInput
+  uiConfig?: Prisma.TenantUIConfigUncheckedUpdateOneWithoutTenantNestedInput
+  users?: Prisma.UserUncheckedUpdateManyWithoutTenantNestedInput
+  products?: Prisma.ProductUncheckedUpdateManyWithoutTenantNestedInput
+  categories?: Prisma.CategoryUncheckedUpdateManyWithoutTenantNestedInput
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutTenantNestedInput
+  appointments?: Prisma.AppointmentUncheckedUpdateManyWithoutTenantNestedInput
+  tickets?: Prisma.TicketUncheckedUpdateManyWithoutTenantNestedInput
+  repairTickets?: Prisma.RepairTicketUncheckedUpdateManyWithoutTenantNestedInput
+  invoices?: Prisma.InvoiceUncheckedUpdateManyWithoutTenantNestedInput
+  settings?: Prisma.SettingUncheckedUpdateManyWithoutTenantNestedInput
+  banners?: Prisma.PromotionalBannerUncheckedUpdateManyWithoutTenantNestedInput
+  discountCodes?: Prisma.DiscountCodeUncheckedUpdateManyWithoutTenantNestedInput
+  shippingZones?: Prisma.ShippingZoneUncheckedUpdateManyWithoutTenantNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutTenantNestedInput
+  feedbackRatings?: Prisma.FeedbackRatingUncheckedUpdateManyWithoutTenantNestedInput
+  emailUnsubscribes?: Prisma.EmailUnsubscribeUncheckedUpdateManyWithoutTenantNestedInput
+  repairDeviceServices?: Prisma.RepairDeviceServiceUncheckedUpdateManyWithoutTenantNestedInput
+  repairBrands?: Prisma.RepairBrandUncheckedUpdateManyWithoutTenantNestedInput
+  repairDevices?: Prisma.RepairDeviceUncheckedUpdateManyWithoutTenantNestedInput
+  repairServiceTypes?: Prisma.RepairServiceTypeUncheckedUpdateManyWithoutTenantNestedInput
+  homepage?: Prisma.TenantHomepageUncheckedUpdateOneWithoutTenantNestedInput
+  pages?: Prisma.TenantPageUncheckedUpdateManyWithoutTenantNestedInput
+  serviceCategories?: Prisma.ServiceCategoryUncheckedUpdateManyWithoutTenantNestedInput
+  services?: Prisma.ServiceUncheckedUpdateManyWithoutTenantNestedInput
+  bookings?: Prisma.BookingUncheckedUpdateManyWithoutTenantNestedInput
+  fieldDefinitions?: Prisma.FieldDefinitionUncheckedUpdateManyWithoutTenantNestedInput
+}
+
+export type TenantCreateWithoutFieldDefinitionsInput = {
+  id?: string
+  name: string
+  slug: string
+  status?: $Enums.TenantStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  suspendedAt?: Date | string | null
+  archivedAt?: Date | string | null
+  onboardingStatus?: string | null
+  domains?: Prisma.TenantDomainCreateNestedManyWithoutTenantInput
+  config?: Prisma.TenantConfigCreateNestedOneWithoutTenantInput
+  features?: Prisma.TenantFeatureCreateNestedOneWithoutTenantInput
+  uiConfig?: Prisma.TenantUIConfigCreateNestedOneWithoutTenantInput
+  users?: Prisma.UserCreateNestedManyWithoutTenantInput
+  products?: Prisma.ProductCreateNestedManyWithoutTenantInput
+  categories?: Prisma.CategoryCreateNestedManyWithoutTenantInput
+  orders?: Prisma.OrderCreateNestedManyWithoutTenantInput
+  appointments?: Prisma.AppointmentCreateNestedManyWithoutTenantInput
+  tickets?: Prisma.TicketCreateNestedManyWithoutTenantInput
+  repairTickets?: Prisma.RepairTicketCreateNestedManyWithoutTenantInput
+  invoices?: Prisma.InvoiceCreateNestedManyWithoutTenantInput
+  settings?: Prisma.SettingCreateNestedManyWithoutTenantInput
+  banners?: Prisma.PromotionalBannerCreateNestedManyWithoutTenantInput
+  discountCodes?: Prisma.DiscountCodeCreateNestedManyWithoutTenantInput
+  shippingZones?: Prisma.ShippingZoneCreateNestedManyWithoutTenantInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutTenantInput
+  feedbackRatings?: Prisma.FeedbackRatingCreateNestedManyWithoutTenantInput
+  emailUnsubscribes?: Prisma.EmailUnsubscribeCreateNestedManyWithoutTenantInput
+  repairDeviceServices?: Prisma.RepairDeviceServiceCreateNestedManyWithoutTenantInput
+  repairBrands?: Prisma.RepairBrandCreateNestedManyWithoutTenantInput
+  repairDevices?: Prisma.RepairDeviceCreateNestedManyWithoutTenantInput
+  repairServiceTypes?: Prisma.RepairServiceTypeCreateNestedManyWithoutTenantInput
+  homepage?: Prisma.TenantHomepageCreateNestedOneWithoutTenantInput
+  pages?: Prisma.TenantPageCreateNestedManyWithoutTenantInput
+  serviceCategories?: Prisma.ServiceCategoryCreateNestedManyWithoutTenantInput
+  services?: Prisma.ServiceCreateNestedManyWithoutTenantInput
+  bookings?: Prisma.BookingCreateNestedManyWithoutTenantInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigCreateNestedOneWithoutTenantInput
+}
+
+export type TenantUncheckedCreateWithoutFieldDefinitionsInput = {
+  id?: string
+  name: string
+  slug: string
+  status?: $Enums.TenantStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  suspendedAt?: Date | string | null
+  archivedAt?: Date | string | null
+  onboardingStatus?: string | null
+  domains?: Prisma.TenantDomainUncheckedCreateNestedManyWithoutTenantInput
+  config?: Prisma.TenantConfigUncheckedCreateNestedOneWithoutTenantInput
+  features?: Prisma.TenantFeatureUncheckedCreateNestedOneWithoutTenantInput
+  uiConfig?: Prisma.TenantUIConfigUncheckedCreateNestedOneWithoutTenantInput
+  users?: Prisma.UserUncheckedCreateNestedManyWithoutTenantInput
+  products?: Prisma.ProductUncheckedCreateNestedManyWithoutTenantInput
+  categories?: Prisma.CategoryUncheckedCreateNestedManyWithoutTenantInput
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutTenantInput
+  appointments?: Prisma.AppointmentUncheckedCreateNestedManyWithoutTenantInput
+  tickets?: Prisma.TicketUncheckedCreateNestedManyWithoutTenantInput
+  repairTickets?: Prisma.RepairTicketUncheckedCreateNestedManyWithoutTenantInput
+  invoices?: Prisma.InvoiceUncheckedCreateNestedManyWithoutTenantInput
+  settings?: Prisma.SettingUncheckedCreateNestedManyWithoutTenantInput
+  banners?: Prisma.PromotionalBannerUncheckedCreateNestedManyWithoutTenantInput
+  discountCodes?: Prisma.DiscountCodeUncheckedCreateNestedManyWithoutTenantInput
+  shippingZones?: Prisma.ShippingZoneUncheckedCreateNestedManyWithoutTenantInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutTenantInput
+  feedbackRatings?: Prisma.FeedbackRatingUncheckedCreateNestedManyWithoutTenantInput
+  emailUnsubscribes?: Prisma.EmailUnsubscribeUncheckedCreateNestedManyWithoutTenantInput
+  repairDeviceServices?: Prisma.RepairDeviceServiceUncheckedCreateNestedManyWithoutTenantInput
+  repairBrands?: Prisma.RepairBrandUncheckedCreateNestedManyWithoutTenantInput
+  repairDevices?: Prisma.RepairDeviceUncheckedCreateNestedManyWithoutTenantInput
+  repairServiceTypes?: Prisma.RepairServiceTypeUncheckedCreateNestedManyWithoutTenantInput
+  homepage?: Prisma.TenantHomepageUncheckedCreateNestedOneWithoutTenantInput
+  pages?: Prisma.TenantPageUncheckedCreateNestedManyWithoutTenantInput
+  serviceCategories?: Prisma.ServiceCategoryUncheckedCreateNestedManyWithoutTenantInput
+  services?: Prisma.ServiceUncheckedCreateNestedManyWithoutTenantInput
+  bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutTenantInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUncheckedCreateNestedOneWithoutTenantInput
+}
+
+export type TenantCreateOrConnectWithoutFieldDefinitionsInput = {
+  where: Prisma.TenantWhereUniqueInput
+  create: Prisma.XOR<Prisma.TenantCreateWithoutFieldDefinitionsInput, Prisma.TenantUncheckedCreateWithoutFieldDefinitionsInput>
+}
+
+export type TenantUpsertWithoutFieldDefinitionsInput = {
+  update: Prisma.XOR<Prisma.TenantUpdateWithoutFieldDefinitionsInput, Prisma.TenantUncheckedUpdateWithoutFieldDefinitionsInput>
+  create: Prisma.XOR<Prisma.TenantCreateWithoutFieldDefinitionsInput, Prisma.TenantUncheckedCreateWithoutFieldDefinitionsInput>
+  where?: Prisma.TenantWhereInput
+}
+
+export type TenantUpdateToOneWithWhereWithoutFieldDefinitionsInput = {
+  where?: Prisma.TenantWhereInput
+  data: Prisma.XOR<Prisma.TenantUpdateWithoutFieldDefinitionsInput, Prisma.TenantUncheckedUpdateWithoutFieldDefinitionsInput>
+}
+
+export type TenantUpdateWithoutFieldDefinitionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumTenantStatusFieldUpdateOperationsInput | $Enums.TenantStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  onboardingStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  domains?: Prisma.TenantDomainUpdateManyWithoutTenantNestedInput
+  config?: Prisma.TenantConfigUpdateOneWithoutTenantNestedInput
+  features?: Prisma.TenantFeatureUpdateOneWithoutTenantNestedInput
+  uiConfig?: Prisma.TenantUIConfigUpdateOneWithoutTenantNestedInput
+  users?: Prisma.UserUpdateManyWithoutTenantNestedInput
+  products?: Prisma.ProductUpdateManyWithoutTenantNestedInput
+  categories?: Prisma.CategoryUpdateManyWithoutTenantNestedInput
+  orders?: Prisma.OrderUpdateManyWithoutTenantNestedInput
+  appointments?: Prisma.AppointmentUpdateManyWithoutTenantNestedInput
+  tickets?: Prisma.TicketUpdateManyWithoutTenantNestedInput
+  repairTickets?: Prisma.RepairTicketUpdateManyWithoutTenantNestedInput
+  invoices?: Prisma.InvoiceUpdateManyWithoutTenantNestedInput
+  settings?: Prisma.SettingUpdateManyWithoutTenantNestedInput
+  banners?: Prisma.PromotionalBannerUpdateManyWithoutTenantNestedInput
+  discountCodes?: Prisma.DiscountCodeUpdateManyWithoutTenantNestedInput
+  shippingZones?: Prisma.ShippingZoneUpdateManyWithoutTenantNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutTenantNestedInput
+  feedbackRatings?: Prisma.FeedbackRatingUpdateManyWithoutTenantNestedInput
+  emailUnsubscribes?: Prisma.EmailUnsubscribeUpdateManyWithoutTenantNestedInput
+  repairDeviceServices?: Prisma.RepairDeviceServiceUpdateManyWithoutTenantNestedInput
+  repairBrands?: Prisma.RepairBrandUpdateManyWithoutTenantNestedInput
+  repairDevices?: Prisma.RepairDeviceUpdateManyWithoutTenantNestedInput
+  repairServiceTypes?: Prisma.RepairServiceTypeUpdateManyWithoutTenantNestedInput
+  homepage?: Prisma.TenantHomepageUpdateOneWithoutTenantNestedInput
+  pages?: Prisma.TenantPageUpdateManyWithoutTenantNestedInput
+  serviceCategories?: Prisma.ServiceCategoryUpdateManyWithoutTenantNestedInput
+  services?: Prisma.ServiceUpdateManyWithoutTenantNestedInput
+  bookings?: Prisma.BookingUpdateManyWithoutTenantNestedInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUpdateOneWithoutTenantNestedInput
+}
+
+export type TenantUncheckedUpdateWithoutFieldDefinitionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumTenantStatusFieldUpdateOperationsInput | $Enums.TenantStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  onboardingStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  domains?: Prisma.TenantDomainUncheckedUpdateManyWithoutTenantNestedInput
+  config?: Prisma.TenantConfigUncheckedUpdateOneWithoutTenantNestedInput
+  features?: Prisma.TenantFeatureUncheckedUpdateOneWithoutTenantNestedInput
+  uiConfig?: Prisma.TenantUIConfigUncheckedUpdateOneWithoutTenantNestedInput
+  users?: Prisma.UserUncheckedUpdateManyWithoutTenantNestedInput
+  products?: Prisma.ProductUncheckedUpdateManyWithoutTenantNestedInput
+  categories?: Prisma.CategoryUncheckedUpdateManyWithoutTenantNestedInput
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutTenantNestedInput
+  appointments?: Prisma.AppointmentUncheckedUpdateManyWithoutTenantNestedInput
+  tickets?: Prisma.TicketUncheckedUpdateManyWithoutTenantNestedInput
+  repairTickets?: Prisma.RepairTicketUncheckedUpdateManyWithoutTenantNestedInput
+  invoices?: Prisma.InvoiceUncheckedUpdateManyWithoutTenantNestedInput
+  settings?: Prisma.SettingUncheckedUpdateManyWithoutTenantNestedInput
+  banners?: Prisma.PromotionalBannerUncheckedUpdateManyWithoutTenantNestedInput
+  discountCodes?: Prisma.DiscountCodeUncheckedUpdateManyWithoutTenantNestedInput
+  shippingZones?: Prisma.ShippingZoneUncheckedUpdateManyWithoutTenantNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutTenantNestedInput
+  feedbackRatings?: Prisma.FeedbackRatingUncheckedUpdateManyWithoutTenantNestedInput
+  emailUnsubscribes?: Prisma.EmailUnsubscribeUncheckedUpdateManyWithoutTenantNestedInput
+  repairDeviceServices?: Prisma.RepairDeviceServiceUncheckedUpdateManyWithoutTenantNestedInput
+  repairBrands?: Prisma.RepairBrandUncheckedUpdateManyWithoutTenantNestedInput
+  repairDevices?: Prisma.RepairDeviceUncheckedUpdateManyWithoutTenantNestedInput
+  repairServiceTypes?: Prisma.RepairServiceTypeUncheckedUpdateManyWithoutTenantNestedInput
+  homepage?: Prisma.TenantHomepageUncheckedUpdateOneWithoutTenantNestedInput
+  pages?: Prisma.TenantPageUncheckedUpdateManyWithoutTenantNestedInput
+  serviceCategories?: Prisma.ServiceCategoryUncheckedUpdateManyWithoutTenantNestedInput
+  services?: Prisma.ServiceUncheckedUpdateManyWithoutTenantNestedInput
+  bookings?: Prisma.BookingUncheckedUpdateManyWithoutTenantNestedInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUncheckedUpdateOneWithoutTenantNestedInput
 }
 
 export type TenantCreateWithoutRepairBrandsInput = {
@@ -3420,6 +4725,11 @@ export type TenantCreateWithoutRepairBrandsInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeCreateNestedManyWithoutTenantInput
   homepage?: Prisma.TenantHomepageCreateNestedOneWithoutTenantInput
   pages?: Prisma.TenantPageCreateNestedManyWithoutTenantInput
+  serviceCategories?: Prisma.ServiceCategoryCreateNestedManyWithoutTenantInput
+  services?: Prisma.ServiceCreateNestedManyWithoutTenantInput
+  bookings?: Prisma.BookingCreateNestedManyWithoutTenantInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigCreateNestedOneWithoutTenantInput
+  fieldDefinitions?: Prisma.FieldDefinitionCreateNestedManyWithoutTenantInput
 }
 
 export type TenantUncheckedCreateWithoutRepairBrandsInput = {
@@ -3456,6 +4766,11 @@ export type TenantUncheckedCreateWithoutRepairBrandsInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeUncheckedCreateNestedManyWithoutTenantInput
   homepage?: Prisma.TenantHomepageUncheckedCreateNestedOneWithoutTenantInput
   pages?: Prisma.TenantPageUncheckedCreateNestedManyWithoutTenantInput
+  serviceCategories?: Prisma.ServiceCategoryUncheckedCreateNestedManyWithoutTenantInput
+  services?: Prisma.ServiceUncheckedCreateNestedManyWithoutTenantInput
+  bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutTenantInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUncheckedCreateNestedOneWithoutTenantInput
+  fieldDefinitions?: Prisma.FieldDefinitionUncheckedCreateNestedManyWithoutTenantInput
 }
 
 export type TenantCreateOrConnectWithoutRepairBrandsInput = {
@@ -3508,6 +4823,11 @@ export type TenantUpdateWithoutRepairBrandsInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeUpdateManyWithoutTenantNestedInput
   homepage?: Prisma.TenantHomepageUpdateOneWithoutTenantNestedInput
   pages?: Prisma.TenantPageUpdateManyWithoutTenantNestedInput
+  serviceCategories?: Prisma.ServiceCategoryUpdateManyWithoutTenantNestedInput
+  services?: Prisma.ServiceUpdateManyWithoutTenantNestedInput
+  bookings?: Prisma.BookingUpdateManyWithoutTenantNestedInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUpdateOneWithoutTenantNestedInput
+  fieldDefinitions?: Prisma.FieldDefinitionUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantUncheckedUpdateWithoutRepairBrandsInput = {
@@ -3544,6 +4864,11 @@ export type TenantUncheckedUpdateWithoutRepairBrandsInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeUncheckedUpdateManyWithoutTenantNestedInput
   homepage?: Prisma.TenantHomepageUncheckedUpdateOneWithoutTenantNestedInput
   pages?: Prisma.TenantPageUncheckedUpdateManyWithoutTenantNestedInput
+  serviceCategories?: Prisma.ServiceCategoryUncheckedUpdateManyWithoutTenantNestedInput
+  services?: Prisma.ServiceUncheckedUpdateManyWithoutTenantNestedInput
+  bookings?: Prisma.BookingUncheckedUpdateManyWithoutTenantNestedInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUncheckedUpdateOneWithoutTenantNestedInput
+  fieldDefinitions?: Prisma.FieldDefinitionUncheckedUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantCreateWithoutRepairDevicesInput = {
@@ -3580,6 +4905,11 @@ export type TenantCreateWithoutRepairDevicesInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeCreateNestedManyWithoutTenantInput
   homepage?: Prisma.TenantHomepageCreateNestedOneWithoutTenantInput
   pages?: Prisma.TenantPageCreateNestedManyWithoutTenantInput
+  serviceCategories?: Prisma.ServiceCategoryCreateNestedManyWithoutTenantInput
+  services?: Prisma.ServiceCreateNestedManyWithoutTenantInput
+  bookings?: Prisma.BookingCreateNestedManyWithoutTenantInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigCreateNestedOneWithoutTenantInput
+  fieldDefinitions?: Prisma.FieldDefinitionCreateNestedManyWithoutTenantInput
 }
 
 export type TenantUncheckedCreateWithoutRepairDevicesInput = {
@@ -3616,6 +4946,11 @@ export type TenantUncheckedCreateWithoutRepairDevicesInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeUncheckedCreateNestedManyWithoutTenantInput
   homepage?: Prisma.TenantHomepageUncheckedCreateNestedOneWithoutTenantInput
   pages?: Prisma.TenantPageUncheckedCreateNestedManyWithoutTenantInput
+  serviceCategories?: Prisma.ServiceCategoryUncheckedCreateNestedManyWithoutTenantInput
+  services?: Prisma.ServiceUncheckedCreateNestedManyWithoutTenantInput
+  bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutTenantInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUncheckedCreateNestedOneWithoutTenantInput
+  fieldDefinitions?: Prisma.FieldDefinitionUncheckedCreateNestedManyWithoutTenantInput
 }
 
 export type TenantCreateOrConnectWithoutRepairDevicesInput = {
@@ -3668,6 +5003,11 @@ export type TenantUpdateWithoutRepairDevicesInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeUpdateManyWithoutTenantNestedInput
   homepage?: Prisma.TenantHomepageUpdateOneWithoutTenantNestedInput
   pages?: Prisma.TenantPageUpdateManyWithoutTenantNestedInput
+  serviceCategories?: Prisma.ServiceCategoryUpdateManyWithoutTenantNestedInput
+  services?: Prisma.ServiceUpdateManyWithoutTenantNestedInput
+  bookings?: Prisma.BookingUpdateManyWithoutTenantNestedInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUpdateOneWithoutTenantNestedInput
+  fieldDefinitions?: Prisma.FieldDefinitionUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantUncheckedUpdateWithoutRepairDevicesInput = {
@@ -3704,6 +5044,11 @@ export type TenantUncheckedUpdateWithoutRepairDevicesInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeUncheckedUpdateManyWithoutTenantNestedInput
   homepage?: Prisma.TenantHomepageUncheckedUpdateOneWithoutTenantNestedInput
   pages?: Prisma.TenantPageUncheckedUpdateManyWithoutTenantNestedInput
+  serviceCategories?: Prisma.ServiceCategoryUncheckedUpdateManyWithoutTenantNestedInput
+  services?: Prisma.ServiceUncheckedUpdateManyWithoutTenantNestedInput
+  bookings?: Prisma.BookingUncheckedUpdateManyWithoutTenantNestedInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUncheckedUpdateOneWithoutTenantNestedInput
+  fieldDefinitions?: Prisma.FieldDefinitionUncheckedUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantCreateWithoutRepairServiceTypesInput = {
@@ -3740,6 +5085,11 @@ export type TenantCreateWithoutRepairServiceTypesInput = {
   repairDevices?: Prisma.RepairDeviceCreateNestedManyWithoutTenantInput
   homepage?: Prisma.TenantHomepageCreateNestedOneWithoutTenantInput
   pages?: Prisma.TenantPageCreateNestedManyWithoutTenantInput
+  serviceCategories?: Prisma.ServiceCategoryCreateNestedManyWithoutTenantInput
+  services?: Prisma.ServiceCreateNestedManyWithoutTenantInput
+  bookings?: Prisma.BookingCreateNestedManyWithoutTenantInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigCreateNestedOneWithoutTenantInput
+  fieldDefinitions?: Prisma.FieldDefinitionCreateNestedManyWithoutTenantInput
 }
 
 export type TenantUncheckedCreateWithoutRepairServiceTypesInput = {
@@ -3776,6 +5126,11 @@ export type TenantUncheckedCreateWithoutRepairServiceTypesInput = {
   repairDevices?: Prisma.RepairDeviceUncheckedCreateNestedManyWithoutTenantInput
   homepage?: Prisma.TenantHomepageUncheckedCreateNestedOneWithoutTenantInput
   pages?: Prisma.TenantPageUncheckedCreateNestedManyWithoutTenantInput
+  serviceCategories?: Prisma.ServiceCategoryUncheckedCreateNestedManyWithoutTenantInput
+  services?: Prisma.ServiceUncheckedCreateNestedManyWithoutTenantInput
+  bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutTenantInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUncheckedCreateNestedOneWithoutTenantInput
+  fieldDefinitions?: Prisma.FieldDefinitionUncheckedCreateNestedManyWithoutTenantInput
 }
 
 export type TenantCreateOrConnectWithoutRepairServiceTypesInput = {
@@ -3828,6 +5183,11 @@ export type TenantUpdateWithoutRepairServiceTypesInput = {
   repairDevices?: Prisma.RepairDeviceUpdateManyWithoutTenantNestedInput
   homepage?: Prisma.TenantHomepageUpdateOneWithoutTenantNestedInput
   pages?: Prisma.TenantPageUpdateManyWithoutTenantNestedInput
+  serviceCategories?: Prisma.ServiceCategoryUpdateManyWithoutTenantNestedInput
+  services?: Prisma.ServiceUpdateManyWithoutTenantNestedInput
+  bookings?: Prisma.BookingUpdateManyWithoutTenantNestedInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUpdateOneWithoutTenantNestedInput
+  fieldDefinitions?: Prisma.FieldDefinitionUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantUncheckedUpdateWithoutRepairServiceTypesInput = {
@@ -3864,6 +5224,11 @@ export type TenantUncheckedUpdateWithoutRepairServiceTypesInput = {
   repairDevices?: Prisma.RepairDeviceUncheckedUpdateManyWithoutTenantNestedInput
   homepage?: Prisma.TenantHomepageUncheckedUpdateOneWithoutTenantNestedInput
   pages?: Prisma.TenantPageUncheckedUpdateManyWithoutTenantNestedInput
+  serviceCategories?: Prisma.ServiceCategoryUncheckedUpdateManyWithoutTenantNestedInput
+  services?: Prisma.ServiceUncheckedUpdateManyWithoutTenantNestedInput
+  bookings?: Prisma.BookingUncheckedUpdateManyWithoutTenantNestedInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUncheckedUpdateOneWithoutTenantNestedInput
+  fieldDefinitions?: Prisma.FieldDefinitionUncheckedUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantCreateWithoutRepairDeviceServicesInput = {
@@ -3900,6 +5265,11 @@ export type TenantCreateWithoutRepairDeviceServicesInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeCreateNestedManyWithoutTenantInput
   homepage?: Prisma.TenantHomepageCreateNestedOneWithoutTenantInput
   pages?: Prisma.TenantPageCreateNestedManyWithoutTenantInput
+  serviceCategories?: Prisma.ServiceCategoryCreateNestedManyWithoutTenantInput
+  services?: Prisma.ServiceCreateNestedManyWithoutTenantInput
+  bookings?: Prisma.BookingCreateNestedManyWithoutTenantInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigCreateNestedOneWithoutTenantInput
+  fieldDefinitions?: Prisma.FieldDefinitionCreateNestedManyWithoutTenantInput
 }
 
 export type TenantUncheckedCreateWithoutRepairDeviceServicesInput = {
@@ -3936,6 +5306,11 @@ export type TenantUncheckedCreateWithoutRepairDeviceServicesInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeUncheckedCreateNestedManyWithoutTenantInput
   homepage?: Prisma.TenantHomepageUncheckedCreateNestedOneWithoutTenantInput
   pages?: Prisma.TenantPageUncheckedCreateNestedManyWithoutTenantInput
+  serviceCategories?: Prisma.ServiceCategoryUncheckedCreateNestedManyWithoutTenantInput
+  services?: Prisma.ServiceUncheckedCreateNestedManyWithoutTenantInput
+  bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutTenantInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUncheckedCreateNestedOneWithoutTenantInput
+  fieldDefinitions?: Prisma.FieldDefinitionUncheckedCreateNestedManyWithoutTenantInput
 }
 
 export type TenantCreateOrConnectWithoutRepairDeviceServicesInput = {
@@ -3988,6 +5363,11 @@ export type TenantUpdateWithoutRepairDeviceServicesInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeUpdateManyWithoutTenantNestedInput
   homepage?: Prisma.TenantHomepageUpdateOneWithoutTenantNestedInput
   pages?: Prisma.TenantPageUpdateManyWithoutTenantNestedInput
+  serviceCategories?: Prisma.ServiceCategoryUpdateManyWithoutTenantNestedInput
+  services?: Prisma.ServiceUpdateManyWithoutTenantNestedInput
+  bookings?: Prisma.BookingUpdateManyWithoutTenantNestedInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUpdateOneWithoutTenantNestedInput
+  fieldDefinitions?: Prisma.FieldDefinitionUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantUncheckedUpdateWithoutRepairDeviceServicesInput = {
@@ -4024,6 +5404,11 @@ export type TenantUncheckedUpdateWithoutRepairDeviceServicesInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeUncheckedUpdateManyWithoutTenantNestedInput
   homepage?: Prisma.TenantHomepageUncheckedUpdateOneWithoutTenantNestedInput
   pages?: Prisma.TenantPageUncheckedUpdateManyWithoutTenantNestedInput
+  serviceCategories?: Prisma.ServiceCategoryUncheckedUpdateManyWithoutTenantNestedInput
+  services?: Prisma.ServiceUncheckedUpdateManyWithoutTenantNestedInput
+  bookings?: Prisma.BookingUncheckedUpdateManyWithoutTenantNestedInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUncheckedUpdateOneWithoutTenantNestedInput
+  fieldDefinitions?: Prisma.FieldDefinitionUncheckedUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantCreateWithoutFeedbackRatingsInput = {
@@ -4060,6 +5445,11 @@ export type TenantCreateWithoutFeedbackRatingsInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeCreateNestedManyWithoutTenantInput
   homepage?: Prisma.TenantHomepageCreateNestedOneWithoutTenantInput
   pages?: Prisma.TenantPageCreateNestedManyWithoutTenantInput
+  serviceCategories?: Prisma.ServiceCategoryCreateNestedManyWithoutTenantInput
+  services?: Prisma.ServiceCreateNestedManyWithoutTenantInput
+  bookings?: Prisma.BookingCreateNestedManyWithoutTenantInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigCreateNestedOneWithoutTenantInput
+  fieldDefinitions?: Prisma.FieldDefinitionCreateNestedManyWithoutTenantInput
 }
 
 export type TenantUncheckedCreateWithoutFeedbackRatingsInput = {
@@ -4096,6 +5486,11 @@ export type TenantUncheckedCreateWithoutFeedbackRatingsInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeUncheckedCreateNestedManyWithoutTenantInput
   homepage?: Prisma.TenantHomepageUncheckedCreateNestedOneWithoutTenantInput
   pages?: Prisma.TenantPageUncheckedCreateNestedManyWithoutTenantInput
+  serviceCategories?: Prisma.ServiceCategoryUncheckedCreateNestedManyWithoutTenantInput
+  services?: Prisma.ServiceUncheckedCreateNestedManyWithoutTenantInput
+  bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutTenantInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUncheckedCreateNestedOneWithoutTenantInput
+  fieldDefinitions?: Prisma.FieldDefinitionUncheckedCreateNestedManyWithoutTenantInput
 }
 
 export type TenantCreateOrConnectWithoutFeedbackRatingsInput = {
@@ -4148,6 +5543,11 @@ export type TenantUpdateWithoutFeedbackRatingsInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeUpdateManyWithoutTenantNestedInput
   homepage?: Prisma.TenantHomepageUpdateOneWithoutTenantNestedInput
   pages?: Prisma.TenantPageUpdateManyWithoutTenantNestedInput
+  serviceCategories?: Prisma.ServiceCategoryUpdateManyWithoutTenantNestedInput
+  services?: Prisma.ServiceUpdateManyWithoutTenantNestedInput
+  bookings?: Prisma.BookingUpdateManyWithoutTenantNestedInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUpdateOneWithoutTenantNestedInput
+  fieldDefinitions?: Prisma.FieldDefinitionUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantUncheckedUpdateWithoutFeedbackRatingsInput = {
@@ -4184,6 +5584,11 @@ export type TenantUncheckedUpdateWithoutFeedbackRatingsInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeUncheckedUpdateManyWithoutTenantNestedInput
   homepage?: Prisma.TenantHomepageUncheckedUpdateOneWithoutTenantNestedInput
   pages?: Prisma.TenantPageUncheckedUpdateManyWithoutTenantNestedInput
+  serviceCategories?: Prisma.ServiceCategoryUncheckedUpdateManyWithoutTenantNestedInput
+  services?: Prisma.ServiceUncheckedUpdateManyWithoutTenantNestedInput
+  bookings?: Prisma.BookingUncheckedUpdateManyWithoutTenantNestedInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUncheckedUpdateOneWithoutTenantNestedInput
+  fieldDefinitions?: Prisma.FieldDefinitionUncheckedUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantCreateWithoutEmailUnsubscribesInput = {
@@ -4220,6 +5625,11 @@ export type TenantCreateWithoutEmailUnsubscribesInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeCreateNestedManyWithoutTenantInput
   homepage?: Prisma.TenantHomepageCreateNestedOneWithoutTenantInput
   pages?: Prisma.TenantPageCreateNestedManyWithoutTenantInput
+  serviceCategories?: Prisma.ServiceCategoryCreateNestedManyWithoutTenantInput
+  services?: Prisma.ServiceCreateNestedManyWithoutTenantInput
+  bookings?: Prisma.BookingCreateNestedManyWithoutTenantInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigCreateNestedOneWithoutTenantInput
+  fieldDefinitions?: Prisma.FieldDefinitionCreateNestedManyWithoutTenantInput
 }
 
 export type TenantUncheckedCreateWithoutEmailUnsubscribesInput = {
@@ -4256,6 +5666,11 @@ export type TenantUncheckedCreateWithoutEmailUnsubscribesInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeUncheckedCreateNestedManyWithoutTenantInput
   homepage?: Prisma.TenantHomepageUncheckedCreateNestedOneWithoutTenantInput
   pages?: Prisma.TenantPageUncheckedCreateNestedManyWithoutTenantInput
+  serviceCategories?: Prisma.ServiceCategoryUncheckedCreateNestedManyWithoutTenantInput
+  services?: Prisma.ServiceUncheckedCreateNestedManyWithoutTenantInput
+  bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutTenantInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUncheckedCreateNestedOneWithoutTenantInput
+  fieldDefinitions?: Prisma.FieldDefinitionUncheckedCreateNestedManyWithoutTenantInput
 }
 
 export type TenantCreateOrConnectWithoutEmailUnsubscribesInput = {
@@ -4308,6 +5723,11 @@ export type TenantUpdateWithoutEmailUnsubscribesInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeUpdateManyWithoutTenantNestedInput
   homepage?: Prisma.TenantHomepageUpdateOneWithoutTenantNestedInput
   pages?: Prisma.TenantPageUpdateManyWithoutTenantNestedInput
+  serviceCategories?: Prisma.ServiceCategoryUpdateManyWithoutTenantNestedInput
+  services?: Prisma.ServiceUpdateManyWithoutTenantNestedInput
+  bookings?: Prisma.BookingUpdateManyWithoutTenantNestedInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUpdateOneWithoutTenantNestedInput
+  fieldDefinitions?: Prisma.FieldDefinitionUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantUncheckedUpdateWithoutEmailUnsubscribesInput = {
@@ -4344,6 +5764,11 @@ export type TenantUncheckedUpdateWithoutEmailUnsubscribesInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeUncheckedUpdateManyWithoutTenantNestedInput
   homepage?: Prisma.TenantHomepageUncheckedUpdateOneWithoutTenantNestedInput
   pages?: Prisma.TenantPageUncheckedUpdateManyWithoutTenantNestedInput
+  serviceCategories?: Prisma.ServiceCategoryUncheckedUpdateManyWithoutTenantNestedInput
+  services?: Prisma.ServiceUncheckedUpdateManyWithoutTenantNestedInput
+  bookings?: Prisma.BookingUncheckedUpdateManyWithoutTenantNestedInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUncheckedUpdateOneWithoutTenantNestedInput
+  fieldDefinitions?: Prisma.FieldDefinitionUncheckedUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantCreateWithoutDiscountCodesInput = {
@@ -4380,6 +5805,11 @@ export type TenantCreateWithoutDiscountCodesInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeCreateNestedManyWithoutTenantInput
   homepage?: Prisma.TenantHomepageCreateNestedOneWithoutTenantInput
   pages?: Prisma.TenantPageCreateNestedManyWithoutTenantInput
+  serviceCategories?: Prisma.ServiceCategoryCreateNestedManyWithoutTenantInput
+  services?: Prisma.ServiceCreateNestedManyWithoutTenantInput
+  bookings?: Prisma.BookingCreateNestedManyWithoutTenantInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigCreateNestedOneWithoutTenantInput
+  fieldDefinitions?: Prisma.FieldDefinitionCreateNestedManyWithoutTenantInput
 }
 
 export type TenantUncheckedCreateWithoutDiscountCodesInput = {
@@ -4416,6 +5846,11 @@ export type TenantUncheckedCreateWithoutDiscountCodesInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeUncheckedCreateNestedManyWithoutTenantInput
   homepage?: Prisma.TenantHomepageUncheckedCreateNestedOneWithoutTenantInput
   pages?: Prisma.TenantPageUncheckedCreateNestedManyWithoutTenantInput
+  serviceCategories?: Prisma.ServiceCategoryUncheckedCreateNestedManyWithoutTenantInput
+  services?: Prisma.ServiceUncheckedCreateNestedManyWithoutTenantInput
+  bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutTenantInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUncheckedCreateNestedOneWithoutTenantInput
+  fieldDefinitions?: Prisma.FieldDefinitionUncheckedCreateNestedManyWithoutTenantInput
 }
 
 export type TenantCreateOrConnectWithoutDiscountCodesInput = {
@@ -4468,6 +5903,11 @@ export type TenantUpdateWithoutDiscountCodesInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeUpdateManyWithoutTenantNestedInput
   homepage?: Prisma.TenantHomepageUpdateOneWithoutTenantNestedInput
   pages?: Prisma.TenantPageUpdateManyWithoutTenantNestedInput
+  serviceCategories?: Prisma.ServiceCategoryUpdateManyWithoutTenantNestedInput
+  services?: Prisma.ServiceUpdateManyWithoutTenantNestedInput
+  bookings?: Prisma.BookingUpdateManyWithoutTenantNestedInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUpdateOneWithoutTenantNestedInput
+  fieldDefinitions?: Prisma.FieldDefinitionUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantUncheckedUpdateWithoutDiscountCodesInput = {
@@ -4504,6 +5944,11 @@ export type TenantUncheckedUpdateWithoutDiscountCodesInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeUncheckedUpdateManyWithoutTenantNestedInput
   homepage?: Prisma.TenantHomepageUncheckedUpdateOneWithoutTenantNestedInput
   pages?: Prisma.TenantPageUncheckedUpdateManyWithoutTenantNestedInput
+  serviceCategories?: Prisma.ServiceCategoryUncheckedUpdateManyWithoutTenantNestedInput
+  services?: Prisma.ServiceUncheckedUpdateManyWithoutTenantNestedInput
+  bookings?: Prisma.BookingUncheckedUpdateManyWithoutTenantNestedInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUncheckedUpdateOneWithoutTenantNestedInput
+  fieldDefinitions?: Prisma.FieldDefinitionUncheckedUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantCreateWithoutBannersInput = {
@@ -4540,6 +5985,11 @@ export type TenantCreateWithoutBannersInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeCreateNestedManyWithoutTenantInput
   homepage?: Prisma.TenantHomepageCreateNestedOneWithoutTenantInput
   pages?: Prisma.TenantPageCreateNestedManyWithoutTenantInput
+  serviceCategories?: Prisma.ServiceCategoryCreateNestedManyWithoutTenantInput
+  services?: Prisma.ServiceCreateNestedManyWithoutTenantInput
+  bookings?: Prisma.BookingCreateNestedManyWithoutTenantInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigCreateNestedOneWithoutTenantInput
+  fieldDefinitions?: Prisma.FieldDefinitionCreateNestedManyWithoutTenantInput
 }
 
 export type TenantUncheckedCreateWithoutBannersInput = {
@@ -4576,6 +6026,11 @@ export type TenantUncheckedCreateWithoutBannersInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeUncheckedCreateNestedManyWithoutTenantInput
   homepage?: Prisma.TenantHomepageUncheckedCreateNestedOneWithoutTenantInput
   pages?: Prisma.TenantPageUncheckedCreateNestedManyWithoutTenantInput
+  serviceCategories?: Prisma.ServiceCategoryUncheckedCreateNestedManyWithoutTenantInput
+  services?: Prisma.ServiceUncheckedCreateNestedManyWithoutTenantInput
+  bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutTenantInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUncheckedCreateNestedOneWithoutTenantInput
+  fieldDefinitions?: Prisma.FieldDefinitionUncheckedCreateNestedManyWithoutTenantInput
 }
 
 export type TenantCreateOrConnectWithoutBannersInput = {
@@ -4628,6 +6083,11 @@ export type TenantUpdateWithoutBannersInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeUpdateManyWithoutTenantNestedInput
   homepage?: Prisma.TenantHomepageUpdateOneWithoutTenantNestedInput
   pages?: Prisma.TenantPageUpdateManyWithoutTenantNestedInput
+  serviceCategories?: Prisma.ServiceCategoryUpdateManyWithoutTenantNestedInput
+  services?: Prisma.ServiceUpdateManyWithoutTenantNestedInput
+  bookings?: Prisma.BookingUpdateManyWithoutTenantNestedInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUpdateOneWithoutTenantNestedInput
+  fieldDefinitions?: Prisma.FieldDefinitionUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantUncheckedUpdateWithoutBannersInput = {
@@ -4664,6 +6124,11 @@ export type TenantUncheckedUpdateWithoutBannersInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeUncheckedUpdateManyWithoutTenantNestedInput
   homepage?: Prisma.TenantHomepageUncheckedUpdateOneWithoutTenantNestedInput
   pages?: Prisma.TenantPageUncheckedUpdateManyWithoutTenantNestedInput
+  serviceCategories?: Prisma.ServiceCategoryUncheckedUpdateManyWithoutTenantNestedInput
+  services?: Prisma.ServiceUncheckedUpdateManyWithoutTenantNestedInput
+  bookings?: Prisma.BookingUncheckedUpdateManyWithoutTenantNestedInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUncheckedUpdateOneWithoutTenantNestedInput
+  fieldDefinitions?: Prisma.FieldDefinitionUncheckedUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantCreateWithoutAuditLogsInput = {
@@ -4700,6 +6165,11 @@ export type TenantCreateWithoutAuditLogsInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeCreateNestedManyWithoutTenantInput
   homepage?: Prisma.TenantHomepageCreateNestedOneWithoutTenantInput
   pages?: Prisma.TenantPageCreateNestedManyWithoutTenantInput
+  serviceCategories?: Prisma.ServiceCategoryCreateNestedManyWithoutTenantInput
+  services?: Prisma.ServiceCreateNestedManyWithoutTenantInput
+  bookings?: Prisma.BookingCreateNestedManyWithoutTenantInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigCreateNestedOneWithoutTenantInput
+  fieldDefinitions?: Prisma.FieldDefinitionCreateNestedManyWithoutTenantInput
 }
 
 export type TenantUncheckedCreateWithoutAuditLogsInput = {
@@ -4736,6 +6206,11 @@ export type TenantUncheckedCreateWithoutAuditLogsInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeUncheckedCreateNestedManyWithoutTenantInput
   homepage?: Prisma.TenantHomepageUncheckedCreateNestedOneWithoutTenantInput
   pages?: Prisma.TenantPageUncheckedCreateNestedManyWithoutTenantInput
+  serviceCategories?: Prisma.ServiceCategoryUncheckedCreateNestedManyWithoutTenantInput
+  services?: Prisma.ServiceUncheckedCreateNestedManyWithoutTenantInput
+  bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutTenantInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUncheckedCreateNestedOneWithoutTenantInput
+  fieldDefinitions?: Prisma.FieldDefinitionUncheckedCreateNestedManyWithoutTenantInput
 }
 
 export type TenantCreateOrConnectWithoutAuditLogsInput = {
@@ -4788,6 +6263,11 @@ export type TenantUpdateWithoutAuditLogsInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeUpdateManyWithoutTenantNestedInput
   homepage?: Prisma.TenantHomepageUpdateOneWithoutTenantNestedInput
   pages?: Prisma.TenantPageUpdateManyWithoutTenantNestedInput
+  serviceCategories?: Prisma.ServiceCategoryUpdateManyWithoutTenantNestedInput
+  services?: Prisma.ServiceUpdateManyWithoutTenantNestedInput
+  bookings?: Prisma.BookingUpdateManyWithoutTenantNestedInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUpdateOneWithoutTenantNestedInput
+  fieldDefinitions?: Prisma.FieldDefinitionUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantUncheckedUpdateWithoutAuditLogsInput = {
@@ -4824,6 +6304,11 @@ export type TenantUncheckedUpdateWithoutAuditLogsInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeUncheckedUpdateManyWithoutTenantNestedInput
   homepage?: Prisma.TenantHomepageUncheckedUpdateOneWithoutTenantNestedInput
   pages?: Prisma.TenantPageUncheckedUpdateManyWithoutTenantNestedInput
+  serviceCategories?: Prisma.ServiceCategoryUncheckedUpdateManyWithoutTenantNestedInput
+  services?: Prisma.ServiceUncheckedUpdateManyWithoutTenantNestedInput
+  bookings?: Prisma.BookingUncheckedUpdateManyWithoutTenantNestedInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUncheckedUpdateOneWithoutTenantNestedInput
+  fieldDefinitions?: Prisma.FieldDefinitionUncheckedUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantCreateWithoutInvoicesInput = {
@@ -4860,6 +6345,11 @@ export type TenantCreateWithoutInvoicesInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeCreateNestedManyWithoutTenantInput
   homepage?: Prisma.TenantHomepageCreateNestedOneWithoutTenantInput
   pages?: Prisma.TenantPageCreateNestedManyWithoutTenantInput
+  serviceCategories?: Prisma.ServiceCategoryCreateNestedManyWithoutTenantInput
+  services?: Prisma.ServiceCreateNestedManyWithoutTenantInput
+  bookings?: Prisma.BookingCreateNestedManyWithoutTenantInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigCreateNestedOneWithoutTenantInput
+  fieldDefinitions?: Prisma.FieldDefinitionCreateNestedManyWithoutTenantInput
 }
 
 export type TenantUncheckedCreateWithoutInvoicesInput = {
@@ -4896,6 +6386,11 @@ export type TenantUncheckedCreateWithoutInvoicesInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeUncheckedCreateNestedManyWithoutTenantInput
   homepage?: Prisma.TenantHomepageUncheckedCreateNestedOneWithoutTenantInput
   pages?: Prisma.TenantPageUncheckedCreateNestedManyWithoutTenantInput
+  serviceCategories?: Prisma.ServiceCategoryUncheckedCreateNestedManyWithoutTenantInput
+  services?: Prisma.ServiceUncheckedCreateNestedManyWithoutTenantInput
+  bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutTenantInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUncheckedCreateNestedOneWithoutTenantInput
+  fieldDefinitions?: Prisma.FieldDefinitionUncheckedCreateNestedManyWithoutTenantInput
 }
 
 export type TenantCreateOrConnectWithoutInvoicesInput = {
@@ -4948,6 +6443,11 @@ export type TenantUpdateWithoutInvoicesInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeUpdateManyWithoutTenantNestedInput
   homepage?: Prisma.TenantHomepageUpdateOneWithoutTenantNestedInput
   pages?: Prisma.TenantPageUpdateManyWithoutTenantNestedInput
+  serviceCategories?: Prisma.ServiceCategoryUpdateManyWithoutTenantNestedInput
+  services?: Prisma.ServiceUpdateManyWithoutTenantNestedInput
+  bookings?: Prisma.BookingUpdateManyWithoutTenantNestedInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUpdateOneWithoutTenantNestedInput
+  fieldDefinitions?: Prisma.FieldDefinitionUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantUncheckedUpdateWithoutInvoicesInput = {
@@ -4984,6 +6484,11 @@ export type TenantUncheckedUpdateWithoutInvoicesInput = {
   repairServiceTypes?: Prisma.RepairServiceTypeUncheckedUpdateManyWithoutTenantNestedInput
   homepage?: Prisma.TenantHomepageUncheckedUpdateOneWithoutTenantNestedInput
   pages?: Prisma.TenantPageUncheckedUpdateManyWithoutTenantNestedInput
+  serviceCategories?: Prisma.ServiceCategoryUncheckedUpdateManyWithoutTenantNestedInput
+  services?: Prisma.ServiceUncheckedUpdateManyWithoutTenantNestedInput
+  bookings?: Prisma.BookingUncheckedUpdateManyWithoutTenantNestedInput
+  bookingFlowConfig?: Prisma.BookingFlowConfigUncheckedUpdateOneWithoutTenantNestedInput
+  fieldDefinitions?: Prisma.FieldDefinitionUncheckedUpdateManyWithoutTenantNestedInput
 }
 
 
@@ -5013,6 +6518,10 @@ export type TenantCountOutputType = {
   repairDevices: number
   repairServiceTypes: number
   pages: number
+  serviceCategories: number
+  services: number
+  bookings: number
+  fieldDefinitions: number
 }
 
 export type TenantCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -5037,6 +6546,10 @@ export type TenantCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions
   repairDevices?: boolean | TenantCountOutputTypeCountRepairDevicesArgs
   repairServiceTypes?: boolean | TenantCountOutputTypeCountRepairServiceTypesArgs
   pages?: boolean | TenantCountOutputTypeCountPagesArgs
+  serviceCategories?: boolean | TenantCountOutputTypeCountServiceCategoriesArgs
+  services?: boolean | TenantCountOutputTypeCountServicesArgs
+  bookings?: boolean | TenantCountOutputTypeCountBookingsArgs
+  fieldDefinitions?: boolean | TenantCountOutputTypeCountFieldDefinitionsArgs
 }
 
 /**
@@ -5196,6 +6709,34 @@ export type TenantCountOutputTypeCountPagesArgs<ExtArgs extends runtime.Types.Ex
   where?: Prisma.TenantPageWhereInput
 }
 
+/**
+ * TenantCountOutputType without action
+ */
+export type TenantCountOutputTypeCountServiceCategoriesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ServiceCategoryWhereInput
+}
+
+/**
+ * TenantCountOutputType without action
+ */
+export type TenantCountOutputTypeCountServicesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ServiceWhereInput
+}
+
+/**
+ * TenantCountOutputType without action
+ */
+export type TenantCountOutputTypeCountBookingsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.BookingWhereInput
+}
+
+/**
+ * TenantCountOutputType without action
+ */
+export type TenantCountOutputTypeCountFieldDefinitionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.FieldDefinitionWhereInput
+}
+
 
 export type TenantSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -5232,6 +6773,11 @@ export type TenantSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   repairServiceTypes?: boolean | Prisma.Tenant$repairServiceTypesArgs<ExtArgs>
   homepage?: boolean | Prisma.Tenant$homepageArgs<ExtArgs>
   pages?: boolean | Prisma.Tenant$pagesArgs<ExtArgs>
+  serviceCategories?: boolean | Prisma.Tenant$serviceCategoriesArgs<ExtArgs>
+  services?: boolean | Prisma.Tenant$servicesArgs<ExtArgs>
+  bookings?: boolean | Prisma.Tenant$bookingsArgs<ExtArgs>
+  bookingFlowConfig?: boolean | Prisma.Tenant$bookingFlowConfigArgs<ExtArgs>
+  fieldDefinitions?: boolean | Prisma.Tenant$fieldDefinitionsArgs<ExtArgs>
   _count?: boolean | Prisma.TenantCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["tenant"]>
 
@@ -5298,6 +6844,11 @@ export type TenantInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   repairServiceTypes?: boolean | Prisma.Tenant$repairServiceTypesArgs<ExtArgs>
   homepage?: boolean | Prisma.Tenant$homepageArgs<ExtArgs>
   pages?: boolean | Prisma.Tenant$pagesArgs<ExtArgs>
+  serviceCategories?: boolean | Prisma.Tenant$serviceCategoriesArgs<ExtArgs>
+  services?: boolean | Prisma.Tenant$servicesArgs<ExtArgs>
+  bookings?: boolean | Prisma.Tenant$bookingsArgs<ExtArgs>
+  bookingFlowConfig?: boolean | Prisma.Tenant$bookingFlowConfigArgs<ExtArgs>
+  fieldDefinitions?: boolean | Prisma.Tenant$fieldDefinitionsArgs<ExtArgs>
   _count?: boolean | Prisma.TenantCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type TenantIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -5331,6 +6882,11 @@ export type $TenantPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     repairServiceTypes: Prisma.$RepairServiceTypePayload<ExtArgs>[]
     homepage: Prisma.$TenantHomepagePayload<ExtArgs> | null
     pages: Prisma.$TenantPagePayload<ExtArgs>[]
+    serviceCategories: Prisma.$ServiceCategoryPayload<ExtArgs>[]
+    services: Prisma.$ServicePayload<ExtArgs>[]
+    bookings: Prisma.$BookingPayload<ExtArgs>[]
+    bookingFlowConfig: Prisma.$BookingFlowConfigPayload<ExtArgs> | null
+    fieldDefinitions: Prisma.$FieldDefinitionPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -5761,6 +7317,11 @@ export interface Prisma__TenantClient<T, Null = never, ExtArgs extends runtime.T
   repairServiceTypes<T extends Prisma.Tenant$repairServiceTypesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Tenant$repairServiceTypesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RepairServiceTypePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   homepage<T extends Prisma.Tenant$homepageArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Tenant$homepageArgs<ExtArgs>>): Prisma.Prisma__TenantHomepageClient<runtime.Types.Result.GetResult<Prisma.$TenantHomepagePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   pages<T extends Prisma.Tenant$pagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Tenant$pagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TenantPagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  serviceCategories<T extends Prisma.Tenant$serviceCategoriesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Tenant$serviceCategoriesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ServiceCategoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  services<T extends Prisma.Tenant$servicesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Tenant$servicesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ServicePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  bookings<T extends Prisma.Tenant$bookingsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Tenant$bookingsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BookingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  bookingFlowConfig<T extends Prisma.Tenant$bookingFlowConfigArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Tenant$bookingFlowConfigArgs<ExtArgs>>): Prisma.Prisma__BookingFlowConfigClient<runtime.Types.Result.GetResult<Prisma.$BookingFlowConfigPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  fieldDefinitions<T extends Prisma.Tenant$fieldDefinitionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Tenant$fieldDefinitionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FieldDefinitionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -6764,6 +8325,121 @@ export type Tenant$pagesArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
   take?: number
   skip?: number
   distinct?: Prisma.TenantPageScalarFieldEnum | Prisma.TenantPageScalarFieldEnum[]
+}
+
+/**
+ * Tenant.serviceCategories
+ */
+export type Tenant$serviceCategoriesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ServiceCategory
+   */
+  select?: Prisma.ServiceCategorySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ServiceCategory
+   */
+  omit?: Prisma.ServiceCategoryOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ServiceCategoryInclude<ExtArgs> | null
+  where?: Prisma.ServiceCategoryWhereInput
+  orderBy?: Prisma.ServiceCategoryOrderByWithRelationInput | Prisma.ServiceCategoryOrderByWithRelationInput[]
+  cursor?: Prisma.ServiceCategoryWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ServiceCategoryScalarFieldEnum | Prisma.ServiceCategoryScalarFieldEnum[]
+}
+
+/**
+ * Tenant.services
+ */
+export type Tenant$servicesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Service
+   */
+  select?: Prisma.ServiceSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Service
+   */
+  omit?: Prisma.ServiceOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ServiceInclude<ExtArgs> | null
+  where?: Prisma.ServiceWhereInput
+  orderBy?: Prisma.ServiceOrderByWithRelationInput | Prisma.ServiceOrderByWithRelationInput[]
+  cursor?: Prisma.ServiceWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ServiceScalarFieldEnum | Prisma.ServiceScalarFieldEnum[]
+}
+
+/**
+ * Tenant.bookings
+ */
+export type Tenant$bookingsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Booking
+   */
+  select?: Prisma.BookingSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Booking
+   */
+  omit?: Prisma.BookingOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BookingInclude<ExtArgs> | null
+  where?: Prisma.BookingWhereInput
+  orderBy?: Prisma.BookingOrderByWithRelationInput | Prisma.BookingOrderByWithRelationInput[]
+  cursor?: Prisma.BookingWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.BookingScalarFieldEnum | Prisma.BookingScalarFieldEnum[]
+}
+
+/**
+ * Tenant.bookingFlowConfig
+ */
+export type Tenant$bookingFlowConfigArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the BookingFlowConfig
+   */
+  select?: Prisma.BookingFlowConfigSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the BookingFlowConfig
+   */
+  omit?: Prisma.BookingFlowConfigOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BookingFlowConfigInclude<ExtArgs> | null
+  where?: Prisma.BookingFlowConfigWhereInput
+}
+
+/**
+ * Tenant.fieldDefinitions
+ */
+export type Tenant$fieldDefinitionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the FieldDefinition
+   */
+  select?: Prisma.FieldDefinitionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the FieldDefinition
+   */
+  omit?: Prisma.FieldDefinitionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.FieldDefinitionInclude<ExtArgs> | null
+  where?: Prisma.FieldDefinitionWhereInput
+  orderBy?: Prisma.FieldDefinitionOrderByWithRelationInput | Prisma.FieldDefinitionOrderByWithRelationInput[]
+  cursor?: Prisma.FieldDefinitionWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.FieldDefinitionScalarFieldEnum | Prisma.FieldDefinitionScalarFieldEnum[]
 }
 
 /**

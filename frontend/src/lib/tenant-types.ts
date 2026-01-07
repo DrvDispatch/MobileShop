@@ -49,3 +49,4 @@ export interface PublicTenantConfig {
     integrations: TenantIntegrations;
     seo: TenantSeo;
 }
+

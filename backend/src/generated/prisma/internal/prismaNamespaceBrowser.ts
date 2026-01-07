@@ -76,6 +76,12 @@ export const ModelName = {
   Ticket: 'Ticket',
   TicketMessage: 'TicketMessage',
   SupportedDevice: 'SupportedDevice',
+  ServiceCategory: 'ServiceCategory',
+  Service: 'Service',
+  Booking: 'Booking',
+  BookingAnswer: 'BookingAnswer',
+  BookingFlowConfig: 'BookingFlowConfig',
+  FieldDefinition: 'FieldDefinition',
   RepairDeviceType: 'RepairDeviceType',
   RepairBrand: 'RepairBrand',
   RepairDevice: 'RepairDevice',
@@ -649,6 +655,107 @@ export const SupportedDeviceScalarFieldEnum = {
 } as const
 
 export type SupportedDeviceScalarFieldEnum = (typeof SupportedDeviceScalarFieldEnum)[keyof typeof SupportedDeviceScalarFieldEnum]
+
+
+export const ServiceCategoryScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  parentId: 'parentId',
+  name: 'name',
+  slug: 'slug',
+  icon: 'icon',
+  image: 'image',
+  description: 'description',
+  depth: 'depth',
+  sortOrder: 'sortOrder',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ServiceCategoryScalarFieldEnum = (typeof ServiceCategoryScalarFieldEnum)[keyof typeof ServiceCategoryScalarFieldEnum]
+
+
+export const ServiceScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  categoryId: 'categoryId',
+  name: 'name',
+  slug: 'slug',
+  description: 'description',
+  icon: 'icon',
+  price: 'price',
+  priceDisplay: 'priceDisplay',
+  duration: 'duration',
+  durationText: 'durationText',
+  sortOrder: 'sortOrder',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ServiceScalarFieldEnum = (typeof ServiceScalarFieldEnum)[keyof typeof ServiceScalarFieldEnum]
+
+
+export const BookingScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  serviceId: 'serviceId',
+  customerId: 'customerId',
+  customerName: 'customerName',
+  customerEmail: 'customerEmail',
+  customerPhone: 'customerPhone',
+  date: 'date',
+  timeSlot: 'timeSlot',
+  status: 'status',
+  notes: 'notes',
+  adminNotes: 'adminNotes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type BookingScalarFieldEnum = (typeof BookingScalarFieldEnum)[keyof typeof BookingScalarFieldEnum]
+
+
+export const BookingAnswerScalarFieldEnum = {
+  id: 'id',
+  bookingId: 'bookingId',
+  fieldKey: 'fieldKey',
+  value: 'value'
+} as const
+
+export type BookingAnswerScalarFieldEnum = (typeof BookingAnswerScalarFieldEnum)[keyof typeof BookingAnswerScalarFieldEnum]
+
+
+export const BookingFlowConfigScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  steps: 'steps',
+  terminology: 'terminology',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type BookingFlowConfigScalarFieldEnum = (typeof BookingFlowConfigScalarFieldEnum)[keyof typeof BookingFlowConfigScalarFieldEnum]
+
+
+export const FieldDefinitionScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  key: 'key',
+  label: 'label',
+  type: 'type',
+  options: 'options',
+  placeholder: 'placeholder',
+  required: 'required',
+  showInStep: 'showInStep',
+  sortOrder: 'sortOrder',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type FieldDefinitionScalarFieldEnum = (typeof FieldDefinitionScalarFieldEnum)[keyof typeof FieldDefinitionScalarFieldEnum]
 
 
 export const RepairDeviceTypeScalarFieldEnum = {

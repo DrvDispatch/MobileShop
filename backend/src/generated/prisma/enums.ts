@@ -219,6 +219,32 @@ export const TicketCategory = {
 export type TicketCategory = (typeof TicketCategory)[keyof typeof TicketCategory]
 
 
+export const BookingStatus = {
+  PENDING: 'PENDING',
+  CONFIRMED: 'CONFIRMED',
+  COMPLETED: 'COMPLETED',
+  CANCELLED: 'CANCELLED',
+  NO_SHOW: 'NO_SHOW'
+} as const
+
+export type BookingStatus = (typeof BookingStatus)[keyof typeof BookingStatus]
+
+
+export const FieldType = {
+  TEXT: 'TEXT',
+  TEXTAREA: 'TEXTAREA',
+  SELECT: 'SELECT',
+  MULTI_SELECT: 'MULTI_SELECT',
+  DATE: 'DATE',
+  TIME: 'TIME',
+  NUMBER: 'NUMBER',
+  PHONE: 'PHONE',
+  EMAIL: 'EMAIL'
+} as const
+
+export type FieldType = (typeof FieldType)[keyof typeof FieldType]
+
+
 export const DiscountType = {
   PERCENTAGE: 'PERCENTAGE',
   FIXED: 'FIXED'

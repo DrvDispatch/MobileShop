@@ -32,6 +32,7 @@ import { StockNotificationsModule } from './modules/stock-notifications/stock-no
 import { ExportModule } from './modules/export/export.module';
 import { OwnerModule } from './modules/owner';
 import { PagesModule } from './modules/pages';
+import { ServicesModule } from './modules/services/services.module';
 
 @Module({
   imports: [
@@ -91,6 +92,9 @@ import { PagesModule } from './modules/pages';
 
     // CMS
     PagesModule,
+
+    // Generic Services (vertical-agnostic)
+    ServicesModule,
   ],
 
 
